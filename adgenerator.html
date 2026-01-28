@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Care | Pro Ad Designer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root { --bg: #0f172a; --panel: #1e293b; --red: #d90429; --blue: #003566; }
+        body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg); color: #fff; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        .main-layout { display: flex; gap: 30px; max-width: 1100px; width: 100%; flex-wrap: wrap; justify-content: center; }
+        .editor-panel { background: var(--panel); padding: 20px; border-radius: 12px; width: 320px; border: 1px solid #334155; }
+        input, textarea { width: 100%; padding: 10px; margin: 8px 0; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 6px; box-sizing: border-box; }
+        
+        .btn-download { width: 100%; padding: 15px; background: #238636; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 16px; }
+
+        /* --- Ad Canvas Style --- */
+        #adCanvas {
+            width: 500px; height: 550px; background: #ffffff; 
+            position: relative; display: flex; flex-direction: column;
+            padding: 40px; box-sizing: border-box; border: 12px solid var(--blue);
+            color: #1a1a1a; overflow: hidden;
+        }
+
+        /* Geometric Design */
+        .g-corner { position: absolute; width: 60px; height: 60px; border: 8px solid var(--blue); z-index: 1; }
+        .top-l { top: -5px; left: -5px; border-right: none; border-bottom: none; }
+        .bot-r { bottom: -5px; right: -5px; border-left: none; border-top: none; }
+
+        .ad-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; z-index: 2; }
+        .main-logo { display: flex; align-items: center; gap: 10px; }
+        .main-logo img { width: 80px; height: 80px; }
+        .main-logo h2 { font-size: 20px; margin: 0; color: var(--blue); font-weight: 700; }
+
+        /* Optional Ad Logo */
+        .opt-logo-box { width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; }
+        #optLogoPreview { max-width: 100%; max-height: 100%; object-fit: contain; display: none; }
+
+        .ad-body { flex-grow: 1; text-align: center; z-index: 2; margin-top: 10px; }
+        #adTitle { font-size: 45px; color: var(--blue); margin: 0; font-weight: 700; line-height: 1.2; }
+        #adDesc { font-size: 18px; color: #333; line-height: 1.5; margin: 15px 0; font-weight: 500; }
+
+        #adDate { font-size: 30px; color: var(--red); font-weight: 800; margin: 10px 0; border: 2px solid var(--red); display: inline-block; padding: 5px 15px; border-radius: 5px; }
+
+        .ad-footer { margin-top: auto; border-top: 3px solid var(--blue); padding-top: 15px; text-align: center; z-index: 2; }
+        .contact-call { font-size: 18px; font-weight: 700; color: var(--red); margin-bottom: 5px; }
+        .details-text { font-size: 14px; color: #000; font-weight: 600; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+    <h2 style="color: #38bdf8; margin-bottom: 25px;"><i class="fa fa-image"></i> Student Care Biggapon Maker</h2>
+
+    <div class="main-layout">
+        <div class="editor-panel">
+            <label>অ্যাড রিলেটেড লোগো (অপশনাল)</label>
+            <input type="file" id="optLogoInput" accept="image/*" onchange="previewOptLogo()">
+
+            <label>শিরোনাম (Headline)</label>
+            <input type="text" id="inTitle" placeholder="উদা: ভর্তি চলছে!" onkeyup="updateAd()">
+            
+            <label>বিস্তারিত তথ্য (Description)</label>
+            <textarea id="inDesc" rows="3" placeholder="বিস্তারিত লিখুন..." onkeyup="updateAd()"></textarea>
+            
+            <label>শেষ সময় (লাল রঙে দেখাবে)</label>
+            <input type="text" id="inDate" placeholder="উদা: ১৫ ফেব্রুয়ারি ২০২৬" onkeyup="updateAd()">
+            
+            <label>আপনার ঠিকানা ও মোবাইল</label>
+            <textarea id="inDetails" rows="2" onkeyup="updateAd()">মৌলভীবাজার সরকারি কলেজের সামনে। মোবাইল: ০১৬৩৭-৭৪৬৪৬৮</textarea>
+            
+            <button class="btn-download" onclick="downloadAd()">ইমেজ ডাউনলোড করুন</button>
+        </div>
+
+        <div id="adCanvas">
+            <div class="g-corner top-l"></div>
+            <div class="g-corner bot-r"></div>
+
+            <div class="ad-header">
+                <div class="main-logo">
+                    <img src="https://i.postimg.cc/7hdFkp49/Logo_sc.png" alt="SC Logo">
+                    <div>
+                        <h2>STUDENT CARE</h2>
+                        <div style="font-size: 10px; color: #555;">IT & Educational Center</div>
+                    </div>
+                </div>
+                <div class="opt-logo-box">
+                    <img id="optLogoPreview" src="" alt="">
+                </div>
+            </div>
+
+            <div class="ad-body">
+                <h1 id="adTitle">ভর্তি চলছে!</h1>
+                <p id="adDesc">আপনার প্রফেশনাল ক্যারিয়ার গড়তে আজই আমাদের আইটি কোর্সে জয়েন করুন।</p>
+                <div id="adDate">১৫ ফেব্রুয়ারি ২০২৬</div>
+            </div>
+
+            <div class="ad-footer">
+                <div class="contact-call">আজই যোগাযোগ করুন</div>
+                <div class="details-text" id="adFullDetails">মৌলভীবাজার সরকারি কলেজের সামনে। মোবাইল: ০১৬৩৭-৭৪৬৪৬৮</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateAd() {
+            document.getElementById('adTitle').innerText = document.getElementById('inTitle').value || "ভর্তি চলছে!";
+            document.getElementById('adDesc').innerText = document.getElementById('inDesc').value || "বিস্তারিত তথ্য এখানে...";
+            document.getElementById('adDate').innerText = document.getElementById('inDate').value || "নির্ধারিত নেই";
+            document.getElementById('adFullDetails').innerText = document.getElementById('inDetails').value;
+        }
+
+        function previewOptLogo() {
+            const preview = document.getElementById('optLogoPreview');
+            const file = document.getElementById('optLogoInput').files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            }
+            if (file) reader.readAsDataURL(file);
+        }
+
+        async function downloadAd() {
+    const canvasArea = document.getElementById('adCanvas');
+    
+    // ডাউনলোড বাটনের টেক্সট পরিবর্তন
+    const btn = event.target;
+    btn.innerText = "প্রসেসিং হচ্ছে...";
+
+    html2canvas(canvasArea, { 
+        scale: 3, 
+        useCORS: true, 
+        allowTaint: false,
+        backgroundColor: "#ffffff",
+        logging: true // এরর চেক করার জন্য
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'StudentCare_Ad.png';
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
+        btn.innerText = "ইমেজ ডাউনলোড করুন";
+    }).catch(err => {
+        console.error("Error generating image:", err);
+        alert("ইমেজ তৈরি করতে সমস্যা হয়েছে। দয়া করে গিটহাবে পুশ করে চেক করুন।");
+    });
+}
+    </script>
+</body>
+</html>
