@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>A4 Assignment Cover Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Hind+Siliguri:wght@400;700&display=swap');
+        
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        
+        @page { size: A4; margin: 0; }
+        body { font-family: 'Hind Siliguri', sans-serif; background: #e0e6ed; margin: 0; padding: 0; }
+
+        .admin-panel { 
+            background: #fff; padding: 20px; max-width: 1000px; margin: 20px auto; 
+            border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-top: 6px solid #2b579a;
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px; }
+        input, select { padding: 10px; border: 1px solid #ccd; border-radius: 6px; width: 100%; font-size: 14px; }
+        label { font-weight: bold; font-size: 11px; color: #444; text-transform: uppercase; }
+        .print-btn { background: #2b579a; color: white; width: 100%; padding: 15px; border: none; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 18px; margin-top: 10px; }
+
+        .cover-page { 
+            width: 210mm; height: 297mm; 
+            margin: 0 auto; background: white; position: relative; 
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        .border-container {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            border-width: 30px; border-color: #2b579a;
+            pointer-events: none; z-index: 10;
+        }
+        
+        .greek-mask {
+            -webkit-mask-image: url('https://www.transparenttextures.com/patterns/greek-vase.png');
+            mask-image: url('https://www.transparenttextures.com/patterns/greek-vase.png');
+        }
+
+        .inner-line {
+            position: absolute; top: 38px; left: 38px; right: 38px; bottom: 38px;
+            border: 2px solid #2b579a; z-index: 5;
+        }
+
+        .content { position: relative; z-index: 2; padding: 50px 70px; height: 100%; display: flex; flex-direction: column; align-items: center; }
+
+        /* Modified SVG for longer names */
+        .header-svg { height: 130px; width: 100%; margin-top: 10px; overflow: visible; }
+        .college-name { font-weight: 900; fill: #1a3a6d; transition: font-size 0.2s; }
+
+        .logo-box { height: 150px; margin: 15px 0; display: flex; align-items: center; justify-content: center; }
+        .logo-box img { max-height: 140px; object-fit: contain; }
+
+        .banner-wrap { margin: 20px 0; }
+        .ribbon { 
+            background: #2b579a; color: white; padding: 12px 80px; font-size: 30px; font-weight: bold;
+            clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+        }
+
+        .info-container { 
+            border: 2.5px solid #2b579a; border-radius: 15px; padding: 40px; 
+            width: 90%; margin: 10px auto; flex-grow: 1;
+        }
+        .info-row { display: flex; margin-bottom: 25px; font-size: 20px; font-weight: bold; border-bottom: 2px dotted #2b579a; padding-bottom: 5px; }
+        .info-label { width: 200px; color: #2b579a; }
+        .info-val { flex-grow: 1; color: #000; padding-left: 10px; }
+
+        .small-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 30px; }
+        .small-box { border: 2px solid #2b579a; border-radius: 25px; padding: 10px; text-align: center; font-size: 16px; font-weight: bold; }
+
+        .date-section { margin-top: 50px; text-align: center; margin-bottom: 80px; }
+        .date-outline { border: 2px dashed #2b579a; border-radius: 50px; padding: 10px 50px; display: inline-block; font-size: 20px; font-weight: bold; min-width: 320px; }
+
+        .signature { position: absolute; bottom: 80px; right: 80px; text-align: center; border-top: 2px solid #000; width: 200px; padding-top: 8px; font-size: 16px; font-weight: bold; }
+
+        @media print {
+            .admin-panel { display: none; }
+            body { background: white; }
+            .cover-page { margin: 0; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-panel">
+    <div class="grid">
+        <div><label>Language</label><select id="langSel" onchange="update()"><option value="bn">Bengali</option><option value="en">English</option></select></div>
+        <div><label>Border Style</label><select id="borderStyle" onchange="updateTheme()">
+            <option value="greek">Greek Pattern (Ref)</option>
+            <option value="dotted">Dotted Border</option>
+            <option value="dashed">Dashed Border</option>
+            <option value="solid">Solid Border</option>
+            <option value="double">Double Border</option>
+            <option value="groove">Groove Border</option>
+            <option value="ridge">Ridge Border</option>
+            <option value="inset">Inset Border</option>
+            <option value="outset">Outset Border</option>
+            <option value="none">No Border</option>
+        </select></div>
+        <div><label>Theme Color</label><input type="color" id="colorSel" value="#2b579a" oninput="updateTheme()"></div>
+    </div>
+    
+    <div class="grid">
+        <div><label>Logo / Building Icon</label><input type="file" onchange="handleLogo(event)"></div>
+        <input type="text" id="collInp" placeholder="Type College Name" oninput="update()">
+        <input type="text" id="subInp" placeholder="Subject Name" oninput="update()">
+    </div>
+    <div class="grid">
+        <input type="text" id="topicInp" placeholder="Topic" oninput="update()">
+        <input type="text" id="teachInp" placeholder="Teacher" oninput="update()">
+        <input type="text" id="studInp" placeholder="Student" oninput="update()">
+    </div>
+    <div class="grid">
+        <input type="text" id="rollInp" placeholder="Roll" oninput="update()">
+        <input type="text" id="regInp" placeholder="Reg" oninput="update()">
+        <input type="text" id="classInp" placeholder="Class" oninput="update()">
+        <div><label>Submission Date</label><input type="date" id="dateInp" oninput="update()"></div>
+    </div>
+    <button class="print-btn" onclick="window.print()">PRINT FULL A4 COVER</button>
+</div>
+
+<div class="cover-page" id="mainPage">
+    <div class="border-container greek-mask" id="vBorder"></div>
+    <div class="inner-line" id="vLine"></div>
+
+    <div class="content">
+        <svg class="header-svg" viewBox="0 0 500 150">
+            <path id="curve" d="M30,140 Q250,-20 470,140" fill="transparent" />
+            <text class="college-name" id="textElement">
+                <textPath xlink:href="#curve" startOffset="50%" text-anchor="middle" id="vCollText">COLLEGE NAME HERE</textPath>
+            </text>
+        </svg>
+
+        <div class="logo-box">
+            <img id="vLogo" src="https://i.postimg.cc/xdVXHkfg/pngtree-school-building-university-png-image-14580240.png">
+        </div>
+
+        <div class="banner-wrap">
+            <div class="ribbon" id="vBanner">ASSIGNMENT</div>
+        </div>
+
+        <div class="info-container" id="vBox">
+            <div class="info-row"><div class="info-label" id="lblSub">বিষয় :</div><div class="info-val" id="vSub"></div></div>
+            <div class="info-row"><div class="info-label" id="lblTopic">টপিক :</div><div class="info-val" id="vTopic"></div></div>
+            <div class="info-row"><div class="info-label" id="lblTeach">শিক্ষকের নাম :</div><div class="info-val" id="vTeach"></div></div>
+            <div class="info-row"><div class="info-label" id="lblStud">শিক্ষার্থীর নাম :</div><div class="info-val" id="vStud"></div></div>
+
+            <div class="small-grid">
+                <div class="small-box"><span id="lblRoll">রোল:</span> <span id="vRoll"></span></div>
+                <div class="small-box"><span id="lblReg">রেজি:</span> <span id="vReg"></span></div>
+                <div class="small-box"><span id="lblClass">শ্রেণী:</span> <span id="vClass"></span></div>
+            </div>
+        </div>
+
+        <div class="date-section">
+            <div class="date-outline" id="vDateBorder">
+                <span id="lblDate">জমা দানের তারিখ :</span> <span id="vDate"></span>
+            </div>
+        </div>
+
+        <div class="signature" id="lblSign">শিক্ষকের স্বাক্ষর</div>
+    </div>
+</div>
+
+<script>
+    const dict = {
+        bn: { banner: "অ্যাসাইনমেন্ট", sub: "বিষয় :", topic: "টপিক :", teach: "শিক্ষকের নাম :", stud: "শিক্ষার্থীর নাম :", roll: "রোল নং:", reg: "রেজি নং:", class: "শ্রেণী:", date: "জমা দানের তারিখ :", sign: "শিক্ষকের স্বাক্ষর" },
+        en: { banner: "ASSIGNMENT", sub: "Subject:", topic: "Topic:", teach: "Teacher:", stud: "Student:", roll: "Roll:", reg: "Reg:", class: "Class:", date: "Submission Date:", sign: "Teacher's Signature" }
+    };
+
+    function update() {
+        const lang = document.getElementById('langSel').value;
+        const d = dict[lang];
+
+        document.getElementById('vBanner').innerText = d.banner;
+        document.getElementById('lblSub').innerText = d.sub;
+        document.getElementById('lblTopic').innerText = d.topic;
+        document.getElementById('lblTeach').innerText = d.teach;
+        document.getElementById('lblStud').innerText = d.stud;
+        document.getElementById('lblRoll').innerText = d.roll;
+        document.getElementById('lblReg').innerText = d.reg;
+        document.getElementById('lblClass').innerText = d.class;
+        document.getElementById('lblDate').innerText = d.date;
+        document.getElementById('lblSign').innerText = d.sign;
+
+        const rawName = document.getElementById('collInp').value || "COLLEGE NAME HERE";
+        const vColl = document.getElementById('vCollText');
+        const textElement = document.getElementById('textElement');
+        
+        vColl.textContent = rawName;
+
+        // Auto Font Resize Logic
+        if (rawName.length > 35) {
+            textElement.style.fontSize = "22px";
+        } else if (rawName.length > 25) {
+            textElement.style.fontSize = "28px";
+        } else {
+            textElement.style.fontSize = "36px";
+        }
+
+        document.getElementById('vSub').innerText = document.getElementById('subInp').value;
+        document.getElementById('vTopic').innerText = document.getElementById('topicInp').value;
+        document.getElementById('vTeach').innerText = document.getElementById('teachInp').value;
+        document.getElementById('vStud').innerText = document.getElementById('studInp').value;
+        document.getElementById('vRoll').innerText = document.getElementById('rollInp').value;
+        document.getElementById('vReg').innerText = document.getElementById('regInp').value;
+        document.getElementById('vClass').innerText = document.getElementById('classInp').value;
+
+        const dateVal = document.getElementById('dateInp').value;
+        document.getElementById('vDate').innerText = dateVal ? new Date(dateVal).toLocaleDateString(lang==='bn'?'bn-BD':'en-GB') : "....................";
+    }
+
+    function updateTheme() {
+        const color = document.getElementById('colorSel').value;
+        const style = document.getElementById('borderStyle').value;
+        const border = document.getElementById('vBorder');
+
+        border.className = 'border-container';
+        border.style.borderStyle = 'solid';
+
+        if(style === 'greek') {
+            border.classList.add('greek-mask');
+        } else {
+            border.style.borderStyle = style;
+        }
+
+        border.style.borderColor = color;
+        document.getElementById('vLine').style.borderColor = color;
+        document.getElementById('vCollText').style.fill = color;
+        document.querySelector('.ribbon').style.background = color;
+        document.getElementById('vBox').style.borderColor = color;
+        document.getElementById('vDateBorder').style.borderColor = color;
+        
+        document.querySelectorAll('.info-row').forEach(r => r.style.borderBottomColor = color);
+        document.querySelectorAll('.small-box').forEach(b => b.style.borderColor = color);
+    }
+
+    function handleLogo(e) {
+        const reader = new FileReader();
+        reader.onload = () => { document.getElementById('vLogo').src = reader.result; };
+        if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+    }
+
+    window.onload = () => { update(); updateTheme(); };
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>Professional Sanad System - Final</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root { 
+            --border-style: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fcf6ba, #aa771c); 
+        }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        
+        body { font-family: 'SolaimanLipi', Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        
+        /* Admin Panel */
+        .admin-panel { 
+            background: #fff; padding: 25px; max-width: 1000px; margin: 0 auto 30px; 
+            border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-top: 6px solid #aa771c;
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        input, select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%; font-size: 14px; }
+        
+        .lang-btn { background: #2c3e50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .lang-btn.active { background: #aa771c; }
+        button.print-btn { background: #aa771c; color: white; padding: 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; margin-top: 10px; }
+
+        /* A4 Page Layout */
+        .a4-page { 
+            width: 210mm; height: 297mm; padding: 15mm 20mm; margin: 0 auto;
+            background: white; position: relative; border: 12px solid transparent;
+            border-image: var(--border-style) 30; overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        /* Watermark */
+        .watermark {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 450px; opacity: 0.08; pointer-events: none; z-index: 0;
+        }
+
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; z-index: 1; }
+        .logo-box { width: 90px; height: 90px; }
+        .union-info { text-align: center; flex-grow: 1; }
+        .union-info h2 { margin: 5px 0; color: #4b0082; font-size: 28px; }
+        .union-info p.web-email { margin: 2px 0; font-size: 13px; color: #333; font-weight: normal; }
+
+        .header-line { width: 100%; height: 4px; border-top: 2px solid #000; border-bottom: 1px solid #000; margin: 8px 0; z-index: 1; }
+
+        .meta-info { display: flex; justify-content: space-between; font-weight: bold; font-size: 17px; margin-bottom: 10px; z-index: 1; }
+
+        .title-container { text-align: center; margin: 15px 0; z-index: 1; }
+        .title-box { border: 3px solid #888; border-radius: 50% / 100%; padding: 8px 35px; font-size: 22px; font-weight: bold; display: inline-block; background: #fff; }
+
+        .certificate-body { text-align: justify; line-height: 2.3; font-size: 20px; margin-top: 25px; z-index: 1; color: #111; flex-grow: 1; }
+        .dash-line { border-bottom: 1.5px dotted #333; padding: 0 5px; font-weight: bold; }
+
+        .footer-sec { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; z-index: 1; padding-bottom: 10mm; }
+        #qrcode { width: 90px; height: 90px; padding: 5px; border: 1px solid #ddd; }
+        .sig-line { border-top: 2px dashed #000; width: 230px; text-align: center; padding-top: 5px; font-weight: bold; font-size: 18px; }
+
+        @media print {
+            .admin-panel { display: none; }
+            body { background: white; padding: 0; }
+            .a4-page { margin: 0; width: 210mm; height: 297mm; }
+            @page { size: A4; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="margin:0; color:#aa771c;">🏛️ Nagorik Sanad Configurator</h3>
+        <div>
+            <button class="lang-btn active" id="btnBn" onclick="setLanguage('bn')">বাংলা</button>
+            <button class="lang-btn" id="btnEn" onclick="setLanguage('en')">English</button>
+        </div>
+    </div>
+    
+    <div class="grid">
+        <input type="text" placeholder="Union Name" oninput="sync('vUnion', this.value); generateQR();">
+        <input type="text" placeholder="Upazilla, District" oninput="sync('vLoc', this.value)">
+        <input type="text" placeholder="Email or Website" oninput="sync('vWeb', this.value)">
+    </div>
+    
+    <div class="grid">
+        <select onchange="changeBorder(this.value)">
+            <option value="gold">Border Color: Golden</option>
+            <option value="green">Border Color: Govt. Green</option>
+            <option value="blue">Border Color: Official Blue</option>
+        </select>
+        <input type="file" onchange="loadUnionLogo(event)">
+        <input type="text" placeholder="Citizen Name" oninput="sync('vName', this.value); generateQR();">
+    </div>
+
+    <div class="grid">
+        <input type="text" placeholder="Father/Spouse Name" oninput="sync('vFather', this.value)">
+        <input type="text" placeholder="Mother Name" oninput="sync('vMother', this.value)">
+        <input type="text" placeholder="Address (Village/Post)" oninput="sync('vAddr', this.value)">
+    </div>
+    <button class="print-btn" onclick="window.print()">PRINT CERTIFICATE (A4)</button>
+</div>
+
+<div class="a4-page" id="mainPage">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Government_Seal_of_Bangladesh.svg/1200px-Government_Seal_of_Bangladesh.svg.png" class="watermark">
+
+    <div class="header">
+        <div class="logo-box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Government_Seal_of_Bangladesh.svg/1200px-Government_Seal_of_Bangladesh.svg.png" width="90"></div>
+        <div class="union-info">
+            <h3 id="govText" style="margin:0;">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</h3>
+            <h2 id="vUnion">ইউনিয়ন পরিষদের নাম</h2>
+            <p id="vLoc">উপজেলা ও জেলা</p>
+            <p id="vWeb" class="web-email">www.union-name.gov.bd</p>
+        </div>
+        <div class="logo-box"><img id="unionLogoDisp" src="" style="display:none; width:90px;"></div>
+    </div>
+
+    <div class="header-line"></div>
+
+    <div class="meta-info">
+        <div>স্মারক নং / SL No: <span id="vSerial"></span></div>
+        <div>তারিখ / Date: <span id="vDate"></span></div>
+    </div>
+
+    <div class="title-container"><div class="title-box" id="certTitle">নাগরিকত্ব সনদপত্র</div></div>
+
+    <div class="certificate-body" id="certBody">
+        এই মর্মে প্রত্যয়ন করা যাচ্ছে যে, জনাব/মিসেস <span class="dash-line" id="vName">.....................................</span>, 
+        পিতা/স্বামী: <span class="dash-line" id="vFather">.....................................</span>, 
+        মাতা: <span class="dash-line" id="vMother">.........................</span>, 
+        গ্রাম/ওয়ার্ড/ডাকঘর: <span class="dash-line" id="vAddr">....................................................................</span>। 
+        তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা এবং জন্মসূত্রে বাংলাদেশের নাগরিক। আমার জানামতে তিনি রাষ্ট্র বা সমাজ বিরোধী কোন কাজের সাথে লিপ্ত নন।
+    </div>
+
+    <div class="footer-sec">
+        <div>
+            <div id="qrcode"></div>
+            <p style="font-size: 11px; margin-top: 5px; font-weight: bold;">Scan to Verify</p>
+        </div>
+        <div class="sig-area">
+            <div class="sig-line" id="sigText">চেয়ারম্যান / সচিব</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentLang = 'bn';
+    const translations = {
+        en: {
+            gov: "People's Republic of Bangladesh",
+            title: "Citizenship Certificate",
+            sig: "Chairman / Secretary",
+            body: `This is to certify that <span class="dash-line" id="vName"></span>, 
+            Father/Spouse: <span class="dash-line" id="vFather"></span>, 
+            Mother: <span class="dash-line" id="vMother"></span>, 
+            Address: <span class="dash-line" id="vAddr"></span>. 
+            He/She is a permanent resident of this union and a citizen of Bangladesh by birth. 
+            <br><br>To the best of my knowledge, he/she has never been involved in any anti-state or anti-social activity.`
+        },
+        bn: {
+            gov: "গণপ্রজাতন্ত্রী বাংলাদেশ সরকার",
+            title: "নাগরিকত্ব সনদপত্র",
+            sig: "চেয়ারম্যান / সচিব",
+            body: `এই মর্মে প্রত্যয়ন করা যাচ্ছে যে, জনাব/মিসেস <span class="dash-line" id="vName"></span>, 
+            পিতা/স্বামী: <span class="dash-line" id="vFather"></span>, 
+            মাতা: <span class="dash-line" id="vMother"></span>, 
+            গ্রাম/ওয়ার্ড/ডাকঘর: <span class="dash-line" id="vAddr"></span>। 
+            তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা এবং জন্মসূত্রে বাংলাদেশের নাগরিক। আমার জানামতে তিনি রাষ্ট্র বা সমাজ বিরোধী কোন কাজের সাথে লিপ্ত নন।`
+        }
+    };
+
+    function changeBorder(color) {
+        const root = document.documentElement;
+        if(color === 'gold') root.style.setProperty('--border-style', 'linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fcf6ba, #aa771c)');
+        else if(color === 'green') root.style.setProperty('--border-style', 'linear-gradient(45deg, #006b38, #2e8b57, #004d2c, #2e8b57)');
+        else if(color === 'blue') root.style.setProperty('--border-style', 'linear-gradient(45deg, #000080, #1e90ff, #00008b, #1e90ff)');
+    }
+
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.getElementById('btnBn').classList.toggle('active', lang === 'bn');
+        document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+        document.getElementById('govText').innerText = translations[lang].gov;
+        document.getElementById('certTitle').innerText = translations[lang].title;
+        document.getElementById('sigText').innerText = translations[lang].sig;
+        
+        const oldData = {
+            name: document.getElementById('vName').innerText,
+            father: document.getElementById('vFather').innerText,
+            mother: document.getElementById('vMother').innerText,
+            addr: document.getElementById('vAddr').innerText
+        };
+        document.getElementById('certBody').innerHTML = translations[lang].body;
+        document.getElementById('vName').innerText = oldData.name;
+        document.getElementById('vFather').innerText = oldData.father;
+        document.getElementById('vMother').innerText = oldData.mother;
+        document.getElementById('vAddr').innerText = oldData.addr;
+        updateDate(); generateQR();
+    }
+
+    function sync(id, val) { document.getElementById(id).innerText = val || ".............................."; }
+
+    function updateDate() {
+        document.getElementById('vDate').innerText = new Date().toLocaleDateString(currentLang === 'bn' ? 'bn-BD' : 'en-GB');
+    }
+
+    function generateQR() {
+        document.getElementById("qrcode").innerHTML = "";
+        const data = `Union: ${document.getElementById('vUnion').innerText} | Citizen: ${document.getElementById('vName').innerText} | SL: ${document.getElementById('vSerial').innerText}`;
+        new QRCode(document.getElementById("qrcode"), { text: data, width: 90, height: 90 });
+    }
+
+    function loadUnionLogo(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const img = document.getElementById('unionLogoDisp');
+            img.src = reader.result;
+            img.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    window.onload = () => {
+        document.getElementById('vSerial').innerText = 'UP-' + Math.floor(1000 + Math.random() * 9000);
+        updateDate(); generateQR();
+    };
+</script>
+</body>
+</html>

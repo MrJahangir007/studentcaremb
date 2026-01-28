@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Professional Family Certificate</title>
+    <style>
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { font-family: 'Times New Roman', Times, serif; background: #f0f2f5; margin: 0; padding: 20px; }
+
+        /* Admin Control Panel */
+        .admin-panel { 
+            background: #fff; padding: 25px; max-width: 1150px; margin: 0 auto 30px; 
+            border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 5px solid #003366;
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px; }
+        input, select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%; font-size: 14px; }
+        button { cursor: pointer; padding: 10px; border-radius: 4px; border: none; font-weight: bold; }
+        .add-btn { background: #28a745; color: white; margin-bottom: 10px; width: 100%; }
+        .print-btn { background: #003366; color: white; width: 100%; font-size: 16px; margin-top: 15px; padding: 15px; }
+
+        /* A4 Page Layout */
+        .a4-page { 
+            width: 210mm; min-height: 297mm; padding: 15mm 15mm; margin: 0 auto;
+            background: white; position: relative; display: flex; flex-direction: column;
+        }
+
+        #watermark {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 450px; opacity: 0.06; pointer-events: none; z-index: 0;
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; z-index: 1; min-height: 100px; }
+        .logo-side { width: 85px; height: 85px; object-fit: contain; }
+        .header-center { text-align: center; flex-grow: 1; padding: 0 10px; }
+        .header-center h1 { margin: 0; font-size: 20px; color: #003366; text-transform: uppercase; }
+        .header-center p { margin: 2px 0; font-size: 13px; font-weight: bold; }
+        
+        .header-line { width: 100%; height: 3px; border-top: 2px solid #000; border-bottom: 1px solid #000; margin: 8px 0; z-index: 1; }
+
+        .meta-info { display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; margin-bottom: 10px; z-index: 1; }
+        .title-container { text-align: center; margin: 10px 0; z-index: 1; }
+        .title-box { border: 2.5px solid #000; padding: 5px 30px; font-size: 18px; font-weight: bold; display: inline-block; text-transform: uppercase; }
+
+        .member-table { width: 100%; border-collapse: collapse; margin: 10px 0; z-index: 1; table-layout: fixed; }
+        .member-table th, .member-table td { border: 1px solid #000; padding: 6px 3px; text-align: center; font-size: 10.5px; word-wrap: break-word; }
+        .member-table th { background: #f2f2f2; font-weight: bold; }
+
+        .main-message { text-align: justify; font-size: 15px; line-height: 1.5; margin-top: 15px; z-index: 1; }
+        .footer { margin-top: auto; display: flex; justify-content: flex-end; padding-bottom: 10mm; z-index: 1; }
+        .sig-box { text-align: center; border-top: 1.5px solid #000; width: 220px; padding-top: 5px; font-weight: bold; font-size: 14px; }
+
+        @media print {
+            .admin-panel { display: none; }
+            body { background: white; padding: 0; }
+            .a4-page { margin: 0; width: 210mm; height: 297mm; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-panel">
+    <h3>🏛️ Family Certificate Configurator</h3>
+    <div class="grid">
+        <select onchange="toggleMode(this.value)">
+            <option value="councilor">Councilor Mode</option>
+            <option value="union">Union Mode</option>
+        </select>
+        <input type="text" id="inName" placeholder="Chairman/Councilor Name" oninput="sync('vAuth', this.value)">
+        <input type="text" placeholder="Designation" oninput="sync('vDesig', this.value)">
+        <input type="text" placeholder="Full Address" oninput="sync('vOffice', this.value)">
+    </div>
+    <div class="grid">
+        <input type="text" placeholder="Phone/Cell No" oninput="sync('vContact', this.value)">
+        <input type="text" placeholder="Email/Website" oninput="sync('vWeb', this.value)">
+        <input type="text" placeholder="Head of Family" oninput="sync('vHead', this.value)">
+        <input type="file" accept="image/*" onchange="loadLogo(event)">
+    </div>
+
+    <hr>
+    <h4>Add Family Members Details:</h4>
+    <div id="memberInputs">
+        <div class="grid" style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
+            <input type="text" placeholder="Member Name" class="m-name">
+            <input type="text" placeholder="Relation" class="m-rel">
+            <input type="text" placeholder="Date of Birth" class="m-dob">
+            <input type="text" placeholder="Present Addr" class="m-pres">
+            <input type="text" placeholder="Permanent Addr" class="m-perm">
+            <input type="text" placeholder="NID/Birth Cert" class="m-nid">
+        </div>
+    </div>
+    
+    <button class="add-btn" onclick="addRow()">+ Add New Member Row</button>
+    
+    <div class="grid" style="margin-top:20px;">
+        <input type="text" placeholder="Ref No." oninput="sync('vRef', this.value)">
+        <input type="text" placeholder="Manual Date (Optional)" oninput="sync('vDate', this.value)">
+    </div>
+    <button class="print-btn" onclick="updateTable(); window.print();">GENERATE & PRINT CERTIFICATE</button>
+</div>
+
+<div class="a4-page">
+    <img id="watermark" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Government_Seal_of_Bangladesh.svg/1200px-Government_Seal_of_Bangladesh.svg.png">
+
+    <div class="header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Government_Seal_of_Bangladesh.svg/1200px-Government_Seal_of_Bangladesh.svg.png" class="logo-side">
+        <div class="header-center">
+            <h1 id="vAuth">CHAIRMAN / COUNCILOR NAME</h1>
+            <p id="vDesig">DESIGNATION</p>
+            <p id="vOffice">OFFICE ADDRESS DETAILS</p>
+            <p><span id="vContact"></span> | <span id="vWeb"></span></p>
+        </div>
+        <img id="rightLogo" src="" class="logo-side" style="display: none;">
+    </div>
+
+    <div class="header-line"></div>
+
+    <div class="meta-info">
+        <div>Ref No: <span id="vRef">..........</span></div>
+        <div>Date: <span id="vDate"></span></div>
+    </div>
+
+    <div class="title-container"><div class="title-box">Family Certificate</div></div>
+
+    <p style="font-size: 16px; z-index: 1;">This is to certify that the family members of <b><span id="vHead">....................</span></b> are as follows:</p>
+
+    <table class="member-table">
+        <thead>
+            <tr>
+                <th width="5%">SL</th>
+                <th width="19%">NAME</th>
+                <th width="10%">RELATION</th>
+                <th width="11%">DOB</th>
+                <th width="19%">PRESENT ADDR</th>
+                <th width="19%">PERMANENT ADDR</th>
+                <th width="17%">NID/BC NO</th>
+            </tr>
+        </thead>
+        <tbody id="memberTableBody"></tbody>
+    </table>
+
+    <div class="main-message">
+        THEY ARE BANGLADESHI BY BIRTH. THEY ARE WELL KNOWN TO ME. THEIR MORAL CHARACTERS ARE EXCELLENT AND THEY HAVE A GOOD RELATION WITH EACH OTHER. I WISH THEM A BRIGHT AND HAPPY FUTURE.
+    </div>
+
+    <div class="footer">
+        <div class="sig-box">
+            Signature & Seal<br>
+            <span id="vSigLabel" style="font-size: 11px;">Councilor / Chairman</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleMode(val) {
+        document.getElementById('vSigLabel').innerText = val === 'councilor' ? 'Councilor' : 'Chairman / Secretary';
+    }
+
+    function addRow() {
+        const div = document.createElement('div');
+        div.className = 'grid';
+        div.style.borderBottom = '1px solid #eee';
+        div.style.paddingBottom = '10px';
+        div.style.marginBottom = '10px';
+        div.innerHTML = `
+            <input type="text" placeholder="Member Name" class="m-name">
+            <input type="text" placeholder="Relation" class="m-rel">
+            <input type="text" placeholder="Date of Birth" class="m-dob">
+            <input type="text" placeholder="Present Addr" class="m-pres">
+            <input type="text" placeholder="Permanent Addr" class="m-perm">
+            <input type="text" placeholder="NID/Birth Cert" class="m-nid">
+        `;
+        document.getElementById('memberInputs').appendChild(div);
+    }
+
+    function sync(id, val) { document.getElementById(id).innerText = val || ""; }
+
+    function updateTable() {
+        const tbody = document.getElementById('memberTableBody');
+        tbody.innerHTML = '';
+        const names = document.querySelectorAll('.m-name');
+        const rels = document.querySelectorAll('.m-rel');
+        const dobs = document.querySelectorAll('.m-dob');
+        const press = document.querySelectorAll('.m-pres');
+        const perms = document.querySelectorAll('.m-perm');
+        const nids = document.querySelectorAll('.m-nid');
+
+        names.forEach((n, i) => {
+            if(n.value) {
+                tbody.innerHTML += `<tr>
+                    <td>${i+1}</td>
+                    <td>${n.value}</td>
+                    <td>${rels[i].value}</td>
+                    <td>${dobs[i].value}</td>
+                    <td>${press[i].value}</td>
+                    <td>${perms[i].value}</td>
+                    <td>${nids[i].value}</td>
+                </tr>`;
+            }
+        });
+    }
+
+    function loadLogo(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const logo = document.getElementById('rightLogo');
+            logo.src = reader.result;
+            logo.style.display = 'block';
+            document.getElementById('watermark').src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    window.onload = () => { 
+        document.getElementById('vDate').innerText = new Date().toLocaleDateString('en-GB');
+    };
+</script>
+</body>
+</html>

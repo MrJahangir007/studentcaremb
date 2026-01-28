@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnostic Report - Straight Watermark Fix</title>
+    <style>
+        :root { --primary-color: #2c3e50; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
+        
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7f9; margin: 0; padding: 0; }
+
+        /* Admin Panel */
+        .admin-panel { 
+            background: #fff; padding: 20px; max-width: 900px; margin: 20px auto; 
+            border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 5px solid var(--primary-color);
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        input, select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%; font-size: 14px; }
+        button { background: var(--primary-color); color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
+
+        /* A4 Page Setup */
+        .a4-page { 
+            width: 210mm; 
+            min-height: 297mm; 
+            padding: 20mm; 
+            margin: 20px auto;
+            background: white; 
+            position: relative; 
+            overflow: hidden;
+            display: block;
+            border: 1px solid #ddd;
+        }
+
+        /* Watermark - ROTATION REMOVED */
+        .watermark {
+            position: absolute; 
+            top: 55%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); /* Rotation deleted */
+            width: 380px; 
+            opacity: 0.07; 
+            pointer-events: none; 
+            z-index: 0;
+            display: flex; 
+            justify-content: center;
+        }
+        #wmImg { max-width: 100%; height: auto; filter: grayscale(1); }
+
+        /* Header */
+        .report-header { position: relative; z-index: 1; display: flex; align-items: center; border-bottom: 2px solid var(--primary-color); padding-bottom: 15px; }
+        .logo-box { width: 95px; height: 95px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        #labLogo { max-width: 100%; max-height: 100%; object-fit: contain; }
+        
+        .lab-details { flex-grow: 1; text-align: center; padding: 0 10px; }
+        .lab-details h1 { margin: 0; font-size: 26px; color: var(--primary-color); text-transform: uppercase; }
+        .lab-details p { margin: 4px 0; font-size: 13px; color: #333; font-weight: 500; }
+
+        /* Patient Info Box */
+        .patient-table { width: 100%; border: 1px solid #000; margin-top: 25px; font-size: 14px; border-collapse: collapse; position: relative; z-index: 1; }
+        .patient-table td { padding: 8px 12px; border: 0.5px solid #ccc; }
+
+        .report-title { text-align: center; margin: 35px 0; font-weight: bold; font-size: 20px; text-decoration: underline; color: #000; letter-spacing: 1px; }
+
+        /* Test Table */
+        .test-table { width: 100%; border-collapse: collapse; position: relative; z-index: 1; margin-top: 10px; }
+        .test-table th { border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 12px; text-align: left; background: #f9f9f9; }
+        .test-table td { padding: 15px 12px; border-bottom: 1px solid #eee; font-size: 15px; }
+
+        /* Footer */
+        .footer-sec { position: absolute; bottom: 30mm; width: calc(100% - 40mm); display: flex; justify-content: space-between; z-index: 1; }
+        .sig-line { border-top: 1.5px solid #000; width: 220px; text-align: center; padding-top: 6px; font-size: 13px; font-weight: bold; }
+
+        @media print {
+            .no-print { display: none; }
+            body { background: white; margin: 0; padding: 0; }
+            .a4-page { 
+                margin: 0 auto; 
+                border: none;
+                box-shadow: none;
+                width: 210mm;
+                height: 297mm;
+            }
+            @page { size: A4; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-panel no-print">
+    <h3 style="margin-top:0">Diagnostic Management System (Final Fix)</h3>
+    <div class="grid">
+        <div><label>Center Logo</label><input type="file" onchange="handleLogo(event)" accept="image/*"></div>
+        <div><label>Center Name</label><input type="text" id="nameInp" placeholder="Diagnostic Name" oninput="updateName(this.value)"></div>
+        <div><label>Address & Contact</label><input type="text" placeholder="Address & Phone" oninput="sync('viewContact', this.value)"></div>
+    </div>
+    
+    <div class="grid">
+        <div><label>Patient Name</label><input type="text" placeholder="Patient Name" oninput="sync('pName', this.value)"></div>
+        <div><label>Age/Sex</label><input type="text" placeholder="e.g. 23Y/Female" oninput="sync('pAge', this.value)"></div>
+        <div>
+            <label>Referred By</label>
+            <div style="display: flex; gap: 5px;">
+                <select id="refType" onchange="handleRefChange(this.value)" style="width: 85px;">
+                    <option value="Self">Self</option>
+                    <option value="Dr">Dr.</option>
+                </select>
+                <input type="text" id="refNameInp" placeholder="Enter Dr. Name" style="display:none;" oninput="sync('vRef', 'Dr. ' + this.value)">
+            </div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div><label>Blood Group</label>
+            <select onchange="sync('resBG', this.value)">
+                <option value="">Select Group</option>
+                <option>A Positive (A+)</option><option>B Positive (B+)</option>
+                <option>O Positive (O+)</option><option>AB Positive (AB+)</option>
+                <option>A Negative (A-)</option><option>B Negative (B-)</option>
+                <option>O Negative (O-)</option><option>AB Negative (AB-)</option>
+            </select>
+        </div>
+        <div style="display:flex; align-items:flex-end;"><button onclick="window.print()">PRINT REPORT (A4)</button></div>
+    </div>
+</div>
+
+<div class="a4-page">
+    <div class="watermark"><img id="wmImg" src=""></div>
+
+    <div class="report-header">
+        <div class="logo-box"><img id="labLogo" src="https://via.placeholder.com/95?text=LOGO"></div>
+        <div class="lab-details">
+            <h1 id="labNameDisp">DIAGNOSTIC NAME</h1>
+            <p id="viewContact">Diagnostic Center Address, Mobile & Contact Details</p>
+        </div>
+    </div>
+
+    <table class="patient-table">
+        <tr>
+            <td width="15%"><strong>ID No.</strong></td><td width="35%">: <span id="viewID">R-00000</span></td>
+            <td width="15%"><strong>Date</strong></td><td width="35%">: <span id="vDate"></span></td>
+        </tr>
+        <tr>
+            <td><strong>Patient Name</strong></td><td>: <b id="pName">----------</b></td>
+            <td><strong>Age / Sex</strong></td><td>: <span id="pAge">--</span></td>
+        </tr>
+        <tr>
+            <td><strong>Specimen</strong></td><td>: BLOOD</td>
+            <td><strong>Ref. By</strong></td><td>: <span id="vRef">Self</span></td>
+        </tr>
+    </table>
+
+    <div class="report-title">BLOOD GROUP EXAMINATION REPORT</div>
+
+    <table class="test-table">
+        <thead>
+            <tr>
+                <th width="40%">INVESTIGATION</th>
+                <th width="30%">RESULT</th>
+                <th width="30%">REFERENCE VALUE</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>ABO Blood Grouping</td>
+                <td><b id="resBG">Not Selected</b></td>
+                <td>--</td>
+            </tr>
+            <tr>
+                <td>Rh Typing (Rh Factor)</td>
+                <td><b>Positive (+ve)</b></td>
+                <td>--</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer-sec">
+        <div class="sig-line">Medical Technologist</div>
+        <div class="sig-line">Consultant Pathologist</div>
+    </div>
+</div>
+
+<script>
+    window.onload = () => {
+        document.getElementById('viewID').innerText = 'R-' + Math.floor(Math.random() * 90000 + 10000);
+        document.getElementById('vDate').innerText = new Date().toLocaleDateString('en-GB');
+    };
+
+    function sync(id, val) { document.getElementById(id).innerText = val; }
+
+    function handleRefChange(val) {
+        const inp = document.getElementById('refNameInp');
+        const vRef = document.getElementById('vRef');
+        if(val === 'Dr') {
+            inp.style.display = 'block';
+            vRef.innerText = 'Dr. ';
+        } else {
+            inp.style.display = 'none';
+            vRef.innerText = 'Self';
+            inp.value = '';
+        }
+    }
+
+    function handleLogo(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            document.getElementById('labLogo').src = reader.result;
+            document.getElementById('wmImg').src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function updateName(val) {
+        document.getElementById('labNameDisp').innerText = val;
+        const n = val.toLowerCase();
+        let c = '#2c3e50';
+        if(n.includes('pulse')) c = '#1a5a30';
+        else if(n.includes('sina')) c = '#c2185b';
+        document.documentElement.style.setProperty('--primary-color', c);
+    }
+</script>
+
+</body>
+</html>

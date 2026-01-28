@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Care - Official System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Hind+Siliguri:wght@400;700&display=swap');
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { font-family: 'Hind Siliguri', sans-serif; background: #f0f4f8; margin: 0; padding: 20px; }
+
+        /* Admin UI */
+        .admin-panel { 
+            background: #fff; padding: 20px; max-width: 1150px; margin: 0 auto 30px; 
+            border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); border-top: 6px solid #2b579a;
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px; }
+        input, select, textarea { padding: 10px; border: 1px solid #ccd; border-radius: 6px; width: 100%; font-family: inherit; font-size: 14px; }
+        label { font-weight: bold; font-size: 11px; color: #555; display: block; margin-bottom: 4px; text-transform: uppercase; }
+        .print-btn { background: #2b579a; color: white; width: 100%; padding: 15px; border: none; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 16px; margin-top: 10px; }
+
+        /* A4 Page Layout */
+        .a4-page { 
+            width: 210mm; height: 297mm; padding: 0; margin: 0 auto;
+            background: white; position: relative; display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+        }
+
+        /* Branding Styles */
+        .header-section { height: 180px; position: relative; display: flex; align-items: center; padding: 0 60px; }
+        .logo-box { width: 115px; height: 115px; z-index: 5; background: white; border-radius: 50%; padding: 5px; border: 1px solid #eee; }
+        .logo-box img { width: 100%; height: 100%; object-fit: contain; }
+        .header-text { margin-left: 25px; z-index: 5; }
+        .header-text h1 { margin: 0; font-family: 'Orbitron', sans-serif; font-size: 40px; color: #2b579a; letter-spacing: 2px; }
+        .header-text p { margin: 2px 0 0; font-size: 16px; color: #5a8cc5; font-weight: bold; text-transform: uppercase; }
+
+        .corner-decoration { position: absolute; top: 0; right: 0; width: 250px; height: 180px; z-index: 1; }
+        .shape-light { position: absolute; top: 0; right: 0; width: 100%; height: 60%; background: #eef5ff; clip-path: polygon(100% 0, 0 0, 100% 100%); }
+        .shape-dark { position: absolute; top: 0; right: 0; width: 85%; height: 100%; background: #2b579a; clip-path: polygon(100% 0, 25% 0, 100% 100%); opacity: 0.9; }
+
+        .meta-strip { margin: 0 60px; border-top: 2.5px solid #2b579a; border-bottom: 2.5px solid #2b579a; padding: 8px 0; display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; }
+
+        /* Document Body */
+        .content-area { padding: 45px 80px; flex-grow: 1; position: relative; z-index: 2; }
+        .doc-title { text-align: center; margin-bottom: 40px; }
+        .doc-title span { font-size: 30px; font-weight: 700; border-bottom: 3px solid #333; padding-bottom: 2px; display: inline-block; }
+        
+        /* Bolding Logic for Name */
+        .body-msg { font-size: 18px; line-height: 2; text-align: justify; color: #111; min-height: 450px; }
+        .body-msg b { font-weight: 900; color: #000; }
+
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 550px; opacity: 0.04; z-index: 0; pointer-events: none; }
+
+        .sig-section { display: flex; justify-content: flex-end; margin-top: 30px; }
+        .sig-box { text-align: center; border-top: 1.5px solid #000; width: 220px; padding-top: 5px; }
+
+        /* Footer */
+        .footer-slant { width: 100%; height: 60px; background: #2b579a; clip-path: polygon(0 100%, 0 20%, 50% 100%); margin-bottom: -1px; }
+        .footer-blue { background: #2b579a; color: white; padding: 25px 60px; display: grid; grid-template-columns: 1fr 1fr; font-size: 13px; }
+
+        @media print {
+            .admin-panel { display: none; }
+            body { background: white; padding: 0; }
+            .a4-page { box-shadow: none; margin: 0; }
+            @page { size: A4; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-panel">
+    <div class="grid">
+        <div><label>Language</label><select id="langSel" onchange="updateAll()">
+            <option value="bn">Bengali (বাংলা)</option>
+            <option value="en">English (ইংরেজি)</option>
+        </select></div>
+        <div><label>Document Type</label><select id="typeSel" onchange="updateAll()">
+            <option value="appr">Appreciation Letter</option>
+            <option value="recom">Recommendation Letter</option>
+            <option value="prot">Prottoyon Patra</option>
+            <option value="work">Work Experience</option>
+            <option value="char">Character Certificate</option>
+        </select></div>
+        <div><label>Reference No.</label><input type="text" id="refInp" placeholder="SC-2026/01" oninput="syncRef()"></div>
+        <div><label>Issue Date</label><input type="date" id="dateInp" oninput="syncDate()"></div>
+    </div>
+    
+    <div class="grid">
+        <div><label>Name</label><input type="text" id="nameInp" placeholder="Name" oninput="updateAll()"></div>
+        <div><label>Father's Name</label><input type="text" id="fatherInp" placeholder="Father's Name" oninput="updateAll()"></div>
+        <div><label>Designation</label><input type="text" id="roleInp" placeholder="Role/Post" oninput="updateAll()"></div>
+        <div><label>From Date</label><input type="date" id="startInp" oninput="updateAll()"></div>
+        <div><label>To Date</label><input type="date" id="endInp" oninput="updateAll()"></div>
+    </div>
+
+    <div><label>Edit Message Body (Customize if needed)</label>
+    <textarea id="editMsg" rows="8" oninput="syncBody()"></textarea></div>
+
+    <button class="print-btn" onclick="window.print()">PRINT PROFESSIONAL A4</button>
+</div>
+
+<div class="a4-page">
+    <div class="corner-decoration"><div class="shape-light"></div><div class="shape-dark"></div></div>
+    <img id="wmLogo" src="https://i.postimg.cc/7hdFkp49/Logo_sc.png" class="watermark">
+
+    <div class="header-section">
+        <div class="logo-box"><img src="https://i.postimg.cc/7hdFkp49/Logo_sc.png"></div>
+        <div class="header-text">
+            <h1>STUDENT CARE</h1>
+            <p>LET US HELP YOU</p>
+        </div>
+    </div>
+
+    <div class="meta-strip">
+        <div><span id="lblRef">Ref:</span> <span id="vRef">..........</span></div>
+        <div><span id="lblDate">Date:</span> <span id="vDate"></span></div>
+    </div>
+
+    <div class="content-area">
+        <div class="doc-title"><span id="vTitle">CERTIFICATE</span></div>
+        <div id="vBody" class="body-msg"></div>
+
+        <div class="sig-section">
+            <div class="sig-box">
+                <p id="lblThanks" style="margin:0 0 45px 0;">Sincerely,</p>
+                <b><span id="lblSign">Signature</span></b><br>
+                <span id="lblAuth">Md. Jahangir Alam</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-slant"></div>
+    <div class="footer-blue">
+        <div>📞 +88 016 377 46468<br>✉ studentcare3123@gmail.com</div>
+        <div style="text-align:right;">📍 Govt. College Gate, Moulvibazar<br>🌐 studentcaremb.blogspot.com</div>
+    </div>
+</div>
+
+<script>
+    const dictionary = {
+        bn: {
+            ref: "সূত্রঃ", date: "তারিখঃ", thanks: "ধন্যবাদান্তে,", sign: "স্বাক্ষরঃ", auth: "মো: জাহাঙ্গীর আলম",
+            titles: { appr: "প্রশংসাপত্র", recom: "সুপারিশপত্র", prot: "প্রত্যয়নপত্র", work: "অভিজ্ঞতা সনদ", char: "চারিত্রিক সনদ" },
+            body: {
+                appr: (n,f,r) => `এই মর্মে অত্যন্ত আনন্দের সাথে জানানো যাচ্ছে যে, <b>${n||'______'}</b>, পিতা: ${f||'______'}, আমাদের প্রতিষ্ঠানে ${r||'শিক্ষার্থী'} হিসেবে তাঁর শিক্ষা কার্যক্রম অত্যন্ত সফলতার সাথে সম্পন্ন করেছেন। তাঁর মেধা, একাগ্রতা এবং সহ-শিক্ষা কার্যক্রমে সক্রিয় অংশগ্রহণ আমাদের প্রতিষ্ঠানের সুনাম বৃদ্ধি করেছে। তিনি একজন নিষ্ঠাবান এবং দায়িত্বশীল ছাত্র হিসেবে নিজেকে প্রমাণ করেছেন। আমি তাঁর জীবনের প্রতিটি ক্ষেত্রে উত্তরোত্তর সাফল্য এবং একটি উজ্জ্বল ভবিষ্যৎ কামনা করছি।`,
+                recom: (n,f,r) => `আমি অত্যন্ত আনন্দের সাথে <b>${n||'______'}</b>, পিতা: ${f||'______'}-কে উচ্চশিক্ষা বা পেশাদার কর্মসংস্থানের জন্য সুপারিশ করছি। আমাদের প্রতিষ্ঠানে ${r||'শিক্ষার্থী'} থাকাকালীন সময়ে আমি তাঁর মাঝে গভীর বিশ্লেষণী ক্ষমতা এবং চমৎকার নেতৃত্ব গুণ লক্ষ্য করেছি। তিনি যে কোনো জটিল কাজ অত্যন্ত দক্ষতার সাথে সম্পন্ন করতে সক্ষম। আমার বিশ্বাস, তিনি যে কোনো প্রতিষ্ঠানে একজন অত্যন্ত মূল্যবান সম্পদ হিসেবে নিজেকে প্রমাণ করবেন। আমি তাঁর উত্তরোত্তর মঙ্গল কামনা করছি।`,
+                prot: (n,f,r) => `এই মর্মে প্রত্যয়ন করা যাচ্ছে যে, <b>${n||'______'}</b>, পিতা: ${f||'______'}, আমাদের প্রতিষ্ঠানের একজন নিয়মিত ${r||'ছাত্র/ছাত্রী'}। অত্র প্রতিষ্ঠানের নথিপত্র অনুযায়ী তাঁর একাডেমিক রেকর্ড অত্যন্ত সন্তোষজনক। তিনি অত্যন্ত নম্র, ভদ্র এবং সচ্চরিত্রবান একজন মানুষ। আমার জানামতে তিনি রাষ্ট্রবিরোধী বা আইন পরিপন্থী কোনো কর্মকাণ্ডের সাথে জড়িত নন। আমি তাঁর জীবনের সকল উদ্দেশ্য ও প্রচেষ্টায় সফলতা কামনা করছি।`,
+                work: (n,f,r,s,e) => `এটি প্রত্যায়িত করা হচ্ছে যে, <b>${n||'______'}</b> 'স্টুডেন্ট কেয়ার'-এ ${r||'পদবী'} হিসেবে ${s||'[শুরু]'} তারিখ হতে ${e||'[শেষ]'} তারিখ পর্যন্ত অত্যন্ত নিষ্ঠার সাথে কর্মরত ছিলেন। তাঁর কর্মকালীন সময়ে তিনি অনলাইন সার্ভিসেস, ডাটা ম্যানেজমেন্ট এবং অফিসিয়াল কার্যাবলীতে অসাধারণ পেশাদারিত্বের পরিচয় দিয়েছেন। তিনি একজন কঠোর পরিশ্রমী এবং সময়নিষ্ঠ কর্মী হিসেবে আমাদের প্রতিষ্ঠানের উন্নয়নে গুরুত্বপূর্ণ ভূমিকা পালন করেছেন। আমরা তাঁর ভবিষ্যৎ ক্যারিয়ারের জন্য শুভকামনা জানাই।`,
+                char: (n,f,r) => `এই মর্মে প্রত্যয়ন করা যাচ্ছে যে, <b>${n||'______'}</b>, পিতা: ${f||'______'}, মৌলভীবাজার জেলার অন্তর্গত এলাকার একজন স্থায়ী বাসিন্দা। তিনি ব্যক্তিগতভাবে আমার পরিচিত। আমার পর্যবেক্ষণ অনুযায়ী, তিনি একজন উচ্চ নৈতিকতা সম্পন্ন এবং সুনাগরিক। তাঁর আচার-ব্যবহার অত্যন্ত মার্জিত এবং তিনি সামাজিক মূল্যবোধের প্রতি শ্রদ্ধাশীল। তাঁর উজ্জ্বল ও সফল ভবিষ্যৎ জীবনের জন্য আমি দোয়া ও শুভকামনা করছি।`
+            }
+        },
+        en: {
+            ref: "Ref:", date: "Date:", thanks: "Sincerely,", sign: "Signature:", auth: "Md. Jahangir Alam",
+            titles: { appr: "Appreciation Letter", recom: "Recommendation Letter", prot: "Bonafide Certificate", work: "Experience Certificate", char: "Character Certificate" },
+            body: {
+                appr: (n,f,r) => `This letter of appreciation is proudly presented to <b>${n||'[Name]'}</b>, S/O: ${f||'[Father]'}, for demonstrating exceptional academic performance and dedication as a ${r||'Student'} at Student Care. Your consistent hard work, discipline, and proactive participation in various institutional activities have been truly remarkable. We highly value your presence and contribution to our community. We wish you continued success and a prosperous future in all your endeavors.`,
+                recom: (n,f,r) => `It is with great pleasure that I recommend <b>${n||'[Name]'}</b>, S/O: ${f||'[Father]'}, for any future academic or professional opportunity. During his/her time as a ${r||'Student'} here, he/she has displayed remarkable analytical skills and a passion for learning. He/she is a self-motivated individual who can handle challenging tasks with efficiency and grace. I am confident that he/she will be a valuable asset to any organization he/she joins.`,
+                prot: (n,f,r) => `To whom it may concern, this is to certify that <b>${n||'[Name]'}</b>, S/O: ${f||'[Father]'}, is a bonafide student of Student Care, Moulvibazar. According to our official records, his/her academic progress and conduct have been highly satisfactory throughout the session. He/she bears an excellent moral character and possesses a very polite nature. We have no objection to his/her pursuit of further studies or professional goals.`,
+                work: (n,f,r,s,e) => `This is to certify that <b>${n||'[Name]'}</b> has served Student Care as a ${r||'Role'} from ${s||'[Start Date]'} to ${e||'[End Date]'}. Throughout this period, he/she has shown extraordinary proficiency in managing online services and office documentation. His/her dedication, punctuality, and ability to work under pressure have been a great asset to our organization. We appreciate his/her valuable contribution and wish him/her the very best in his/her future career.`,
+                char: (n,f,r) => `This is to certify that <b>${n||'[Name]'}</b>, S/O: ${f||'[Father]'}, is a permanent resident of Moulvibazar. I have known him/her personally for a significant period. During my acquaintance, I have found him/her to be a person of high moral integrity and sound character. He/she is respectful of social values and has not been involved in any activities subversive to the state or society. I wish him/her every success and a peaceful life.`
+            }
+        }
+    };
+
+    function updateAll() {
+        const lang = document.getElementById('langSel').value;
+        const type = document.getElementById('typeSel').value;
+        const name = document.getElementById('nameInp').value;
+        const father = document.getElementById('fatherInp').value;
+        const role = document.getElementById('roleInp').value;
+        const sD = document.getElementById('startInp').value;
+        const eD = document.getElementById('endInp').value;
+
+        const formatD = (d) => d ? new Date(d).toLocaleDateString(lang==='bn'?'bn-BD':'en-GB') : '';
+
+        document.getElementById('lblRef').innerText = dictionary[lang].ref;
+        document.getElementById('lblDate').innerText = dictionary[lang].date;
+        document.getElementById('lblThanks').innerText = dictionary[lang].thanks;
+        document.getElementById('lblSign').innerText = dictionary[lang].sign;
+        document.getElementById('lblAuth').innerText = dictionary[lang].auth;
+        document.getElementById('vTitle').innerText = dictionary[lang].titles[type];
+
+        let autoText = (type === 'work') ? 
+            dictionary[lang].body.work(name, father, role, formatD(sD), formatD(eD)) : 
+            dictionary[lang].body[type](name, father, role);
+        
+        document.getElementById('editMsg').value = autoText;
+        syncBody();
+        syncDate();
+    }
+
+    function syncBody() { 
+        // We use innerHTML here to allow the <b> tag to work
+        document.getElementById('vBody').innerHTML = document.getElementById('editMsg').value; 
+    }
+    
+    function syncRef() { document.getElementById('vRef').innerText = document.getElementById('refInp').value || ".........."; }
+    function syncDate() { 
+        const d = document.getElementById('dateInp').value;
+        const lang = document.getElementById('langSel').value;
+        document.getElementById('vDate').innerText = d ? new Date(d).toLocaleDateString(lang==='bn'?'bn-BD':'en-GB') : new Date().toLocaleDateString(lang==='bn'?'bn-BD':'en-GB');
+    }
+
+    window.onload = updateAll;
+</script>
+</body>
+</html>

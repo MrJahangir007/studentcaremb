@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Care - Pro Management System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;700&family=Inter:wght@400;600;700&display=swap');
+        
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        @page { size: A4; margin: 0; }
+        body { font-family: 'Inter', 'Hind Siliguri', sans-serif; background: #eef2f7; margin: 0; padding: 0; }
+
+        /* Dashboard UI */
+        .admin-panel { 
+            background: #fff; padding: 25px; max-width: 1000px; margin: 20px auto; 
+            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 8px solid #0056b3;
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        input { padding: 12px; border: 1px solid #ccd; border-radius: 6px; width: 100%; font-size: 14px; outline: none; transition: 0.3s; }
+        input:focus { border-color: #0056b3; box-shadow: 0 0 5px rgba(0,86,179,0.2); }
+        label { font-weight: bold; font-size: 12px; color: #333; margin-bottom: 5px; display: block; }
+        
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn { padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .add-btn { background: #28a745; color: white; }
+        .reset-btn { background: #dc3545; color: white; }
+        .print-btn { background: #0056b3; color: white; flex-grow: 1; }
+        .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+        /* History Table Style */
+        .history-section { max-width: 1000px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .history-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .history-table th, .history-table td { border: 1px solid #eee; padding: 12px; text-align: left; cursor: pointer; }
+        .history-table tr:hover { background: #f8fbff; }
+        .history-table th { background: #f4f7f6; color: #0056b3; font-size: 13px; }
+
+        /* Invoice Container */
+        .invoice-container { width: 210mm; height: 297mm; margin: 20px auto; background: white; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
+        .outer-border { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 25px solid #0056b3; -webkit-mask-image: url('https://www.transparenttextures.com/patterns/greek-vase.png'); mask-image: url('https://www.transparenttextures.com/patterns/greek-vase.png'); z-index: 1; pointer-events: none; }
+        .main-content { position: relative; z-index: 5; padding: 60px 80px; height: 100%; display: flex; flex-direction: column; }
+
+        /* Header Branding */
+        .invoice-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #0056b3; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo-img { height: 90px; }
+        .brand-text h1 { margin: 0; font-size: 32px; color: #0056b3; font-weight: 900; }
+        .brand-text p { margin: 2px 0; font-size: 12px; color: #444; font-weight: 600; }
+
+        .qr-group { display: flex; gap: 12px; }
+        .qr-item { text-align: center; }
+        .qr-img { width: 60px; height: 60px; border: 1px solid #ddd; padding: 2px; border-radius: 4px; }
+        .qr-label { font-size: 8px; font-weight: bold; color: #0056b3; margin-top: 3px; }
+
+        /* Billing Section */
+        .bill-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; margin-bottom: 40px; }
+        .bill-to h3 { color: #0056b3; border-bottom: 2px solid #0056b3; display: inline-block; padding-bottom: 2px; margin-bottom: 15px; font-size: 16px; }
+        .bill-to p { margin: 8px 0; font-size: 15px; color: #333; }
+        .bill-to span { font-weight: bold; }
+
+        /* Items Table */
+        .items-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .items-table th { background: #0056b3; color: white; padding: 12px; text-align: left; font-size: 14px; text-transform: uppercase; }
+        .items-table td { padding: 15px 12px; border-bottom: 1px solid #eee; font-size: 15px; }
+        .tr { text-align: right; }
+
+        /* Footer Calculations */
+        .invoice-footer { display: flex; justify-content: space-between; margin-top: auto; padding-top: 30px; }
+        .note-box { width: 55%; font-size: 13px; color: #666; font-style: italic; border-left: 5px solid #0056b3; padding-left: 15px; }
+        .total-area { width: 35%; }
+        .total-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 16px; }
+        .net-total { border-top: 3px solid #0056b3; font-weight: 900; font-size: 22px; color: #0056b3; padding-top: 10px; margin-top: 10px; }
+
+        /* Signatures */
+        .signature-wrap { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 60px; padding-bottom: 20px; }
+        .sig-box { text-align: center; width: 200px; position: relative; }
+        .sig-img { width: 130px; position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); mix-blend-mode: multiply; }
+        .sig-line { border-top: 2px solid #333; padding-top: 8px; font-size: 14px; font-weight: bold; color: #0056b3; margin-top: 60px; }
+
+        @media print {
+            .admin-panel, .history-section { display: none; }
+            body { background: white; }
+            .invoice-container { margin: 0; box-shadow: none; border: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-panel">
+    <h3 style="margin-top:0; color:#0056b3;">🚀 STUDENT CARE - PRO DASHBOARD</h3>
+    <div class="grid">
+        <div><label>Customer Name</label><input type="text" id="inName" oninput="updateLive()"></div>
+        <div><label>Phone Number</label><input type="text" id="inPhone" oninput="updateLive()"></div>
+        <div><label>Customer Address</label><input type="text" id="inAddr" oninput="updateLive()"></div>
+    </div>
+    
+    <div id="serviceInputs">
+        <div class="grid service-row">
+            <div><label>Service Description</label><input type="text" class="s-name" placeholder="Ex: Monthly Fee" oninput="updateLive()"></div>
+            <div><label>Quantity</label><input type="number" class="s-qty" value="1" oninput="updateLive()"></div>
+            <div><label>Rate (BDT)</label><input type="number" class="s-rate" value="0" oninput="updateLive()"></div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div><label>Overall Discount</label><input type="number" id="inDisc" value="0" oninput="updateLive()"></div>
+        <div><label>Special Note</label><input type="text" id="inNote" placeholder="Any specific note?" oninput="updateLive()"></div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn add-btn" onclick="addServiceRow()">+ Add Service</button>
+        <button class="btn reset-btn" onclick="resetForm()">↺ Reset/Clear</button>
+        <button class="btn print-btn" onclick="saveAndPrint()">GENERATE & PRINT</button>
+    </div>
+</div>
+
+<div class="history-section">
+    <strong style="color:#0056b3;">📊 Recent Invoices (Click a row to reload)</strong>
+    <table class="history-table" id="historyTable">
+        <thead>
+            <tr><th>Invoice #</th><th>Customer Name</th><th>Date</th><th>Net Amount</th></tr>
+        </thead>
+        <tbody id="historyBody">
+            </tbody>
+    </table>
+</div>
+
+<div class="invoice-container" id="printableInvoice">
+    <div class="outer-border"></div>
+    <div class="main-content">
+        <header class="invoice-header">
+            <div style="display:flex; align-items:center; gap:20px;">
+                <img src="https://i.postimg.cc/7hdFkp49/Logo_sc.png" class="logo-img">
+                <div class="brand-text">
+                    <h1>STUDENT CARE</h1>
+                    <p>📧 studentcare3123@gmail.com | 📞 +8801637746468</p>
+                    <p>🌐 studentcaremb.blogspot.com</p>
+                    <p>📍 Moulvibazar, Sylhet Division, Bangladesh</p>
+                </div>
+            </div>
+            <div class="qr-group">
+                <div class="qr-item"><img src="https://api.qrserver.com/v1/create-qr-code/?data=https://studentcaremb.blogspot.com/" class="qr-img"><div class="qr-label">BLOG</div></div>
+                <div class="qr-item"><img src="https://api.qrserver.com/v1/create-qr-code/?data=https://sites.google.com/view/studentcaremb/home" class="qr-img"><div class="qr-label">SITES</div></div>
+                <div class="qr-item"><img src="https://api.qrserver.com/v1/create-qr-code/?data=https://www.facebook.com/studentcaremb/" class="qr-img"><div class="qr-label">FACEBOOK</div></div>
+            </div>
+        </header>
+
+        <section class="bill-grid">
+            <div class="bill-to">
+                <h3>BILL TO:</h3>
+                <p>Name: <span id="outName">................................</span></p>
+                <p>Phone: <span id="outPhone">................................</span></p>
+                <p>Address: <span id="outAddr">................................</span></p>
+            </div>
+            <div class="bill-to" style="text-align: right;">
+                <h3>INVOICE INFO:</h3>
+                <p>Invoice No: <span id="outInvNo">#SC-24001</span></p>
+                <p>Date: <span id="outDate"></span></p>
+                <p>Payment: <span style="color:green; font-weight:bold;">COMPLETED</span></p>
+            </div>
+        </section>
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th width="10%">SL</th>
+                    <th width="50%">Description</th>
+                    <th class="tr">Qty</th>
+                    <th class="tr">Price</th>
+                    <th class="tr">Total</th>
+                </tr>
+            </thead>
+            <tbody id="invoiceTableBody"></tbody>
+        </table>
+
+        <footer class="invoice-footer">
+            <div class="note-box" id="outNote">Thank you for being with Student Care. We value your education and progress. Please contact us for any query.</div>
+            <div class="total-area">
+                <div class="total-row"><span>Subtotal:</span><span>৳ <span id="outSub">0.00</span></span></div>
+                <div class="total-row"><span>Discount:</span><span>৳ <span id="outDisc">0.00</span></span></div>
+                <div class="total-row net-total"><span>Net Total:</span><span>৳ <span id="outNet">0.00</span></span></div>
+            </div>
+        </footer>
+
+        <div class="signature-wrap">
+            <div class="sig-box"><div class="sig-line">Customer Signature</div></div>
+            <div class="sig-box">
+                <img src="https://i.postimg.cc/ZKgGwpyF/Jgu-Sign.jpg" class="sig-img">
+                <div class="sig-line">Director, Student Care</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let invoiceHistory = [];
+
+    function addServiceRow() {
+        const container = document.getElementById('serviceInputs');
+        const div = document.createElement('div');
+        div.className = 'grid service-row';
+        div.innerHTML = `
+            <div><input type="text" class="s-name" placeholder="Service Description" oninput="updateLive()"></div>
+            <div><input type="number" class="s-qty" value="1" oninput="updateLive()"></div>
+            <div><input type="number" class="s-rate" value="0" oninput="updateLive()"></div>
+        `;
+        container.appendChild(div);
+        updateLive();
+    }
+
+    function resetForm() {
+        document.getElementById('inName').value = '';
+        document.getElementById('inPhone').value = '';
+        document.getElementById('inAddr').value = '';
+        document.getElementById('inDisc').value = '0';
+        document.getElementById('inNote').value = '';
+        document.getElementById('serviceInputs').innerHTML = `
+            <div class="grid service-row">
+                <div><label>Service Description</label><input type="text" class="s-name" placeholder="Ex: Monthly Fee" oninput="updateLive()"></div>
+                <div><label>Quantity</label><input type="number" class="s-qty" value="1" oninput="updateLive()"></div>
+                <div><label>Rate (BDT)</label><input type="number" class="s-rate" value="0" oninput="updateLive()"></div>
+            </div>`;
+        document.getElementById('outInvNo').innerText = '#SC-' + Math.floor(10000 + Math.random() * 90000);
+        updateLive();
+    }
+
+    function updateLive() {
+        // Update Header & Customer Info
+        document.getElementById('outName').innerText = document.getElementById('inName').value || "................................";
+        document.getElementById('outPhone').innerText = document.getElementById('inPhone').value || "................................";
+        document.getElementById('outAddr').innerText = document.getElementById('inAddr').value || "................................";
+        document.getElementById('outNote').innerText = document.getElementById('inNote').value || "Thank you for being with Student Care. We value your education and progress.";
+        document.getElementById('outDate').innerText = new Date().toLocaleDateString('en-GB');
+
+        // Dynamic Table Logic
+        const names = document.getElementsByClassName('s-name');
+        const qties = document.getElementsByClassName('s-qty');
+        const rates = document.getElementsByClassName('s-rate');
+        const tableBody = document.getElementById('invoiceTableBody');
+        tableBody.innerHTML = '';
+        let subtotal = 0;
+
+        for (let i = 0; i < names.length; i++) {
+            let n = names[i].value || "Service Description";
+            let q = parseFloat(qties[i].value) || 0;
+            let r = parseFloat(rates[i].value) || 0;
+            let rowTotal = q * r;
+            subtotal += rowTotal;
+
+            tableBody.innerHTML += `
+                <tr>
+                    <td>0${i+1}</td>
+                    <td>${n}</td>
+                    <td class="tr">${q}</td>
+                    <td class="tr">${r.toFixed(2)}</td>
+                    <td class="tr">${rowTotal.toFixed(2)}</td>
+                </tr>`;
+        }
+
+        const disc = parseFloat(document.getElementById('inDisc').value) || 0;
+        document.getElementById('outSub').innerText = subtotal.toFixed(2);
+        document.getElementById('outDisc').innerText = disc.toFixed(2);
+        document.getElementById('outNet').innerText = (subtotal - disc).toFixed(2);
+    }
+
+    function saveAndPrint() {
+        const invData = {
+            id: document.getElementById('outInvNo').innerText,
+            name: document.getElementById('inName').value || "Unnamed",
+            date: new Date().toLocaleDateString('en-GB'),
+            total: document.getElementById('outNet').innerText
+        };
+        
+        // Add to history list
+        invoiceHistory.unshift(invData);
+        renderHistory();
+        window.print();
+    }
+
+    function renderHistory() {
+        const body = document.getElementById('historyBody');
+        body.innerHTML = invoiceHistory.map((inv, index) => `
+            <tr onclick="loadFromHistory(${index})">
+                <td>${inv.id}</td>
+                <td><b>${inv.name}</b></td>
+                <td>${inv.date}</td>
+                <td>৳ ${inv.total}</td>
+            </tr>
+        `).join('');
+    }
+
+    // Pro Feature: Clicking a row reloads that invoice info
+    function loadFromHistory(index) {
+        const data = invoiceHistory[index];
+        alert("Reloading Invoice " + data.id + " details for review.");
+        // Note: For a real database version, we would save all service rows here too.
+    }
+
+    window.onload = resetForm;
+</script>
+</body>
+</html>
