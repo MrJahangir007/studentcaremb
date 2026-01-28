@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Care | Admin Control Panel</title>
+    <title>Student Care | Professional Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #0b0e14;
@@ -18,7 +17,7 @@
         }
 
         body {
-            margin: 0; font-family: 'Inter', sans-serif;
+            margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg); color: var(--text-main);
             display: flex; height: 100vh; overflow: hidden;
         }
@@ -46,12 +45,12 @@
         .nav-item.active { background: var(--accent); color: #000; font-weight: bold; }
 
         /* --- Main Content --- */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: #0b0e14; }
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: #0b0e14; position: relative; }
         
         iframe { flex: 1; width: 100%; height: 100%; border: none; display: none; background: white; }
         iframe.active { display: block; }
 
-        /* --- Home Dashboard UI --- */
+        /* --- Home Dashboard UI (Nothing Missing Now) --- */
         #home-screen { padding: 40px; }
         .welcome-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .digital-clock { background: var(--sidebar-bg); padding: 12px 20px; border-radius: 12px; font-size: 20px; font-weight: bold; color: var(--accent); border: 1px solid var(--border); }
@@ -63,7 +62,7 @@
         .stat-box h3 { margin: 0; font-size: 12px; color: var(--text-dim); }
         .stat-box p { margin: 5px 0 0; font-size: 20px; font-weight: bold; }
 
-        /* Info Cards (Price List & Contacts) */
+        /* Info Layout (Service Price & Contacts) */
         .info-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
         .info-card { background: var(--sidebar-bg); padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
         .info-card h3 { font-size: 16px; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; color: var(--accent); }
@@ -81,12 +80,12 @@
         <h2>STUDENT CARE</h2>
     </div>
     
-    <div class="menu-label">Management</div>
-    <div class="nav-item active" onclick="loadPage('home')"><i class="fa-solid fa-house"></i> <span>Dashboard</span></div>
+    <div class="menu-label">Main Management</div>
+    <div class="nav-item active" onclick="loadPage('home')"><i class="fa-solid fa-house"></i> <span>Dashboard Home</span></div>
     <div class="nav-item" onclick="loadPage('adgenerator.html')"><i class="fa-solid fa-wand-magic-sparkles"></i> <span>Ad Designer Pro</span></div>
     <div class="nav-item" onclick="loadPage('dailysales.html')"><i class="fa-solid fa-calculator"></i> <span>Sales Tracker</span></div>
     
-    <div class="menu-label">Services & Tools</div>
+    <div class="menu-label">Service Tools</div>
     <div class="nav-item" onclick="loadPage('invoice.html')"><i class="fa-solid fa-file-invoice-dollar"></i> <span>Invoice Gen</span></div>
     <div class="nav-item" onclick="loadPage('assignment.html')"><i class="fa-solid fa-file-signature"></i> <span>Assignment</span></div>
     <div class="nav-item" onclick="loadPage('blood.html')"><i class="fa-solid fa-droplet"></i> <span>Blood Report</span></div>
@@ -94,7 +93,7 @@
     <div class="nav-item" onclick="loadPage('letter.html')"><i class="fa-solid fa-envelope-open-text"></i> <span>Official Letter</span></div>
     <div class="nav-item" onclick="loadPage('nagorik.html')"><i class="fa-solid fa-id-card"></i> <span>Nagorik Sanad</span></div>
 
-    <div class="menu-label">EXTERNAL LINKS</div>
+    <div class="menu-label">External Links</div>
     <div class="nav-item" onclick="window.open('https://sites.google.com/view/studentcaremb', '_blank')"><i class="fa-brands fa-google"></i> <span>Google Site</span></div>
     <div class="nav-item" onclick="window.open('https://studentcaremb.blogspot.com', '_blank')"><i class="fa-solid fa-globe"></i> <span>Blogspot</span></div>
 </div>
@@ -110,9 +109,9 @@
         </div>
 
         <div class="dashboard-grid">
-            <div class="stat-box"><i class="fa fa-users"></i><div><h3>Students</h3><p>2,000+</p></div></div>
-            <div class="stat-box"><i class="fa fa-chart-line" style="color:var(--green)"></i><div><h3>Status</h3><p>Online</p></div></div>
-            <div class="stat-box"><i class="fa fa-shield-halved" style="color:#f59e0b"></i><div><h3>Security</h3><p>SSL Active</p></div></div>
+            <div class="stat-box"><i class="fa fa-users"></i><div><h3>Total Students</h3><p>2,000+</p></div></div>
+            <div class="stat-box"><i class="fa fa-chart-line" style="color:var(--green)"></i><div><h3>Daily Status</h3><p>Online</p></div></div>
+            <div class="stat-box"><i class="fa fa-shield-halved" style="color:#f59e0b"></i><div><h3>System Security</h3><p>SSL Secure</p></div></div>
         </div>
 
         <div class="info-layout">
@@ -121,14 +120,15 @@
                 <div class="service-item"><span>Job Application</span> <b>৳ 100</b></div>
                 <div class="service-item"><span>Passport Apply</span> <b>৳ 250</b></div>
                 <div class="service-item"><span>NID Correction</span> <b>৳ 200+</b></div>
-                <div class="service-item"><span>Assignment</span> <b>৳ 50+</b></div>
+                <div class="service-item"><span>Assignment Maker</span> <b>৳ 50+</b></div>
+                <div class="service-item"><span>Blood Report</span> <b>৳ Free</b></div>
             </div>
             <div class="info-card">
                 <h3><i class="fa fa-headset"></i> Quick Contacts</h3>
                 <div class="service-item"><span>WhatsApp</span> <b>01637746468</b></div>
-                <div class="service-item"><span>Location</span> <b>Moulvibazar</b></div>
+                <div class="service-item"><span>Location</span> <b>Moulvibazar Govt College</b></div>
                 <div class="service-item"><span>Instructor</span> <b>BRAC Certified</b></div>
-                <div class="service-item"><span>System Status</span> <b style="color: var(--green);">Ready</b></div>
+                <div class="service-item"><span>Network Status</span> <b style="color: var(--green);">Optimal</b></div>
             </div>
         </div>
     </div>
@@ -145,6 +145,7 @@
     function loadPage(page) {
         const home = document.getElementById('home-screen');
         const frame = document.getElementById('content-frame');
+        
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         event.currentTarget.classList.add('active');
 
