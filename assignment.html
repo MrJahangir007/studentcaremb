@@ -2,82 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>A4 Assignment Cover Generator</title>
+    <title>Pro A4 Assignment Cover - Student Care</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Hind+Siliguri:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@700&family=Poppins:wght@900&family=Roboto:wght@900&family=Anek+Bangla:wght@800&family=Oswald:wght@700&family=Playfair+Display:wght@900&family=Galada&family=Mina:wght@700&family=Ubuntu:wght@700&family=Teko:wght@700&display=swap');
         
         * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        
         @page { size: A4; margin: 0; }
-        body { font-family: 'Hind Siliguri', sans-serif; background: #e0e6ed; margin: 0; padding: 0; }
+        body { font-family: 'Hind Siliguri', sans-serif; background: #f0f2f5; margin: 0; padding: 0; }
 
-        .admin-panel { 
-            background: #fff; padding: 20px; max-width: 1000px; margin: 20px auto; 
-            border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-top: 6px solid #2b579a;
-        }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px; }
-        input, select { padding: 10px; border: 1px solid #ccd; border-radius: 6px; width: 100%; font-size: 14px; }
-        label { font-weight: bold; font-size: 11px; color: #444; text-transform: uppercase; }
-        .print-btn { background: #2b579a; color: white; width: 100%; padding: 15px; border: none; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 18px; margin-top: 10px; }
+        .admin-panel { background: #fff; padding: 20px; max-width: 1150px; margin: 15px auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-top: 6px solid #1a3a6d; position: relative; z-index: 100; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 12px; }
+        input, select { padding: 10px; border: 1.5px solid #ddd; border-radius: 6px; width: 100%; font-size: 14px; }
+        label { font-weight: bold; font-size: 11px; color: #444; text-transform: uppercase; display: block; margin-bottom: 4px; }
+        .print-btn { background: #238636; color: white; width: 100%; padding: 15px; border: none; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 18px; margin-top: 10px; }
 
-        .cover-page { 
-            width: 210mm; height: 297mm; 
-            margin: 0 auto; background: white; position: relative; 
-            display: flex; flex-direction: column; overflow: hidden;
-        }
+        .cover-page { width: 210mm; height: 297mm; margin: 0 auto; background: white; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+        .border-container { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-width: 25px; border-style: solid; border-color: #1a3a6d; pointer-events: none; z-index: 10; }
+        .greek-mask { -webkit-mask-image: url('https://www.transparenttextures.com/patterns/greek-vase.png'); mask-image: url('https://www.transparenttextures.com/patterns/greek-vase.png'); }
+        .inner-line { position: absolute; top: 32px; left: 32px; right: 32px; bottom: 32px; border: 2px solid #1a3a6d; z-index: 5; }
 
-        .border-container {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            border-width: 30px; border-color: #2b579a;
-            pointer-events: none; z-index: 10;
-        }
-        
-        .greek-mask {
-            -webkit-mask-image: url('https://www.transparenttextures.com/patterns/greek-vase.png');
-            mask-image: url('https://www.transparenttextures.com/patterns/greek-vase.png');
-        }
+        .content { position: relative; z-index: 2; padding: 40px 60px; height: 100%; display: flex; flex-direction: column; align-items: center; }
 
-        .inner-line {
-            position: absolute; top: 38px; left: 38px; right: 38px; bottom: 38px;
-            border: 2px solid #2b579a; z-index: 5;
-        }
+        .header-svg { width: 100%; height: 210px; overflow: visible; margin-top: 10px; }
+        .college-name { font-weight: 900; fill: #1a3a6d; text-transform: uppercase; }
 
-        .content { position: relative; z-index: 2; padding: 50px 70px; height: 100%; display: flex; flex-direction: column; align-items: center; }
+        .logo-box { height: 140px; margin: 10px 0; display: flex; align-items: center; justify-content: center; }
+        .logo-box img { max-height: 135px; object-fit: contain; }
 
-        /* Modified SVG for longer names */
-        .header-svg { height: 130px; width: 100%; margin-top: 10px; overflow: visible; }
-        .college-name { font-weight: 900; fill: #1a3a6d; transition: font-size 0.2s; }
+        .banner-wrap { margin: 15px 0; }
+        .ribbon { background: #1a3a6d; color: white; padding: 12px 80px; font-size: 32px; font-weight: bold; clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%); }
 
-        .logo-box { height: 150px; margin: 15px 0; display: flex; align-items: center; justify-content: center; }
-        .logo-box img { max-height: 140px; object-fit: contain; }
+        .info-container { border: 3px solid #1a3a6d; border-radius: 20px; padding: 35px 45px; width: 95%; margin: 10px auto; flex-grow: 0; display: flex; flex-direction: column; }
+        .info-row { display: flex; margin-bottom: 20px; font-size: 22px; font-weight: bold; border-bottom: 2.5px dotted #1a3a6d; padding-bottom: 5px; width: 100%; }
+        .info-label { width: 230px; color: #1a3a6d; text-align: left; }
+        .info-val { flex-grow: 1; color: #000; }
 
-        .banner-wrap { margin: 20px 0; }
-        .ribbon { 
-            background: #2b579a; color: white; padding: 12px 80px; font-size: 30px; font-weight: bold;
-            clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
-        }
+        .small-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; width: 100%; }
+        .small-box { border: 2.5px solid #1a3a6d; border-radius: 15px; padding: 10px; text-align: center; font-size: 19px; font-weight: bold; }
 
-        .info-container { 
-            border: 2.5px solid #2b579a; border-radius: 15px; padding: 40px; 
-            width: 90%; margin: 10px auto; flex-grow: 1;
-        }
-        .info-row { display: flex; margin-bottom: 25px; font-size: 20px; font-weight: bold; border-bottom: 2px dotted #2b579a; padding-bottom: 5px; }
-        .info-label { width: 200px; color: #2b579a; }
-        .info-val { flex-grow: 1; color: #000; padding-left: 10px; }
+        .footer-section { width: 100%; text-align: center; padding-bottom: 80px; margin-top: 20px; }
+        .nu-logo { height: 75px; display: none; margin: 0 auto 10px auto; }
+        .date-outline { border: 2px dashed #1a3a6d; border-radius: 50px; padding: 8px 35px; display: inline-block; font-size: 18px; font-weight: bold; }
 
-        .small-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 30px; }
-        .small-box { border: 2px solid #2b579a; border-radius: 25px; padding: 10px; text-align: center; font-size: 16px; font-weight: bold; }
-
-        .date-section { margin-top: 50px; text-align: center; margin-bottom: 80px; }
-        .date-outline { border: 2px dashed #2b579a; border-radius: 50px; padding: 10px 50px; display: inline-block; font-size: 20px; font-weight: bold; min-width: 320px; }
-
-        .signature { position: absolute; bottom: 80px; right: 80px; text-align: center; border-top: 2px solid #000; width: 200px; padding-top: 8px; font-size: 16px; font-weight: bold; }
-
-        @media print {
-            .admin-panel { display: none; }
-            body { background: white; }
-            .cover-page { margin: 0; box-shadow: none; }
-        }
+        @media print { .admin-panel { display: none; } body { background: white; } .cover-page { margin: 0; } }
     </style>
 </head>
 <body>
@@ -85,163 +52,179 @@
 <div class="admin-panel">
     <div class="grid">
         <div><label>Language</label><select id="langSel" onchange="update()"><option value="bn">Bengali</option><option value="en">English</option></select></div>
-        <div><label>Border Style</label><select id="borderStyle" onchange="updateTheme()">
-            <option value="greek">Greek Pattern (Ref)</option>
-            <option value="dotted">Dotted Border</option>
-            <option value="dashed">Dashed Border</option>
-            <option value="solid">Solid Border</option>
-            <option value="double">Double Border</option>
-            <option value="groove">Groove Border</option>
-            <option value="ridge">Ridge Border</option>
-            <option value="inset">Inset Border</option>
-            <option value="outset">Outset Border</option>
-            <option value="none">No Border</option>
-        </select></div>
-        <div><label>Theme Color</label><input type="color" id="colorSel" value="#2b579a" oninput="updateTheme()"></div>
+        <div><label>Name Style</label><select id="curveToggle" onchange="toggleCurve()"><option value="curve">Curved</option><option value="straight">Straight</option></select></div>
+        <div><label>Coll. Font Size</label><input type="range" id="sizeInp" min="15" max="75" value="42" oninput="update()"></div>
+        <div><label>Theme Color</label><input type="color" id="colorSel" value="#1a3a6d" oninput="updateStyle()"></div>
     </div>
     
     <div class="grid">
-        <div><label>Logo / Building Icon</label><input type="file" onchange="handleLogo(event)"></div>
-        <input type="text" id="collInp" placeholder="Type College Name" oninput="update()">
-        <input type="text" id="subInp" placeholder="Subject Name" oninput="update()">
+        <div><label>20 Border Styles</label><select id="borderStyle" onchange="updateStyle()">
+            <option value="greek">01. Greek Pattern</option><option value="solid">02. Solid Thick</option><option value="double">03. Double Royal</option><option value="dashed">04. Classic Dash</option><option value="dotted">05. Fine Dot</option><option value="groove">06. Deep Groove</option><option value="ridge">07. Stone Ridge</option><option value="inset">08. Shadow Inset</option><option value="outset">09. Glass Outset</option><option value="none">10. No Border</option><option value="double">11. Elegant Double</option><option value="dotted">12. Heavy Dot</option><option value="dashed">13. Wide Dash</option><option value="ridge">14. Mountain Ridge</option><option value="groove">15. Soft Groove</option><option value="solid">16. Thin Minimal</option><option value="inset">17. Dark Inset</option><option value="outset">18. 3D Outset</option><option value="solid">19. Medium Bold</option><option value="greek">20. Greek Gold</option>
+        </select></div>
+        <div><label>All Colleges (BN & EN)</label><select id="collPreset" onchange="applyPreset()">
+            <option value="custom">-- Custom --</option>
+            <option value="MOULVIBAZAR GOVT. COLLEGE|https://i.postimg.cc/LX38t5JM/mbgc_logo.jpg">MBGC (English)</option>
+            <option value="MOULVIBAZAR MAHILA COLLEGE|https://i.postimg.cc/d1jV23hw/mbgwc_logo.jpg">MBGWC (English)</option>
+            <option value="SREEMANGAL GOVT. COLLEGE|https://i.postimg.cc/HnWsBmMm/Sreemangal_g_c.png">Sremangal GC (English)</option>
+            <option value="SREEMANGAL GOVT. WOMEN'S COLLEGE|https://i.postimg.cc/KjcvJbTh/SGWC.png">SGWC (English)</option>
+            <option value="KOMOLGANJ GANO COLLEGE|https://i.postimg.cc/KzD8PjRC/kggc_logo.jpg">KGGC (English)</option>
+            <option value="মৌলভীবাজার সরকারি কলেজ|https://i.postimg.cc/LX38t5JM/mbgc_logo.jpg">মৌলভীবাজার সরকারি কলেজ</option>
+            <option value="মৌলভীবাজার সরকারি মহিলা কলেজ|https://i.postimg.cc/d1jV23hw/mbgwc_logo.jpg">মৌলভীবাজার সরকারি মহিলা কলেজ</option>
+            <option value="শ্রীমঙ্গল সরকারি কলেজ|https://i.postimg.cc/HnWsBmMm/Sreemangal_g_c.png">শ্রীমঙ্গল সরকারি কলেজ</option>
+            <option value="শ্রীমঙ্গল সরকারি মহিলা কলেজ|https://i.postimg.cc/KjcvJbTh/SGWC.png">শ্রীমঙ্গল সরকারি মহিলা কলেজ</option>
+            <option value="কমলগঞ্জ সরকারি কলেজ|https://i.postimg.cc/KzD8PjRC/kggc_logo.jpg">কমলগঞ্জ সরকারি কলেজ</option>
+        </select></div>
+        <div><label>Body Font Size</label><input type="range" id="bodySizeInp" min="10" max="45" value="22" oninput="updateStyle()"></div>
+        <div><label>Body Text Color</label><input type="color" id="textColor" value="#000000" oninput="updateStyle()"></div>
+    </div>
+
+    <div class="grid">
+        <div><label>Body Align</label><select id="bodyAlign" onchange="updateStyle()"><option value="flex-start">Left</option><option value="center" selected>Center</option><option value="flex-end">Right</option></select></div>
+        <div><label>EN Fonts (10)</label><select id="enFont" onchange="update()"><option value="'Poppins'">Poppins</option><option value="'Oswald'">Oswald</option><option value="'Roboto'">Roboto</option><option value="'Ubuntu'">Ubuntu</option><option value="'Teko'">Teko</option><option value="'Playfair Display'">Playfair</option><option value="Impact">Impact</option><option value="Arial">Arial</option><option value="'Trebuchet MS'">Trebuchet</option><option value="Verdana">Verdana</option></select></div>
+        <div><label>BN Fonts (10)</label><select id="bnFont" onchange="update()"><option value="'Hind Siliguri'">Siliguri</option><option value="'Anek Bangla'">Anek</option><option value="'Mina'">Mina</option><option value="'Galada'">Galada</option><option value="'SolaimanLipi'">Solaiman</option><option value="'Kalpurush'">Kalpurush</option><option value="'Siyam Rupali'">Siyam</option><option value="'Mukti'">Mukti</option><option value="serif">Serif</option><option value="sans-serif">Standard</option></select></div>
+        <div><label>NU Logo Option</label><select id="nuShow" onchange="toggleNU()"><option value="none">Hide NU Logo</option><option value="block">Show NU Logo</option></select></div>
+    </div>
+
+    <div class="grid">
+        <input type="text" id="collManual" placeholder="Manual College Name" oninput="update()">
+        <input type="text" id="subject" placeholder="Subject" oninput="update()">
+        <input type="text" id="topic" placeholder="Topic" oninput="update()">
+        <input type="text" id="teacher" placeholder="Teacher Name" oninput="update()">
     </div>
     <div class="grid">
-        <input type="text" id="topicInp" placeholder="Topic" oninput="update()">
-        <input type="text" id="teachInp" placeholder="Teacher" oninput="update()">
-        <input type="text" id="studInp" placeholder="Student" oninput="update()">
+        <input type="text" id="student" placeholder="Student Name" oninput="update()">
+        <input type="text" id="roll" placeholder="Roll No" oninput="update()">
+        <input type="text" id="reg" placeholder="Reg No" oninput="update()">
+        <input type="text" id="class" placeholder="Class" oninput="update()">
+        <input type="date" id="subDate" oninput="update()">
     </div>
-    <div class="grid">
-        <input type="text" id="rollInp" placeholder="Roll" oninput="update()">
-        <input type="text" id="regInp" placeholder="Reg" oninput="update()">
-        <input type="text" id="classInp" placeholder="Class" oninput="update()">
-        <div><label>Submission Date</label><input type="date" id="dateInp" oninput="update()"></div>
-    </div>
-    <button class="print-btn" onclick="window.print()">PRINT FULL A4 COVER</button>
+    <button class="print-btn" onclick="window.print()">PRINT COVER PAGE</button>
 </div>
 
-<div class="cover-page" id="mainPage">
+<div class="cover-page">
     <div class="border-container greek-mask" id="vBorder"></div>
     <div class="inner-line" id="vLine"></div>
-
     <div class="content">
-        <svg class="header-svg" viewBox="0 0 500 150">
-            <path id="curve" d="M30,140 Q250,-20 470,140" fill="transparent" />
-            <text class="college-name" id="textElement">
-                <textPath xlink:href="#curve" startOffset="50%" text-anchor="middle" id="vCollText">COLLEGE NAME HERE</textPath>
+        <svg class="header-svg" viewBox="0 0 600 210">
+            <path id="curvePath" d="M60,165 Q300,10 540,165" fill="transparent" />
+            <text class="college-name" id="vCollText">
+                <textPath xlink:href="#curvePath" startOffset="50%" text-anchor="middle">COLLEGE NAME HERE</textPath>
             </text>
         </svg>
 
-        <div class="logo-box">
-            <img id="vLogo" src="https://i.postimg.cc/xdVXHkfg/pngtree-school-building-university-png-image-14580240.png">
-        </div>
-
-        <div class="banner-wrap">
-            <div class="ribbon" id="vBanner">ASSIGNMENT</div>
-        </div>
+        <div class="logo-box"><img id="vLogo" src="https://i.postimg.cc/xdVXHkfg/pngtree-school-building-university-png-image-14580240.png"></div>
+        <div class="banner-wrap"><div class="ribbon" id="vBanner">অ্যাসাইনমেন্ট</div></div>
 
         <div class="info-container" id="vBox">
-            <div class="info-row"><div class="info-label" id="lblSub">বিষয় :</div><div class="info-val" id="vSub"></div></div>
-            <div class="info-row"><div class="info-label" id="lblTopic">টপিক :</div><div class="info-val" id="vTopic"></div></div>
-            <div class="info-row"><div class="info-label" id="lblTeach">শিক্ষকের নাম :</div><div class="info-val" id="vTeach"></div></div>
-            <div class="info-row"><div class="info-label" id="lblStud">শিক্ষার্থীর নাম :</div><div class="info-val" id="vStud"></div></div>
-
+            <div class="info-row"><div class="info-label" id="lSub">বিষয় :</div><div class="info-val" id="vSub"></div></div>
+            <div class="info-row"><div class="info-label" id="lTopic">টপিক :</div><div class="info-val" id="vTopic"></div></div>
+            <div class="info-row"><div class="info-label" id="lTeach">শিক্ষকের নাম :</div><div class="info-val" id="vTeach"></div></div>
+            <div class="info-row"><div class="info-label" id="lStud">শিক্ষার্থীর নাম :</div><div class="info-val" id="vStud"></div></div>
             <div class="small-grid">
-                <div class="small-box"><span id="lblRoll">রোল:</span> <span id="vRoll"></span></div>
-                <div class="small-box"><span id="lblReg">রেজি:</span> <span id="vReg"></span></div>
-                <div class="small-box"><span id="lblClass">শ্রেণী:</span> <span id="vClass"></span></div>
+                <div class="small-box"><span id="lRoll">রোল:</span> <span id="vRoll"></span></div>
+                <div class="small-box"><span id="lReg">রেজি:</span> <span id="vReg"></span></div>
+                <div class="small-box"><span id="lClass">শ্রেণী:</span> <span id="vClass"></span></div>
             </div>
         </div>
 
-        <div class="date-section">
-            <div class="date-outline" id="vDateBorder">
-                <span id="lblDate">জমা দানের তারিখ :</span> <span id="vDate"></span>
-            </div>
+        <div class="footer-section">
+            <img id="vNU" class="nu-logo" src="https://i.postimg.cc/4y4NBG9r/national_university_of_bangladesh_seeklogo.png">
+            <div><div class="date-outline" id="vDateBox"><span id="lDate">জমা দানের তারিখ :</span> <span id="vDate"></span></div></div>
         </div>
-
-        <div class="signature" id="lblSign">শিক্ষকের স্বাক্ষর</div>
     </div>
 </div>
 
 <script>
-    const dict = {
-        bn: { banner: "অ্যাসাইনমেন্ট", sub: "বিষয় :", topic: "টপিক :", teach: "শিক্ষকের নাম :", stud: "শিক্ষার্থীর নাম :", roll: "রোল নং:", reg: "রেজি নং:", class: "শ্রেণী:", date: "জমা দানের তারিখ :", sign: "শিক্ষকের স্বাক্ষর" },
-        en: { banner: "ASSIGNMENT", sub: "Subject:", topic: "Topic:", teach: "Teacher:", stud: "Student:", roll: "Roll:", reg: "Reg:", class: "Class:", date: "Submission Date:", sign: "Teacher's Signature" }
+    const labels = {
+        bn: { banner: "অ্যাসাইনমেন্ট", sub: "বিষয় :", topic: "টপিক :", teach: "শিক্ষকের নাম :", stud: "শিক্ষার্থীর নাম :", roll: "রোল:", reg: "রেজি:", class: "শ্রেণী:", date: "জমা দানের তারিখ :" },
+        en: { banner: "ASSIGNMENT", sub: "Subject:", topic: "Topic:", teach: "Teacher:", stud: "Student:", roll: "Roll:", reg: "Reg:", class: "Class:", date: "Submission Date:" }
     };
+
+    function toggleCurve() {
+        const val = document.getElementById('curveToggle').value;
+        document.getElementById('curvePath').setAttribute('d', val === 'curve' ? 'M60,165 Q300,10 540,165' : 'M60,110 L540,110');
+        update();
+    }
+
+    function applyPreset() {
+        const val = document.getElementById('collPreset').value;
+        if(val === 'custom') return;
+        const [name, logo] = val.split('|');
+        document.getElementById('collManual').value = name;
+        document.getElementById('vLogo').src = logo;
+        update();
+    }
+
+    function toggleNU() { document.getElementById('vNU').style.display = document.getElementById('nuShow').value; }
 
     function update() {
         const lang = document.getElementById('langSel').value;
-        const d = dict[lang];
-
-        document.getElementById('vBanner').innerText = d.banner;
-        document.getElementById('lblSub').innerText = d.sub;
-        document.getElementById('lblTopic').innerText = d.topic;
-        document.getElementById('lblTeach').innerText = d.teach;
-        document.getElementById('lblStud').innerText = d.stud;
-        document.getElementById('lblRoll').innerText = d.roll;
-        document.getElementById('lblReg').innerText = d.reg;
-        document.getElementById('lblClass').innerText = d.class;
-        document.getElementById('lblDate').innerText = d.date;
-        document.getElementById('lblSign').innerText = d.sign;
-
-        const rawName = document.getElementById('collInp').value || "COLLEGE NAME HERE";
-        const vColl = document.getElementById('vCollText');
-        const textElement = document.getElementById('textElement');
+        const name = document.getElementById('collManual').value || "COLLEGE NAME HERE";
+        const d = labels[lang];
         
-        vColl.textContent = rawName;
+        document.getElementById('vBanner').innerText = d.banner;
+        document.getElementById('lSub').innerText = d.sub; document.getElementById('lTopic').innerText = d.topic;
+        document.getElementById('lTeach').innerText = d.teach; document.getElementById('lStud').innerText = d.stud;
+        document.getElementById('lRoll').innerText = d.roll; document.getElementById('lReg').innerText = d.reg;
+        document.getElementById('lClass').innerText = d.class; document.getElementById('lDate').innerText = d.date;
 
-        // Auto Font Resize Logic
-        if (rawName.length > 35) {
-            textElement.style.fontSize = "22px";
-        } else if (rawName.length > 25) {
-            textElement.style.fontSize = "28px";
-        } else {
-            textElement.style.fontSize = "36px";
-        }
+        const vText = document.getElementById('vCollText');
+        vText.style.fontFamily = lang === 'en' ? document.getElementById('enFont').value : document.getElementById('bnFont').value;
+        vText.style.fontSize = document.getElementById('sizeInp').value + "px";
+        vText.firstElementChild.textContent = name;
 
-        document.getElementById('vSub').innerText = document.getElementById('subInp').value;
-        document.getElementById('vTopic').innerText = document.getElementById('topicInp').value;
-        document.getElementById('vTeach').innerText = document.getElementById('teachInp').value;
-        document.getElementById('vStud').innerText = document.getElementById('studInp').value;
-        document.getElementById('vRoll').innerText = document.getElementById('rollInp').value;
-        document.getElementById('vReg').innerText = document.getElementById('regInp').value;
-        document.getElementById('vClass').innerText = document.getElementById('classInp').value;
-
-        const dateVal = document.getElementById('dateInp').value;
-        document.getElementById('vDate').innerText = dateVal ? new Date(dateVal).toLocaleDateString(lang==='bn'?'bn-BD':'en-GB') : "....................";
+        document.getElementById('vSub').innerText = document.getElementById('subject').value;
+        document.getElementById('vTopic').innerText = document.getElementById('topic').value;
+        document.getElementById('vTeach').innerText = document.getElementById('teacher').value;
+        document.getElementById('vStud').innerText = document.getElementById('student').value;
+        document.getElementById('vRoll').innerText = document.getElementById('roll').value;
+        document.getElementById('vReg').innerText = document.getElementById('reg').value;
+        document.getElementById('vClass').innerText = document.getElementById('class').value;
+        const dt = document.getElementById('subDate').value;
+        document.getElementById('vDate').innerText = dt ? new Date(dt).toLocaleDateString(lang==='bn'?'bn-BD':'en-GB') : "..../..../....";
     }
 
-    function updateTheme() {
+    function updateStyle() {
         const color = document.getElementById('colorSel').value;
+        const tColor = document.getElementById('textColor').value;
+        const bSize = document.getElementById('bodySizeInp').value;
+        const align = document.getElementById('bodyAlign').value;
         const style = document.getElementById('borderStyle').value;
         const border = document.getElementById('vBorder');
 
-        border.className = 'border-container';
-        border.style.borderStyle = 'solid';
+        const container = document.getElementById('vBox');
+        container.style.alignItems = align;
 
-        if(style === 'greek') {
-            border.classList.add('greek-mask');
-        } else {
-            border.style.borderStyle = style;
-        }
+        document.querySelectorAll('.info-row').forEach(r => {
+            r.style.justifyContent = align === 'center' ? 'center' : (align === 'flex-start' ? 'flex-start' : 'flex-end');
+            r.style.color = tColor;
+            r.style.fontSize = bSize + "px";
+            r.style.borderBottomColor = color;
+        });
+        
+        document.querySelectorAll('.info-label').forEach(l => {
+            l.style.color = color;
+            l.style.textAlign = align === 'flex-end' ? 'right' : 'left';
+        });
+
+        border.className = 'border-container';
+        if(style === 'greek') { border.style.borderStyle = 'solid'; border.classList.add('greek-mask'); }
+        else { border.style.borderStyle = style; }
 
         border.style.borderColor = color;
         document.getElementById('vLine').style.borderColor = color;
         document.getElementById('vCollText').style.fill = color;
         document.querySelector('.ribbon').style.background = color;
-        document.getElementById('vBox').style.borderColor = color;
-        document.getElementById('vDateBorder').style.borderColor = color;
-        
-        document.querySelectorAll('.info-row').forEach(r => r.style.borderBottomColor = color);
-        document.querySelectorAll('.small-box').forEach(b => b.style.borderColor = color);
+        container.style.borderColor = color;
+        document.getElementById('vDateBox').style.borderColor = color;
+        document.querySelectorAll('.small-box').forEach(b => { 
+            b.style.borderColor = color; 
+            b.style.color = tColor;
+            b.style.fontSize = Math.max(14, bSize - 4) + "px";
+        });
     }
 
-    function handleLogo(e) {
-        const reader = new FileReader();
-        reader.onload = () => { document.getElementById('vLogo').src = reader.result; };
-        if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-    }
-
-    window.onload = () => { update(); updateTheme(); };
+    window.onload = () => { update(); updateStyle(); };
 </script>
 </body>
 </html>
