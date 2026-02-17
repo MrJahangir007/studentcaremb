@@ -3,162 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Care | Professional Portal</title>
+    <title>Student Care | Digital Service Portal v3.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --bg: #0b0e14;
-            --sidebar-bg: #161b22;
+            --card-bg: #161b22;
             --accent: #38bdf8;
             --text-main: #f1f5f9;
             --text-dim: #8b949e;
             --border: rgba(255, 255, 255, 0.08);
             --green: #10b981;
+            --red: #ef4444;
         }
 
         body {
-            margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif;
             background-color: var(--bg); color: var(--text-main);
-            display: flex; height: 100vh; overflow: hidden;
+            scroll-behavior: smooth; overflow-x: hidden;
         }
 
-        /* --- Sidebar --- */
-        .sidebar {
-            width: 260px; background: var(--sidebar-bg);
-            display: flex; flex-direction: column; padding: 20px 0;
-            border-right: 1px solid var(--border); overflow-y: auto;
+        /* --- Navbar --- */
+        nav {
+            background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(15px);
+            padding: 10px 5%; display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border);
         }
-
-        .brand { text-align: center; margin-bottom: 25px; }
-        .brand img { width: 65px; border-radius: 50%; border: 2px solid var(--accent); padding: 3px; }
-        .brand h2 { font-size: 14px; margin-top: 10px; color: #fff; letter-spacing: 1px; }
-
-        .menu-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin: 20px 0 10px 25px; letter-spacing: 1px; font-weight: bold; }
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; color: var(--accent); }
+        .logo img { width: 42px; border-radius: 50%; border: 2px solid var(--accent); }
         
-        .nav-item {
-            display: flex; align-items: center; gap: 12px;
-            padding: 10px 25px; margin: 2px 15px;
-            border-radius: 10px; cursor: pointer;
-            color: var(--text-dim); transition: 0.3s; font-size: 14px;
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent); }
+
+        /* --- Hero --- */
+        .hero {
+            padding: 80px 5% 40px; text-align: center;
+            background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
         }
-        .nav-item:hover { background: rgba(56, 189, 248, 0.1); color: var(--accent); }
-        .nav-item.active { background: var(--accent); color: #000; font-weight: bold; }
+        .hero h1 { font-size: 42px; margin: 0; color: #fff; letter-spacing: -1px; }
+        .hero p { color: var(--text-dim); margin: 10px 0 30px; }
 
-        /* --- Main Content --- */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: #0b0e14; position: relative; }
+        /* --- Search Bar --- */
+        .search-container { max-width: 600px; margin: 0 auto 50px; position: relative; }
+        .search-container input {
+            width: 100%; padding: 15px 25px; border-radius: 30px; border: 1px solid var(--border);
+            background: var(--card-bg); color: #fff; font-size: 16px; outline: none; transition: 0.3s;
+        }
+        .search-container input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+
+        /* --- Tools Grid (11 Tools) --- */
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 5% 50px; }
+        .section-title { font-size: 24px; color: var(--accent); margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
         
-        iframe { flex: 1; width: 100%; height: 100%; border: none; display: none; background: white; }
-        iframe.active { display: block; }
+        .tools-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 60px;
+        }
+        .tool-card {
+            background: var(--card-bg); padding: 25px 15px; border-radius: 18px; border: 1px solid var(--border);
+            text-align: center; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden;
+        }
+        .tool-card:hover { transform: translateY(-5px); border-color: var(--accent); background: rgba(56, 189, 248, 0.05); }
+        .tool-card i { font-size: 28px; color: var(--accent); margin-bottom: 12px; }
+        .tool-card h3 { font-size: 14px; margin: 0; color: #fff; }
 
-        /* --- Home Dashboard UI (Nothing Missing Now) --- */
-        #home-screen { padding: 40px; }
-        .welcome-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .digital-clock { background: var(--sidebar-bg); padding: 12px 20px; border-radius: 12px; font-size: 20px; font-weight: bold; color: var(--accent); border: 1px solid var(--border); }
-
-        /* Stats Section */
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-box { background: var(--sidebar-bg); padding: 20px; border-radius: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid var(--border); }
-        .stat-box i { font-size: 30px; color: var(--accent); }
-        .stat-box h3 { margin: 0; font-size: 12px; color: var(--text-dim); }
-        .stat-box p { margin: 5px 0 0; font-size: 20px; font-weight: bold; }
-
-        /* Info Layout (Service Price & Contacts) */
-        .info-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .info-card { background: var(--sidebar-bg); padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
-        .info-card h3 { font-size: 16px; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; color: var(--accent); }
+        /* --- Mega Link Directory --- */
+        .directory-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;
+        }
+        .dir-box { background: rgba(255,255,255,0.02); border-radius: 15px; padding: 20px; border: 1px solid var(--border); height: fit-content; }
+        .dir-box h4 { color: var(--accent); margin: 0 0 15px 0; font-size: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
         
-        .service-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed rgba(255,255,255,0.05); font-size: 14px; }
-        .service-item span { color: var(--text-dim); }
-        .service-item b { color: var(--accent); }
+        .link-list { list-style: none; padding: 0; margin: 0; }
+        .link-list li { margin-bottom: 6px; }
+        .link-list li a {
+            color: var(--text-dim); text-decoration: none; font-size: 13px; display: flex; justify-content: space-between;
+            padding: 8px 12px; border-radius: 8px; transition: 0.2s; background: rgba(255,255,255,0.01);
+        }
+        .link-list li a:hover { color: #fff; background: rgba(56, 189, 248, 0.1); padding-left: 15px; }
+        .link-list li a i { font-size: 10px; opacity: 0.5; }
+
+        /* --- Full Screen Loader --- */
+        #iframe-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 2000;
+        }
+        .modal-header { background: var(--card-bg); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .modal-header span { color: var(--accent); font-weight: bold; }
+        iframe { width: 100%; height: calc(100% - 55px); border: none; }
+        .btn-close { background: var(--red); color: #fff; border: none; padding: 6px 15px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: bold; }
+
+        footer { text-align: center; padding: 40px; color: var(--text-dim); font-size: 13px; border-top: 1px solid var(--border); margin-top: 50px; }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 28px; }
+            .tools-grid { grid-template-columns: 1fr 1fr; }
+        }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <div class="brand">
+<nav>
+    <div class="logo">
         <img src="https://i.postimg.cc/7hdFkp49/Logo_sc.png" alt="Logo">
-        <h2>STUDENT CARE</h2>
+        STUDENT CARE
     </div>
-    
-    <div class="menu-label">Main Management</div>
-    <div class="nav-item active" onclick="loadPage('home')"><i class="fa-solid fa-house"></i> <span>Dashboard Home</span></div>
-    <div class="nav-item" onclick="loadPage('adgenerator.html')"><i class="fa-solid fa-wand-magic-sparkles"></i> <span>Ad Designer Pro</span></div>
-    <div class="nav-item" onclick="loadPage('dailysales.html')"><i class="fa-solid fa-calculator"></i> <span>Sales Tracker</span></div>
-    
-    <div class="menu-label">Service Tools</div>
-    <div class="nav-item" onclick="loadPage('invoice.html')"><i class="fa-solid fa-file-invoice-dollar"></i> <span>Invoice Gen</span></div>
-    <div class="nav-item" onclick="loadPage('assignment.html')"><i class="fa-solid fa-file-signature"></i> <span>Assignment</span></div>
-    <div class="nav-item" onclick="loadPage('blood.html')"><i class="fa-solid fa-droplet"></i> <span>Blood Report</span></div>
-    <div class="nav-item" onclick="loadPage('family.html')"><i class="fa-solid fa-users-rectangle"></i> <span>Family Certificate</span></div>
-    <div class="nav-item" onclick="loadPage('letter.html')"><i class="fa-solid fa-envelope-open-text"></i> <span>Official Letter</span></div>
-    <div class="nav-item" onclick="loadPage('nagorik.html')"><i class="fa-solid fa-id-card"></i> <span>Nagorik Sanad</span></div>
+    <div class="nav-links">
+        <a href="#services">Tools</a>
+        <a href="#directory">BD Directory</a>
+        <a href="https://wa.me/8801637746468" target="_blank">Contact</a>
+    </div>
+</nav>
 
-    <div class="menu-label">External Links</div>
-    <div class="nav-item" onclick="window.open('https://sites.google.com/view/studentcaremb', '_blank')"><i class="fa-brands fa-google"></i> <span>Google Site</span></div>
-    <div class="nav-item" onclick="window.open('https://studentcaremb.blogspot.com', '_blank')"><i class="fa-solid fa-globe"></i> <span>Blogspot</span></div>
+<div class="hero">
+    <h1>All-in-One Digital Gateway</h1>
+    <p>Professional Internal Tools & Bangladesh Public Service Directory</p>
+    
+    <div class="search-container">
+        <input type="text" id="linkSearch" placeholder="Search for a service (e.g. Passport, NID, Results)..." onkeyup="filterLinks()">
+    </div>
 </div>
 
-<div class="main-content">
-    <div id="home-screen">
-        <div class="welcome-header">
-            <div>
-                <h1>Welcome Back, Jahangir! 🚀</h1>
-                <p style="color: var(--text-dim);">Academic & Professional IT Center Control Panel</p>
-            </div>
-            <div id="clock" class="digital-clock">00:00:00</div>
-        </div>
-
-        <div class="dashboard-grid">
-            <div class="stat-box"><i class="fa fa-users"></i><div><h3>Total Students</h3><p>2,000+</p></div></div>
-            <div class="stat-box"><i class="fa fa-chart-line" style="color:var(--green)"></i><div><h3>Daily Status</h3><p>Online</p></div></div>
-            <div class="stat-box"><i class="fa fa-shield-halved" style="color:#f59e0b"></i><div><h3>System Security</h3><p>SSL Secure</p></div></div>
-        </div>
-
-        <div class="info-layout">
-            <div class="info-card">
-                <h3><i class="fa fa-list"></i> Service Price List</h3>
-                <div class="service-item"><span>Job Application</span> <b>৳ 100</b></div>
-                <div class="service-item"><span>Passport Apply</span> <b>৳ 250</b></div>
-                <div class="service-item"><span>NID Correction</span> <b>৳ 200+</b></div>
-                <div class="service-item"><span>Assignment Maker</span> <b>৳ 50+</b></div>
-                <div class="service-item"><span>Blood Report</span> <b>৳ Free</b></div>
-            </div>
-            <div class="info-card">
-                <h3><i class="fa fa-headset"></i> Quick Contacts</h3>
-                <div class="service-item"><span>WhatsApp</span> <b>01637746468</b></div>
-                <div class="service-item"><span>Location</span> <b>Moulvibazar Govt College</b></div>
-                <div class="service-item"><span>Instructor</span> <b>BRAC Certified</b></div>
-                <div class="service-item"><span>Network Status</span> <b style="color: var(--green);">Optimal</b></div>
-            </div>
-        </div>
+<div class="container" id="services">
+    <div class="section-title"><i class="fa fa-screwdriver-wrench"></i> Professional Tools</div>
+    <div class="tools-grid">
+        <div class="tool-card" onclick="location.reload()"><i class="fa-solid fa-house"></i><h3>Home Page</h3></div>
+        <div class="tool-card" onclick="openPage('adgenerator.html')"><i class="fa-solid fa-wand-magic-sparkles"></i><h3>Ad Designer</h3></div>
+        <div class="tool-card" onclick="openPage('SocialmediaPost.html')"><i class="fa-solid fa-bullhorn"></i><h3>Social Poster</h3></div>
+        <div class="tool-card" onclick="openPage('dailysales.html')"><i class="fa-solid fa-calculator"></i><h3>Sales Tracker</h3></div>
+        <div class="tool-card" onclick="openPage('invoice.html')"><i class="fa-solid fa-file-invoice-dollar"></i><h3>Invoice Gen</h3></div>
+        <div class="tool-card" onclick="openPage('assignment.html')"><i class="fa-solid fa-file-pen"></i><h3>Assignment</h3></div>
+        <div class="tool-card" onclick="openPage('blood.html')"><i class="fa-solid fa-droplet"></i><h3>Blood Report</h3></div>
+        <div class="tool-card" onclick="openPage('family.html')"><i class="fa-solid fa-users-line"></i><h3>Family Cert</h3></div>
+        <div class="tool-card" onclick="openPage('letter.html')"><i class="fa-solid fa-envelope-open-text"></i><h3>Official Letter</h3></div>
+        <div class="tool-card" onclick="openPage('nagorik.html')"><i class="fa-solid fa-id-card"></i><h3>Nagorik Sanad</h3></div>
+        <div class="tool-card" onclick="openPage('uniondigital.html')"><i class="fa-solid fa-landmark"></i><h3>Union Digital</h3></div>
     </div>
 
-    <iframe id="content-frame" src=""></iframe>
+    <div class="section-title" id="directory"><i class="fa fa-globe"></i> Bangladesh Service Directory</div>
+    <div class="directory-grid" id="dirGrid">
+        
+        <div class="dir-box">
+            <h4><i class="fa fa-check-double"></i> Verification Services</h4>
+            <ul class="link-list">
+                <li><a href="https://everify.bdris.gov.bd/" target="_blank">Birth Reg. Verify <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://everify.bdris.gov.bd/UDRNVerification" target="_blank">Death Reg. Verify <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://services.nidw.gov.bd/nid-pub/verify-nid" target="_blank">NID Verification <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://www.epassport.gov.bd/authorization/application-status" target="_blank">Passport Status <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://bsp.brta.gov.bd/dlStatus" target="_blank">Driving License Status <i class="fa fa-external-link"></i></a></li>
+            </ul>
+        </div>
+
+        <div class="dir-box">
+            <h4><i class="fa fa-user-shield"></i> Essential Public Services</h4>
+            <ul class="link-list">
+                <li><a href="https://www.epassport.gov.bd" target="_blank">e-Passport Online <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://services.nidw.gov.bd" target="_blank">NID Registration <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://etaxnbr.gov.bd" target="_blank">NBR e-Tax <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://land.gov.bd" target="_blank">Land Administration <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://www.bpost.gov.bd" target="_blank">Post Office <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://bdvisa.gov.bd" target="_blank">Visa Portal <i class="fa fa-external-link"></i></a></li>
+            </ul>
+        </div>
+
+        <div class="dir-box">
+            <h4><i class="fa fa-graduation-cap"></i> Education & Results</h4>
+            <ul class="link-list">
+                <li><a href="http://www.educationboardresults.gov.bd" target="_blank">All Board Results <i class="fa fa-external-link"></i></a></li>
+                <li><a href="http://www.nu.ac.bd" target="_blank">National University <i class="fa fa-external-link"></i></a></li>
+                <li><a href="http://www.ugc.gov.bd" target="_blank">UGC Bangladesh <i class="fa fa-external-link"></i></a></li>
+                <li><a href="http://www.dpe.gov.bd" target="_blank">Primary Education <i class="fa fa-external-link"></i></a></li>
+                <li><a href="http://www.bmeb.gov.bd" target="_blank">Madrasah Board <i class="fa fa-external-link"></i></a></li>
+            </ul>
+        </div>
+
+        <div class="dir-box">
+            <h4><i class="fa fa-university"></i> Core Government</h4>
+            <ul class="link-list">
+                <li><a href="https://pmo.gov.bd" target="_blank">Prime Minister's Office <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://bangabhaban.gov.bd" target="_blank">President's Office <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://cabinet.gov.bd" target="_blank">Cabinet Division <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://mopa.gov.bd" target="_blank">Ministry of Public Admin <i class="fa fa-external-link"></i></a></li>
+            </ul>
+        </div>
+
+        <div class="dir-box">
+            <h4><i class="fa fa-shield-halved"></i> Security & Judiciary</h4>
+            <ul class="link-list">
+                <li><a href="https://www.police.gov.bd" target="_blank">Bangladesh Police <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://www.rab.gov.bd" target="_blank">RAB Portal <i class="fa fa-external-link"></i></a></li>
+                <li><a href="http://www.supremecourt.gov.bd" target="_blank">Supreme Court <i class="fa fa-external-link"></i></a></li>
+                <li><a href="http://bdlaws.minlaw.gov.bd" target="_blank">BD Laws Online <i class="fa fa-external-link"></i></a></li>
+            </ul>
+        </div>
+
+        <div class="dir-box">
+            <h4><i class="fa fa-bolt"></i> Energy & Emergencies</h4>
+            <ul class="link-list">
+                <li><a href="http://www.fireservice.gov.bd" target="_blank">Fire Service <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://mpemr.gov.bd" target="_blank">Power & Energy Ministry <i class="fa fa-external-link"></i></a></li>
+                <li><a href="http://www.desco.org.bd" target="_blank">DESCO <i class="fa fa-external-link"></i></a></li>
+                <li><a href="https://www.reb.gov.bd" target="_blank">Rural Electrification <i class="fa fa-external-link"></i></a></li>
+            </ul>
+        </div>
+
+    </div>
 </div>
+
+<div id="iframe-modal">
+    <div class="modal-header">
+        <span id="modal-title">Live View</span>
+        <button class="btn-close" onclick="closePage()">Close & Back</button>
+    </div>
+    <iframe id="page-frame" src=""></iframe>
+</div>
+
+<footer>
+    <p>&copy; 2026 Student Care MB | Developed with ❤️ by Jahangir</p>
+    <p style="font-size: 11px; margin-top:5px; opacity: 0.6;">Academic & Professional IT Support Center</p>
+</footer>
 
 <script>
-    function updateClock() {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+    function openPage(url) {
+        const modal = document.getElementById('iframe-modal');
+        const frame = document.getElementById('page-frame');
+        frame.src = url;
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
     }
-    setInterval(updateClock, 1000);
 
-    function loadPage(page) {
-        const home = document.getElementById('home-screen');
-        const frame = document.getElementById('content-frame');
+    function closePage() {
+        const modal = document.getElementById('iframe-modal');
+        const frame = document.getElementById('page-frame');
+        frame.src = "";
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // Search/Filter Function
+    function filterLinks() {
+        let input = document.getElementById('linkSearch').value.toLowerCase();
+        let boxes = document.getElementsByClassName('dir-box');
         
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-
-        if(page === 'home') {
-            home.style.display = 'block';
-            frame.classList.remove('active');
-            frame.src = "";
-        } else {
-            home.style.display = 'none';
-            frame.classList.add('active');
-            frame.src = page;
+        for (let i = 0; i < boxes.length; i++) {
+            let listItems = boxes[i].getElementsByTagName('li');
+            let boxHasMatch = false;
+            
+            for (let j = 0; j < listItems.length; j++) {
+                let text = listItems[j].innerText.toLowerCase();
+                if (text.includes(input)) {
+                    listItems[j].style.display = "";
+                    boxHasMatch = true;
+                } else {
+                    listItems[j].style.display = "none";
+                }
+            }
+            
+            boxes[i].style.display = boxHasMatch ? "" : "none";
         }
     }
 </script>
+
 </body>
 </html>
