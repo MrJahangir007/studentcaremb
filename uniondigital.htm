@@ -1,0 +1,2578 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>ইউনিয়ন ডিজিটাল সনদ জেনারেটর | মৌলভীবাজার জেলা</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #006a4e; 
+            --secondary: #2c5f2d;
+            --danger: #f42a41; 
+            --sidebar: #2c3e50;
+            --accent: #ff9a3c;
+            --light: #f8f9fa;
+            --dark: #1a3c1e;
+            --text-color: #000000;
+            --bg-color: #ffffff;
+            --global-font-size: 14px;
+            --body-font-size: 14px;
+            --title-font-size: 22px;
+            --watermark-size: 300px;
+        }
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Segoe UI', 'SolaimanLipi', 'Hind Siliguri', sans-serif; 
+        }
+        
+        body { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        /* Sidebar Styling - 50% width */
+        .sidebar { 
+            width: 50%; 
+            background: var(--sidebar); 
+            color: #fff; 
+            padding: 20px; 
+            overflow-y: auto; 
+            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .sidebar-header h1 {
+            color: var(--accent);
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+        
+        .sidebar-header p {
+            font-size: 13px;
+            color: #ddd;
+        }
+        
+        .card { 
+            background: rgba(255,255,255,0.1); 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        
+        .card h3 {
+            color: var(--accent);
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h3 i {
+            font-size: 18px;
+        }
+        
+        label { 
+            display: block; 
+            font-size: 14px; 
+            margin: 10px 0 6px; 
+            color: #ddd; 
+            font-weight: 500;
+        }
+        
+        input, select, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border-radius: 6px; 
+            border: 1px solid rgba(255,255,255,0.3); 
+            font-size: 14px; 
+            margin-bottom: 12px;
+            background: rgba(255,255,255,0.9);
+            color: #000000 !important;
+            transition: all 0.3s;
+        }
+        
+        select option {
+            color: #000000 !important;
+            background-color: white !important;
+        }
+        
+        input::placeholder, textarea::placeholder {
+            color: rgba(0,0,0,0.6) !important;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(255, 154, 60, 0.2);
+            background: rgba(255,255,255,0.95);
+        }
+        
+        /* Preview Panel - 50% width */
+        .preview-panel { 
+            width: 50%;
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            padding: 20px; 
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        /* A4 Page */
+        .a4-page { 
+            width: 210mm; 
+            min-height: 297mm; 
+            background: var(--bg-color, #ffffff); 
+            padding: 10mm 15mm;
+            position: relative; 
+            display: flex; 
+            flex-direction: column;
+            border: 15px double var(--primary); 
+            box-shadow: 0 0 25px rgba(0,0,0,0.5);
+            overflow: hidden;
+            font-size: var(--global-font-size);
+        }
+        
+        /* Watermark */
+        .watermark { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            width: var(--watermark-size);
+            height: var(--watermark-size);
+            opacity: 0.15;
+            z-index: 0; 
+            pointer-events: none;
+            object-fit: contain;
+            mix-blend-mode: multiply; 
+        }
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Top Section: Logo and Photo - Logo WITHOUT border, Photo WITH border */
+        .header-top-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            margin-bottom: 5px; 
+        }
+        
+        /* Logo box - NO BORDER */
+        .logo-box { 
+            width: 110px;
+            height: 110px;
+            padding: 3px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none; /* REMOVED BORDER */
+            border-radius: 4px;
+        }
+        
+        .logo-box img { 
+            width: 100%; 
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .header-text { 
+            text-align: center; 
+            flex: 1; 
+            padding: 0 15px;
+            min-width: 0; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header-text h1 { 
+            color: var(--primary); 
+            margin: 0; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 5px;
+            max-width: 100%;
+            text-align: center;
+            line-height: 1.1;
+            font-size: var(--title-font-size);
+        }
+        
+        .header-contact {
+            margin-top: 3px;
+            font-size: 11px;
+            color: var(--text-color, #333);
+            line-height: 1.2;
+        }
+        
+        .header-text p { 
+            font-weight: bold; 
+            font-size: 13px; 
+            margin-top: 3px;
+            color: var(--text-color, #333);
+        }
+        
+        /* Photo box - WITH BORDER */
+        .photo-box { 
+            width: 110px;
+            height: 135px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden;
+            background: #f5f5f5;
+            border: 2px solid var(--primary); /* KEPT BORDER */
+            border-radius: 4px;
+        }
+        
+        .photo-box img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+        
+        .header-lines { 
+            margin: 8px 0 15px 0;
+        }
+        
+        .hr-thick { 
+            border-top: 3px solid var(--text-color, #000); 
+            margin-top: 6px; 
+        }
+        
+        .hr-thin { 
+            border-top: 1px solid var(--text-color, #000); 
+            margin-top: 1px; 
+        }
+        
+        .cert-title { 
+            text-align: center; 
+            margin-bottom: 15px;
+            font-size: calc(var(--title-font-size) * 1.2);
+            font-weight: bold; 
+            color: var(--danger); 
+            text-decoration: underline;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .meta-info { 
+            display: flex; 
+            justify-content: space-between; 
+            font-weight: bold; 
+            margin-bottom: 15px;
+            font-size: calc(var(--global-font-size) * 0.9);
+            padding: 6px 0;
+            border-top: 2px dashed #ddd;
+            border-bottom: 2px dashed #ddd;
+            color: var(--text-color, #000);
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .cert-body { 
+            text-align: justify; 
+            line-height: 1.5;
+            font-size: var(--body-font-size);
+            margin-bottom: 10px;
+            text-indent: 30px;
+            color: var(--text-color, #000);
+        }
+        
+        .member-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 5px 0 10px 0;
+            display: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: calc(var(--global-font-size) * 0.85);
+            position: relative;
+            z-index: 3;
+            page-break-inside: auto;
+        }
+        
+        .member-table th, .member-table td { 
+            border: 1px solid var(--text-color, #000); 
+            padding: 6px;
+            text-align: center; 
+            color: var(--text-color, #000);
+            page-break-inside: avoid;
+        }
+        
+        .member-table th { 
+            background: var(--primary); 
+            color: white;
+            font-weight: 600;
+        }
+        
+        .member-table tr:nth-child(even) {
+            background-color: rgba(0,0,0,0.03);
+        }
+        
+        .table-footer-text {
+            width: 100%;
+            margin: 5px 0 10px 0;
+            display: none;
+            text-align: center;
+            font-size: calc(var(--global-font-size) * 0.9);
+            font-style: italic;
+            line-height: 1.4;
+            padding: 6px;
+            background-color: rgba(0,0,0,0.02);
+            border-left: 2px solid var(--primary);
+            color: var(--text-color, #000);
+            position: relative;
+            z-index: 3;
+        }
+        
+        /* Footer */
+        .footer { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-top: auto; 
+            padding-top: 20px;
+            padding-bottom: 15px;
+            border-top: 2px solid #ddd;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .sign-box { 
+            text-align: center; 
+            width: 200px;
+        }
+        
+        .sign-line { 
+            border-top: 2px solid var(--text-color, #000); 
+            width: 160px;
+            margin: 0 auto 5px auto;
+            padding-top: 20px;
+        }
+        
+        /* Developer credit */
+        .developer-credit {
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 8px;
+            color: #666;
+            font-style: italic;
+            padding: 3px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 2px;
+            z-index: 2;
+            width: 100%;
+        }
+        
+        .print-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .print-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            background: var(--dark);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #1e4f1e;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .member-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr auto;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+        
+        .member-row input, .member-row select {
+            margin-bottom: 0;
+            background: white;
+            color: #333 !important;
+            font-size: 13px;
+            padding: 8px;
+        }
+        
+        .remove-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .remove-btn:hover {
+            background: #d11a32;
+        }
+        
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px dashed rgba(255,255,255,0.3);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-upload-btn:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: var(--accent);
+        }
+        
+        .sanad-type-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .sanad-type-item {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid transparent;
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            color: white;
+            font-weight: 500;
+        }
+        
+        .sanad-type-item:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .sanad-type-item.active {
+            background: rgba(255, 154, 60, 0.3);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .color-picker-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .color-picker label {
+            flex: 1;
+            margin: 0;
+            font-size: 13px;
+        }
+        
+        .color-picker input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: transparent;
+        }
+        
+        .reset-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .reset-btn:hover {
+            background: #5a6268;
+        }
+        
+        .watermark-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .watermark-controls input[type="range"] {
+            flex: 1;
+        }
+        
+        .union-size-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .union-size-controls input[type="range"] {
+            flex: 1;
+        }
+        
+        /* Font Size Controls */
+        .font-size-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .font-size-controls input[type="range"] {
+            flex: 1;
+        }
+        
+        .font-size-display {
+            min-width: 40px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            z-index: 9999;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .table-container {
+            max-height: 200mm;
+            overflow-y: auto;
+            position: relative;
+            z-index: 3;
+            margin-bottom: 5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            body {
+                flex-direction: column;
+                height: auto;
+                overflow-y: auto;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 50vh;
+            }
+            
+            .preview-panel {
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .a4-page {
+                width: 100%;
+                min-height: auto;
+                max-width: 210mm;
+            }
+            
+            .header-text h1 {
+                font-size: 18px;
+                white-space: normal;
+                line-height: 1.1;
+            }
+            
+            .header-contact {
+                font-size: 10px;
+            }
+            
+            .sanad-type-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .color-picker-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo-box, .photo-box {
+                width: 95px;
+                height: 95px;
+            }
+            
+            .photo-box {
+                height: 115px;
+            }
+            
+            .watermark {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-container {
+                max-height: 150mm;
+            }
+        }
+        
+        /* Print styles */
+        @media print {
+            body { 
+                background: none; 
+                overflow: visible;
+                margin: 0;
+                padding: 0;
+                width: 210mm;
+                height: 297mm;
+            }
+            
+            .sidebar, .print-btn { 
+                display: none !important; 
+            }
+            
+            .preview-panel { 
+                padding: 0; 
+                background: none; 
+                width: 100%;
+                overflow: visible;
+                display: block;
+                margin: 0;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            
+            .a4-page { 
+                box-shadow: none; 
+                border: 15px double var(--primary) !important; 
+                margin: 0 auto;
+                page-break-inside: avoid;
+                min-height: 297mm;
+                height: auto;
+                width: 210mm;
+                background: white !important;
+                color: black !important;
+                padding: 10mm 15mm !important;
+                position: relative;
+                overflow: visible !important;
+                font-size: var(--global-font-size) !important;
+            }
+            
+            @page { 
+                size: A4 portrait; 
+                margin: 0; 
+            }
+            
+            /* Watermark always visible in print */
+            .watermark {
+                display: block !important;
+                transform: translate(-50%, -50%) !important;
+                opacity: 0.08 !important;
+                width: calc(var(--watermark-size) * 0.8) !important;
+                height: calc(var(--watermark-size) * 0.8) !important;
+                filter: none !important;
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                z-index: 0 !important;
+            }
+            
+            /* Developer credit */
+            .developer-credit {
+                display: block !important;
+                color: #666 !important;
+                font-size: 7px !important;
+                white-space: nowrap !important;
+                background: transparent !important;
+                position: relative !important;
+                bottom: auto !important;
+                margin-top: 10px !important;
+                padding-top: 5px !important;
+                border-top: 1px dashed #ccc !important;
+            }
+            
+            /* Ensure content is above watermark */
+            .content-wrapper {
+                position: relative;
+                z-index: 1;
+            }
+            
+            /* Ensure text is black for printing */
+            .header-text p,
+            .meta-info,
+            .cert-body,
+            .member-table,
+            .table-footer-text,
+            .footer,
+            .sign-box p,
+            .header-contact {
+                color: #000000 !important;
+            }
+            
+            /* Table print optimization */
+            .member-table {
+                font-size: calc(var(--global-font-size) * 0.85) !important;
+                page-break-inside: avoid !important;
+            }
+            
+            .member-table th,
+            .member-table td {
+                padding: 4px !important;
+                page-break-inside: avoid !important;
+            }
+            
+            /* Prevent content from being cut */
+            .cert-body,
+            .table-footer-text,
+            .footer {
+                page-break-inside: avoid !important;
+            }
+            
+            /* Remove any page breaks before/after */
+            .header-top-row,
+            .cert-title,
+            .meta-info {
+                page-break-after: avoid !important;
+                page-break-inside: avoid !important;
+            }
+            
+            /* Logo and photo in print - Logo NO border, Photo WITH border */
+            .logo-box {
+                width: 100px !important;
+                height: 100px !important;
+                border: none !important; /* NO BORDER in print */
+            }
+            
+            .photo-box {
+                width: 100px !important;
+                height: 120px !important;
+                border: 2px solid var(--primary) !important; /* KEPT BORDER in print */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Loading Indicator -->
+<div class="loading" id="loading">
+    <i class="fas fa-spinner fa-spin"></i> লোড হচ্ছে...
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <h1><i class="fas fa-file-certificate"></i> ইউনিয়ন ডিজিটাল সনদ জেনারেটর</h1>
+        <p>মৌলভীবাজার জেলা | সনদ তৈরি করুন</p>
+    </div>
+
+    <!-- Language Selection -->
+    <div class="card">
+        <h3><i class="fas fa-language"></i> ভাষা নির্বাচন</h3>
+        <select id="lang" onchange="changeLanguage()">
+            <option value="BN">বাংলা (Bangla)</option>
+            <option value="EN">English</option>
+        </select>
+    </div>
+
+    <!-- Location Selection -->
+    <div class="card">
+        <h3><i class="fas fa-map-marker-alt"></i> অবস্থান নির্বাচন</h3>
+        
+        <label id="upazilaLabel">উপজেলা (Upazila)</label>
+        <select id="upzSelect" onchange="loadUnions()">
+            <option value="MoulvibazarSadar">মৌলভীবাজার সদর (১২)</option>
+            <option value="Barlekha">বড়লেখা (১০)</option>
+            <option value="Kamalganj">কমলগঞ্জ (৯)</option>
+            <option value="Kulaura">কুলাউড়া (১৩)</option>
+            <option value="Rajnagar">রাজনগর (৮)</option>
+            <option value="Sreemangal">শ্রীমঙ্গল (৯)</option>
+            <option value="Juri">জুড়ী (৬)</option>
+        </select>
+        
+        <label id="unionLabel">ইউনিয়ন পরিষদ (Union Parishad)</label>
+        <select id="uniSelect" onchange="updatePreview()"></select>
+        
+        <!-- Union Name Size Adjustment -->
+        <div class="union-size-controls">
+            <label id="unionSizeLabel">ইউনিয়ন নামের সাইজ</label>
+            <input type="range" id="unionFontSize" min="14" max="30" value="22" oninput="updateUnionFontSize(this.value)">
+            <span id="unionFontSizeValue" class="font-size-display">22px</span>
+        </div>
+    </div>
+
+    <!-- Font Size Controls -->
+    <div class="card">
+        <h3><i class="fas fa-text-height"></i> টেক্সট সাইজ কন্ট্রোল</h3>
+        
+        <div class="font-size-controls">
+            <label id="globalFontSizeLabel">সব টেক্সটের সাইজ</label>
+            <input type="range" id="globalFontSize" min="10" max="20" value="14" oninput="updateGlobalFontSize(this.value)">
+            <span id="globalFontSizeValue" class="font-size-display">14px</span>
+        </div>
+        
+        <div class="font-size-controls">
+            <label id="bodyFontSizeLabel">বডি টেক্সট সাইজ</label>
+            <input type="range" id="bodyFontSize" min="10" max="20" value="14" oninput="updateBodyFontSize(this.value)">
+            <span id="bodyFontSizeValue" class="font-size-display">14px</span>
+        </div>
+        
+        <div class="font-size-controls">
+            <label id="titleFontSizeLabel">টাইটেল সাইজ</label>
+            <input type="range" id="titleFontSize" min="18" max="32" value="22" oninput="updateTitleFontSize(this.value)">
+            <span id="titleFontSizeValue" class="font-size-display">22px</span>
+        </div>
+        
+        <button class="reset-btn" onclick="resetFontSizes()" style="margin-top: 10px; width: 100%;">
+            <i class="fas fa-redo"></i> ফন্ট সাইজ রিসেট করুন
+        </button>
+    </div>
+
+    <!-- Union Contact Information Card -->
+    <div class="card">
+        <h3><i class="fas fa-address-card"></i> ইউনিয়ন যোগাযোগ তথ্য</h3>
+        
+        <label id="unionPhoneLabel">ফোন নম্বর</label>
+        <input type="text" id="unionPhone" value="০১৭১২-৩৪৫৬৭৮" placeholder="ইউনিয়ন ফোন নম্বর" oninput="updatePreview()">
+        
+        <label id="unionEmailLabel">ইমেইল</label>
+        <input type="text" id="unionEmail" value="union@example.com" placeholder="ইউনিয়ন ইমেইল" oninput="updatePreview()">
+        
+        <label id="unionWebsiteLabel">ওয়েবসাইট</label>
+        <input type="text" id="unionWebsite" value="www.union.gov.bd" placeholder="ইউনিয়ন ওয়েবসাইট" oninput="updatePreview()">
+        
+        <div class="btn-group" style="margin-top: 15px;">
+            <button class="btn btn-primary" onclick="resetUnionContact()">
+                <i class="fas fa-redo"></i> ডিফল্ট করুন
+            </button>
+        </div>
+    </div>
+
+    <!-- Chairman Details Card -->
+    <div class="card">
+        <h3><i class="fas fa-user-tie"></i> চেয়ারম্যানের তথ্য</h3>
+        
+        <label id="chairmanNameLabel">চেয়ারম্যানের নাম</label>
+        <input type="text" id="chairmanName" value="মোহাম্মদ আলী" placeholder="চেয়ারম্যানের নাম লিখুন" oninput="updatePreview()">
+        
+        <label id="chairmanTitleLabel">চেয়ারম্যান পদবী</label>
+        <input type="text" id="chairmanTitleText" value="চেয়ারম্যান" placeholder="পদবী লিখুন" oninput="updatePreview()">
+        
+        <div class="btn-group" style="margin-top: 15px;">
+            <button class="btn btn-primary" onclick="resetChairmanDetails()">
+                <i class="fas fa-redo"></i> ডিফল্ট করুন
+            </button>
+        </div>
+    </div>
+
+    <!-- Investigator Details Card -->
+    <div class="card">
+        <h3><i class="fas fa-user-check"></i> তদন্তকারীর তথ্য</h3>
+        
+        <label id="investigatorNameLabel">তদন্তকারীর নাম</label>
+        <input type="text" id="investigatorName" value="রহিম উদ্দিন" placeholder="তদন্তকারীর নাম লিখুন" oninput="updatePreview()">
+        
+        <label id="investigatorDesignationLabel">তদন্তকারীর পদবী</label>
+        <input type="text" id="investigatorDesignationText" value="সহকারী কমিশনার" placeholder="পদবী লিখুন" oninput="updatePreview()">
+        
+        <div class="btn-group" style="margin-top: 15px;">
+            <button class="btn btn-primary" onclick="resetInvestigatorDetails()">
+                <i class="fas fa-redo"></i> ডিফল্ট করুন
+            </button>
+        </div>
+    </div>
+
+    <!-- Sanad Type Selection -->
+    <div class="card">
+        <h3><i class="fas fa-certificate"></i> সনদের ধরণ</h3>
+        
+        <div class="sanad-type-list" id="sanadTypes">
+            <!-- Will be populated by JavaScript -->
+        </div>
+        
+        <div style="margin-top: 15px;">
+            <label id="sanadTypeLabel">সনদ ধরন নির্বাচন</label>
+            <select id="certType" onchange="changeCertificateType()">
+                <!-- Will be populated by JavaScript -->
+            </select>
+        </div>
+        
+        <!-- Custom Title for Testimonial Certificate -->
+        <div id="customTitleContainer" style="display: none; margin-top: 15px;">
+            <label id="customTitleLabel">কাস্টম সনদ টাইটেল</label>
+            <input type="text" id="customTitle" placeholder="সনদের কাস্টম টাইটেল লিখুন" oninput="updatePreview()">
+        </div>
+    </div>
+
+    <!-- Design Customization -->
+    <div class="card">
+        <h3><i class="fas fa-palette"></i> ডিজাইন কাস্টমাইজেশন</h3>
+        
+        <div class="color-picker-group">
+            <div class="color-picker">
+                <label id="textColorLabel">টেক্সট কালার</label>
+                <input type="color" id="textColor" value="#000000" oninput="changeTextColor(this.value)">
+            </div>
+            <div class="color-picker">
+                <label id="bgColorLabel">ব্যাকগ্রাউন্ড কালার</label>
+                <input type="color" id="bgColor" value="#ffffff" oninput="changeBgColor(this.value)">
+            </div>
+        </div>
+        
+        <div style="margin-top: 15px;">
+            <label id="borderColorLabel">সীমানা রং</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="color" id="borderColor" value="#006a4e" oninput="changeBorderColor(this.value)" style="flex: 1;">
+                <button class="reset-btn" onclick="resetColors()">
+                    <i class="fas fa-redo"></i> রিসেট
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Media Upload -->
+    <div class="card">
+        <h3><i class="fas fa-images"></i> লোগো ও ফটো অপশন</h3>
+        
+        <label id="logoLabel">ইউনিয়ন লোগো</label>
+        <div class="file-upload">
+            <div class="file-upload-btn">
+                <i class="fas fa-upload"></i> <span id="uploadLogoText">লোগো আপলোড করুন</span>
+            </div>
+            <input type="file" accept="image/*" onchange="uploadMedia(this, 'mainLogo')">
+        </div>
+        
+        <label id="photoLabel">আবেদনকারীর ফটো</label>
+        <div class="file-upload">
+            <div class="file-upload-btn">
+                <i class="fas fa-user-circle"></i> <span id="uploadPhotoText">ফটো আপলোড করুন</span>
+            </div>
+            <input type="file" accept="image/*" onchange="uploadMedia(this, 'userPhoto')">
+        </div>
+        
+        <label id="watermarkLabel">ওয়াটারমার্ক টাইপ</label>
+        <select id="wmType" onchange="updateWatermarkControls()">
+            <option value="BD" id="wmBD">বাংলাদেশ সরকারী লোগো</option>
+            <option value="UP" id="wmUP">ইউনিয়ন লোগো</option>
+            <option value="NONE" id="wmNone">ওয়াটারমার্ক নেই</option>
+        </select>
+        
+        <!-- Watermark Controls -->
+        <div class="watermark-controls" style="margin-top: 10px; display: none;" id="watermarkControls">
+            <label id="opacityLabel">ওয়াটারমার্ক স্বচ্ছতা</label>
+            <input type="range" id="watermarkOpacity" min="5" max="50" value="15" oninput="updateWatermarkOpacity(this.value)">
+            <span id="opacityValue">15%</span>
+        </div>
+        
+        <!-- Watermark Size Control -->
+        <div class="watermark-controls" style="margin-top: 10px; display: none;" id="watermarkSizeControls">
+            <label id="sizeLabel">ওয়াটারমার্ক সাইজ</label>
+            <input type="range" id="watermarkSize" min="100" max="500" value="300" oninput="updateWatermarkSize(this.value)">
+            <span id="sizeValue">300px</span>
+        </div>
+        
+        <div style="margin-top: 15px;">
+            <label style="display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="colorWatermark" checked onchange="toggleWatermarkColor()">
+                <span>রঙিন ওয়াটারমার্ক</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Certificate Details -->
+    <div class="card" id="detailsCard">
+        <h3><i class="fas fa-info-circle"></i> <span id="detailsTitle">সনদ তথ্য</span></h3>
+        
+        <div class="form-row">
+            <div>
+                <label id="certNoLabel">সনদ নং (Certificate No)</label>
+                <div class="cert-no-generator" style="display: flex; gap: 10px;">
+                    <input type="text" id="certNo" placeholder="সনদ নং লিখুন" value="২০২৫/০১/০০১" oninput="updatePreview()">
+                    <button onclick="generateCertNo()" style="background: var(--accent); color: #333; border: none; border-radius: 6px; padding: 0 15px; cursor: pointer; font-weight: bold;">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <label id="dateLabel">তারিখ (Date)</label>
+                <input type="text" id="date" value="৩১ জানুয়ারী ২০২৬" oninput="updatePreview()">
+            </div>
+        </div>
+        
+        <label id="applicantLabel">আবেদনকারীর নাম (Applicant Name)</label>
+        <input type="text" id="applicantName" placeholder="আবেদনকারীর পূর্ণ নাম" oninput="updatePreview()">
+        
+        <label id="fatherLabel">পিতার নাম (Father's Name)</label>
+        <input type="text" id="fatherName" placeholder="পিতার নাম" oninput="updatePreview()">
+        
+        <label id="motherLabel">মাতার নাম (Mother's Name)</label>
+        <input type="text" id="motherName" placeholder="মাতার নাম" oninput="updatePreview()">
+        
+        <label id="nidLabel">জাতীয় পরিচয়পত্র নং (NID No)</label>
+        <input type="text" id="nidNo" placeholder="জাতীয় পরিচয়পত্র নম্বর" oninput="updatePreview()">
+        
+        <label id="addressLabel">ঠিকানা (Address)</label>
+        <textarea id="address" rows="2" placeholder="স্থায়ী ঠিকানা" oninput="updatePreview()"></textarea>
+        
+        <label id="bodyTextLabel">সনদ বিবরণ (Certificate Details)</label>
+        <textarea id="bodyText" rows="3" placeholder="সনদের সম্পূর্ণ বিবরণ এখানে লিখুন..." oninput="updatePreview()"></textarea>
+        
+        <!-- Additional text line for specific certificates -->
+        <div id="additionalTextLineContainer" style="display: none;">
+            <label id="additionalTextLabel">টেবিলের নিচের অতিরিক্ত লাইন</label>
+            <textarea id="additionalTextLine" rows="1" placeholder="টেবিলের নিচে প্রদর্শিত হবে (শুধুমাত্র ওয়ারিশ/পারিবারিক/উত্তরাধিকার সনদে)" oninput="updatePreview()"></textarea>
+        </div>
+        
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="loadTemplateData()">
+                <i class="fas fa-magic"></i> <span id="autoFillText">অটো ফিল করুন</span>
+            </button>
+            <button class="btn btn-secondary" onclick="clearForm()">
+                <i class="fas fa-redo"></i> <span id="clearText">ক্লিয়ার করুন</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Table Input for Members -->
+    <div id="tableInputArea" class="card" style="display:none;">
+        <h3><i class="fas fa-users"></i> <span id="memberTitle">সদস্য তথ্য (ওয়ারিশ/পারিবারিক/উত্তরাধিকার সনদ)</span></h3>
+        
+        <div id="memberInputs">
+            <!-- Member rows will be added here -->
+        </div>
+        
+        <button class="btn btn-primary" onclick="addMemberRow()" style="width:100%;">
+            <i class="fas fa-plus"></i> <span id="addMemberText">নতুন সদস্য যোগ করুন</span>
+        </button>
+        
+        <div style="margin-top: 15px; text-align: center;">
+            <small style="color: #ddd;">টেবিলটি স্বয়ংক্রিয়ভাবে A4 সাইজে ফিট হবে। সর্বোচ্চ ১৫ জন সদস্য যোগ করা যাবে।</small>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Panel -->
+<div class="preview-panel">
+    <div class="a4-page" id="certificatePage">
+        <img id="wmImg" src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg" class="watermark">
+        
+        <div class="content-wrapper">
+            <div class="header-top-row">
+                <div class="logo-box">
+                    <img id="mainLogo" src="https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg">
+                </div>
+                <div class="header-text">
+                    <p id="hGov">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</p>
+                    <h1 id="hUni" title="খলিলপুর ইউনিয়ন পরিষদ">খলিলপুর ইউনিয়ন পরিষদ</h1>
+                    <div class="header-contact" id="unionContact">
+                        <div>ফোন: ০১৭১২-৩৪৫৬৭৮ | ইমেইল: union@example.com</div>
+                        <div>ওয়েবসাইট: www.union.gov.bd</div>
+                    </div>
+                    <p id="hLoc">উপজেলা: মৌলভীবাজার সদর, জেলা: মৌলভীবাজার</p>
+                </div>
+                <div class="photo-box">
+                    <img id="userPhoto" src="" alt="আবেদনকারীর ফটো">
+                </div>
+            </div>
+
+            <div class="header-lines">
+                <div class="hr-thin"></div>
+                <div class="hr-thin"></div>
+            </div>
+
+            <div class="cert-title" id="outTitle">ওয়ারিশ সনদ</div>
+
+            <div class="meta-info">
+                <span id="outNo">সনদ নং: ২০২৫/০১/০০১</span>
+                <span id="outDate">তারিখ: ৩১ জানুয়ারী ২০২৬</span>
+            </div>
+
+            <div class="main-content">
+                <div class="cert-body" id="outBody">
+                    <!-- Content will be loaded by JavaScript -->
+                </div>
+
+                <div class="table-container" id="tableContainer">
+                    <table class="member-table" id="outTable">
+                        <thead>
+                            <tr id="tableHead">
+                                <!-- Table headers will be loaded by JavaScript -->
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Table rows will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="table-footer-text" id="tableFooterText"></div>
+            </div>
+
+            <div class="footer">
+                <div class="sign-box">
+                    <div class="sign-line"></div>
+                    <p id="fPrep">তদন্তকারীর স্বাক্ষর</p>
+                    <p id="investigatorName">নাম: রহিম উদ্দিন</p>
+                    <p id="investigatorDesignation">পদবী: সহকারী কমিশনার</p>
+                </div>
+                <div class="sign-box">
+                    <div class="sign-line"></div>
+                    <p id="chairmanTitle"><strong>চেয়ারম্যান</strong></p>
+                    <p id="fUniDisp">খলিলপুর ইউনিয়ন পরিষদ</p>
+                    <p id="chairmanName">মোহাম্মদ আলী</p>
+                </div>
+            </div>
+            
+            <!-- Updated Developer credit -->
+            <div class="developer-credit">
+                <span id="devCredit">STUDENT CARE CTC, Moulvibazar | Contact: 01637746468 | Email: studentcare3123@gmail.com</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Print Button Only -->
+<button class="print-btn" onclick="window.print()" title="প্রিন্ট করুন (A4)">
+    <i class="fas fa-print"></i>
+</button>
+
+<script>
+    // Performance optimization: Debounce function
+    let renderTimeout;
+    function updatePreview() {
+        clearTimeout(renderTimeout);
+        renderTimeout = setTimeout(render, 50);
+    }
+
+    // Show loading
+    function showLoading() {
+        document.getElementById('loading').style.display = 'block';
+    }
+    
+    function hideLoading() {
+        document.getElementById('loading').style.display = 'none';
+    }
+
+    // UPDATED: Complete data for Moulvibazar district with 7 upazilas and 67 unions
+    const unions = {
+        BN: {
+            MoulvibazarSadar: [
+                "০১ নং খলিলপুর ইউনিয়ন পরিষদ",
+                "০২ নং মনুমুখ ইউনিয়ন পরিষদ",
+                "০৩ নং কামালপুর ইউনিয়ন পরিষদ",
+                "০৪ নং আপার কাগাবলা ইউনিয়ন পরিষদ",
+                "০৫ নং আখাইলকুড়া ইউনিয়ন পরিষদ",
+                "০৬ নং একাটুনা ইউনিয়ন পরিষদ",
+                "০৭ নং চাঁদনীঘাট ইউনিয়ন পরিষদ",
+                "০৮ নং কনকপুর ইউনিয়ন পরিষদ",
+                "০৯ নং আমতৈল ইউনিয়ন পরিষদ",
+                "১০ নং নাজিরাবাদ ইউনিয়ন পরিষদ",
+                "১১ নং মোস্তফাপুর ইউনিয়ন পরিষদ",
+                "১২ নং গিয়াসনগর ইউনিয়ন পরিষদ"
+            ],
+            Barlekha: [
+                "১ নং বর্ণি ইউনিয়ন পরিষদ",
+                "২ নং দাসের বাজার ইউনিয়ন পরিষদ",
+                "৩ নং নিজবাহাদুরপুর ইউনিয়ন পরিষদ",
+                "৪ নং উত্তর শাহবাজপুর ইউনিয়ন পরিষদ",
+                "৫ নং দক্ষিণ শাহবাজপুর ইউনিয়ন পরিষদ",
+                "৬ নং বড়লেখা ইউনিয়ন পরিষদ",
+                "৭ নং তালিমপুর ইউনিয়ন পরিষদ",
+                "৮ নং দক্ষিণভাগ (উত্তর) ইউনিয়ন পরিষদ",
+                "৯ নং সুজানগর ইউনিয়ন পরিষদ",
+                "১০ নং দক্ষিণভাগ (দক্ষিণ) ইউনিয়ন পরিষদ"
+            ],
+            Kamalganj: [
+                "১নং রহিমপুর ইউনিয়ন পরিষদ",
+                "২নং পতনঊষার ইউনিয়ন পরিষদ",
+                "৩নং মুন্সিবাজার ইউনিয়ন পরিষদ",
+                "৪নং শমসেরনগর ইউনিয়ন পরিষদ",
+                "৫নং কমলগঞ্জ ইউনিয়ন পরিষদ",
+                "৬নং আলীনগর ইউনিয়ন পরিষদ",
+                "৭নং আদমপুর ইউনিয়ন পরিষদ",
+                "৮নং মাধবপুর ইউনিয়ন পরিষদ",
+                "৯নং ইসলামপুর ইউনিয়ন পরিষদ"
+            ],
+            Kulaura: [
+                "১নং বরমচাল ইউনিয়ন পরিষদ",
+                "২নং ভূকশিমইল ইউনিয়ন পরিষদ",
+                "৩নং ভাটেরা ইউনিয়ন পরিষদ",
+                "৪নং জয়চণ্ডী ইউনিয়ন পরিষদ",
+                "৫নং ব্রাহ্মণবাজার ইউনিয়ন পরিষদ",
+                "৬নং কাদিপুর ইউনিয়ন পরিষদ",
+                "৭নং কুলাউড়া ইউনিয়ন পরিষদ",
+                "৮নং রাউৎগাঁও ইউনিয়ন পরিষদ",
+                "৯নং টিলাগাঁও ইউনিয়ন পরিষদ",
+                "১০নং হাজীপুর ইউনিয়ন পরিষদ",
+                "১১নং শরীফপুর ইউনিয়ন পরিষদ",
+                "১২নং পৃথিমপাশা ইউনিয়ন পরিষদ",
+                "১৩নং কর্মধা ইউনিয়ন পরিষদ"
+            ],
+            Rajnagar: [
+                "১নং ফতেপুর ইউনিয়ন পরিষদ",
+                "২নং উত্তরভাগ ইউনিয়ন পরিষদ",
+                "৩নং মুন্সিবাজার ইউনিয়ন পরিষদ",
+                "৪নং পাঁচগাঁও ইউনিয়ন পরিষদ",
+                "৫নং রাজনগর ইউনিয়ন পরিষদ",
+                "৬নং টেংরা ইউনিয়ন পরিষদ",
+                "৭নং কামারচাক ইউনিয়ন পরিষদ",
+                "৮নং মনসুরনগর ইউনিয়ন পরিষদ"
+            ],
+            Sreemangal: [
+                "১নং মির্জাপুর ইউনিয়ন পরিষদ",
+                "২নং ভূনবীর ইউনিয়ন পরিষদ",
+                "৩নং শ্রীমঙ্গল ইউনিয়ন পরিষদ",
+                "৪নং সিন্দুরখান ইউনিয়ন পরিষদ",
+                "৫নং কালাপুর ইউনিয়ন পরিষদ",
+                "৬নং আশিদ্রোন ইউনিয়ন পরিষদ",
+                "৭নং রাজঘাট ইউনিয়ন পরিষদ",
+                "৮নং কালিঘাট ইউনিয়ন পরিষদ",
+                "৯নং সাতগাঁও ইউনিয়ন পরিষদ"
+            ],
+            Juri: [
+                "৩নং পূর্বজুড়ী ইউনিয়ন পরিষদ",
+                "২নং পশ্চিমজুড়ী ইউপি",
+                "১নং জায়ফরনগর ইউনিয়ন",
+                "৫নং সাগরনাল ইউনিয়ন পরিষদ",
+                "৪নং গোয়ালবাড়ী ইউনিয়ন পরিষদ",
+                "৬নং ফুলতলা ইউপি ইউনিয়ন পরিষদ"
+            ]
+        },
+        EN: {
+            MoulvibazarSadar: [
+                "01 No. Khalilpur Union Parishad",
+                "02 No. Manumukh Union Parishad",
+                "03 No. Kamalpur Union Parishad",
+                "04 No. Upper Kagabla Union Parishad",
+                "05 No. Akhailkura Union Parishad",
+                "06 No. Ekatuna Union Parishad",
+                "07 No. Chandnighat Union Parishad",
+                "08 No. Kanakpur Union Parishad",
+                "09 No. Amoil Union Parishad",
+                "10 No. Nazirabad Union Parishad",
+                "11 No. Mostafapur Union Parishad",
+                "12 No. Giasnagar Union Parishad"
+            ],
+            Barlekha: [
+                "01 No. Barni Union Parishad",
+                "02 No. Daser Bazar Union Parishad",
+                "03 No. Nijbahadurpur Union Parishad",
+                "04 No. North Shahbazpur Union Parishad",
+                "05 No. South Shahbazpur Union Parishad",
+                "06 No. Barlekha Union Parishad",
+                "07 No. Talimpur Union Parishad",
+                "08 No. Dakshinbhag (North) Union Parishad",
+                "09 No. Sujanagar Union Parishad",
+                "10 No. Dakshinbhag (South) Union Parishad"
+            ],
+            Kamalganj: [
+                "01 No. Rahimpur Union Parishad",
+                "02 No. Patan Ushar Union Parishad",
+                "03 No. Munsibazar Union Parishad",
+                "04 No. Shamshernagar Union Parishad",
+                "05 No. Kamalganj Union Parishad",
+                "06 No. Alinagar Union Parishad",
+                "07 No. Adampur Union Parishad",
+                "08 No. Madhabpur Union Parishad",
+                "09 No. Islampur Union Parishad"
+            ],
+            Kulaura: [
+                "01 No. Baramchal Union Parishad",
+                "02 No. Bhukshimail Union Parishad",
+                "03 No. Bhatera Union Parishad",
+                "04 No. Joychandi Union Parishad",
+                "05 No. Brahmanbazar Union Parishad",
+                "06 No. Kadipur Union Parishad",
+                "07 No. Kulaura Union Parishad",
+                "08 No. Rautgaon Union Parishad",
+                "09 No. Tilagaon Union Parishad",
+                "10 No. Hajipur Union Parishad",
+                "11 No. Sharifpur Union Parishad",
+                "12 No. Prithimpasha Union Parishad",
+                "13 No. Karmadha Union Parishad"
+            ],
+            Rajnagar: [
+                "01 No. Fatepur Union Parishad",
+                "02 No. Uttarbhag Union Parishad",
+                "03 No. Munsibazar Union Parishad",
+                "04 No. Panchgaon Union Parishad",
+                "05 No. Rajnagar Union Parishad",
+                "06 No. Tengra Union Parishad",
+                "07 No. Kamarchak Union Parishad",
+                "08 No. Mansurnagar Union Parishad"
+            ],
+            Sreemangal: [
+                "01 No. Mirzapur Union Parishad",
+                "02 No. Bhunbir Union Parishad",
+                "03 No. Srimangal Union Parishad",
+                "04 No. Sindurkhan Union Parishad",
+                "05 No. Kalapur Union Parishad",
+                "06 No. Ashidron Union Parishad",
+                "07 No. Rajghat Union Parishad",
+                "08 No. Kalighat Union Parishad",
+                "09 No. Satgaon Union Parishad"
+            ],
+            Juri: [
+                "03 No. Purbajuri Union Parishad",
+                "02 No. Pashchimjuri Union Parishad",
+                "01 No. Jaifarnagar Union Parishad",
+                "05 No. Sagarnal Union Parishad",
+                "04 No. Nangoalbari Union Parishad",
+                "06 No. Phultala UP Union Parishad"
+            ]
+        }
+    };
+
+    // Labels for UI elements in both languages
+    const labels = {
+        BN: {
+            upazilaLabel: "উপজেলা",
+            unionLabel: "ইউনিয়ন পরিষদ",
+            sanadTypeLabel: "সনদ ধরন নির্বাচন",
+            logoLabel: "ইউনিয়ন লোগো",
+            photoLabel: "আবেদনকারীর ফটো",
+            watermarkLabel: "ওয়াটারমার্ক টাইপ",
+            wmBD: "বাংলাদেশ সরকারী লোগো",
+            wmUP: "ইউনিয়ন লোগো",
+            wmNone: "ওয়াটারমার্ক নেই",
+            detailsTitle: "সনদ তথ্য",
+            certNoLabel: "সনদ নং",
+            dateLabel: "তারিখ",
+            applicantLabel: "আবেদনকারীর নাম",
+            fatherLabel: "পিতার নাম",
+            motherLabel: "মাতার নাম",
+            nidLabel: "জাতীয় পরিচয়পত্র নং",
+            addressLabel: "ঠিকানা",
+            bodyTextLabel: "সনদ বিবরণ",
+            additionalTextLabel: "টেবিলের নিচের অতিরিক্ত লাইন",
+            autoFillText: "অটো ফিল করুন",
+            clearText: "ক্লিয়ার করুন",
+            memberTitle: "সদস্য তথ্য (ওয়ারিশ/পারিবারিক/উত্তরাধিকার সনদ)",
+            addMemberText: "নতুন সদস্য যোগ করুন",
+            uploadLogoText: "লোগো আপলোড করুন",
+            uploadPhotoText: "ফটো আপলোড করুন",
+            tableHeaders: ["ক্রমিক নং", "নাম", "জাতীয় পরিচয়পত্র নং", "জন্ম তারিখ", "সম্পর্ক"],
+            signInvestigator: "তদন্তকারীর স্বাক্ষর",
+            investigatorNameLabel: "তদন্তকারীর নাম",
+            investigatorDesignationLabel: "তদন্তকারীর পদবী",
+            chairmanTitle: "চেয়ারম্যান",
+            chairmanNameLabel: "চেয়ারম্যানের নাম",
+            chairmanTitleLabel: "চেয়ারম্যান পদবী",
+            unionPhoneLabel: "ফোন নম্বর",
+            unionEmailLabel: "ইমেইল",
+            unionWebsiteLabel: "ওয়েবসাইট",
+            unionSizeLabel: "ইউনিয়ন নামের সাইজ",
+            globalFontSizeLabel: "সব টেক্সটের সাইজ",
+            bodyFontSizeLabel: "বডি টেক্সট সাইজ",
+            titleFontSizeLabel: "টাইটেল সাইজ",
+            customTitleLabel: "কাস্টম সনদ টাইটেল",
+            sizeLabel: "ওয়াটারমার্ক সাইজ",
+            gov: "গণপ্রজাতন্ত্রী বাংলাদেশ সরকার",
+            district: "মৌলভীবাজার",
+            warishAdditionalText: "আমি তাহার আত্তার মাগফিরাত কামনা করছি ও ওয়ারিশদের সর্বাঙ্গীণ মঙ্গল কামনা করছি।",
+            familyAdditionalText: "উক্ত পরিবারের সদস্যদের সম্পর্কে ইউনিয়ন পরিষদের কোন আপত্তি নাই।",
+            uttoradikarAdditionalText: "উত্তরাধিকার সংক্রান্ত আইনানুযায়ী উক্ত ওয়ারিশদের অধিকার প্রতিষ্ঠিত আছে।",
+            textColorLabel: "টেক্সট কালার",
+            bgColorLabel: "ব্যাকগ্রাউন্ড কালার",
+            borderColorLabel: "সীমানা রং",
+            opacityLabel: "ওয়াটারমার্ক স্বচ্ছতা",
+            loadingText: "লোড হচ্ছে...",
+            devCredit: "STUDENT CARE CTC, Moulvibazar | Contact: 01637746468 | Email: studentcare3123@gmail.com"
+        },
+        EN: {
+            upazilaLabel: "Upazila",
+            unionLabel: "Union Parishad",
+            sanadTypeLabel: "Select Certificate Type",
+            logoLabel: "Union Logo",
+            photoLabel: "Applicant Photo",
+            watermarkLabel: "Watermark Type",
+            wmBD: "Bangladesh Government Logo",
+            wmUP: "Union Logo",
+            wmNone: "No Watermark",
+            detailsTitle: "Certificate Information",
+            certNoLabel: "Certificate No",
+            dateLabel: "Date",
+            applicantLabel: "Applicant Name",
+            fatherLabel: "Father's Name",
+            motherLabel: "Mother's Name",
+            nidLabel: "National ID No",
+            addressLabel: "Address",
+            bodyTextLabel: "Certificate Details",
+            additionalTextLabel: "Additional Line Below Table",
+            autoFillText: "Auto Fill",
+            clearText: "Clear Form",
+            memberTitle: "Member Information (Heir/Family/Inheritance Certificate)",
+            addMemberText: "Add New Member",
+            uploadLogoText: "Upload Logo",
+            uploadPhotoText: "Upload Photo",
+            tableHeaders: ["Sl No", "Name", "National ID No", "Date of Birth", "Relation"],
+            signInvestigator: "Signature of Investigator",
+            investigatorNameLabel: "Investigator Name",
+            investigatorDesignationLabel: "Investigator Designation",
+            chairmanTitle: "Chairman",
+            chairmanNameLabel: "Chairman Name",
+            chairmanTitleLabel: "Chairman Designation",
+            unionPhoneLabel: "Phone Number",
+            unionEmailLabel: "Email",
+            unionWebsiteLabel: "Website",
+            unionSizeLabel: "Union Name Size",
+            globalFontSizeLabel: "Global Font Size",
+            bodyFontSizeLabel: "Body Text Size",
+            titleFontSizeLabel: "Title Font Size",
+            customTitleLabel: "Custom Certificate Title",
+            sizeLabel: "Watermark Size",
+            gov: "Government of the People's Republic of Bangladesh",
+            district: "Moulvibazar",
+            warishAdditionalText: "I pray for the salvation of his soul and wish all-round welfare for the heirs.",
+            familyAdditionalText: "The Union Parishad has no objection regarding the members of this family.",
+            uttoradikarAdditionalText: "The rights of the heirs are established according to the inheritance law.",
+            textColorLabel: "Text Color",
+            bgColorLabel: "Background Color",
+            borderColorLabel: "Border Color",
+            opacityLabel: "Watermark Opacity",
+            loadingText: "Loading...",
+            devCredit: "STUDENT CARE CTC, Moulvibazar | Contact: 01637746468 | Email: studentcare3123@gmail.com"
+        }
+    };
+
+    // Sanad Types with different text for each in both languages
+    const sanadTypes = [
+        {
+            id: "warish",
+            nameBN: "ওয়ারিশ সনদ",
+            nameEN: "Heir Certificate",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি]। তাহার স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা ছিলেন। বিগত [তারিখ] তারিখে তিনি মৃত্যুবরণ করিলে তিনি নিম্নলিখিত ওয়ারিশ/উত্তরাধিকারীগণ রেখে যান। তন্মধ্যে তাঁহার স্ত্রী/স্বামী [নাম], পুত্র [নাম], কন্যা [নাম], পিতা [নাম], মাতা [নাম] জীবিত আছেন। অত্র ইউনিয়ন পরিষদের রেকর্ড অনুযায়ী তাহার কোন ঋণ/দেনা নাই। তিনি একজন সচ্চরিত্র, ন্যায়পরায়ণ ও শান্তিপ্রিয় ব্যক্তি ছিলেন।",
+            bodyEN: "This is to certify that Mr. [Name], son of [Father's Name], mother [Mother's Name], National ID No: [NID]. His permanent address: [Address]. He was a permanent resident of this union. He passed away on [Date] leaving behind the following heirs. Among them, his wife/husband [Name], son [Name], daughter [Name], father [Name], mother [Name] are alive. According to the records of this Union Parishad, he has no debt/liability. He was a person of good character, honest and peaceful."
+        },
+        {
+            id: "family",
+            nameBN: "পারিবারিক সনদ",
+            nameEN: "Family Certificate",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি], স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা। তিনি একজন সচ্চরিত্র, ন্যায়পরায়ণ ও শান্তিপ্রিয় ব্যক্তি। তাহার পরিবারের সদস্যদের মধ্যে কোনো অপরাধী বা ফৌজদারী মামলা নাই। তাহার পরিবারের সদস্যগণ অত্র ইউনিয়নের সুশৃঙ্খল ও আইনানুগ জীবনযাপন করিতেছেন। উক্ত ব্যক্তির পরিবারের সদস্যদের বিবরণ নিম্নরূপ:",
+            bodyEN: "This is to certify that Mr. [Name], son of [Father's Name], mother [Mother's Name], National ID No: [NID], permanent address: [Address]. He is a permanent resident of this union. He is a person of good character, honest and peaceful. There are no criminals or criminal cases among the members of his family. The members of his family lead a disciplined and lawful life in this union. Details of his family members are as follows:"
+        },
+        {
+            id: "uttoradikar",
+            nameBN: "উত্তরাধিকার সনদ",
+            nameEN: "Inheritance Certificate",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি]। তাহার স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা ছিলেন। তিনি [তারিখ] তারিখে মৃত্যুবরণ করেন। মৃত্যুকালে তিনি নিম্নলিখিত সম্পত্তি রেখে যান: [সম্পত্তির বিবরণ]। উক্ত সম্পত্তির উপর উক্ত মৃত ব্যক্তির নিম্নলিখিত উত্তরাধিকারীগণের আইনানুগ দাবি প্রতিষ্ঠিত আছে। তাহার উত্তরাধিকারীগণের বিবরণ নিম্নরূপ:",
+            bodyEN: "This is to certify that Mr. [Name], son of [Father's Name], mother [Mother's Name], National ID No: [NID]. His permanent address: [Address]. He was a permanent resident of this union. He passed away on [Date]. At the time of his death, he left behind the following properties: [Property Details]. The legal claim of the following heirs of the deceased on the said property is established. Details of his heirs are as follows:"
+        },
+        {
+            id: "character",
+            nameBN: "চারিত্রিক সনদ",
+            nameEN: "Character Certificate",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব/জনাবা [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি], স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা। গত [বছর] বছর যাবৎ আমি তাহাকে চিনি এবং আমার জানামতে তিনি একজন সচ্চরিত্র, ন্যায়পরায়ণ, দেশপ্রেমিক, ধর্মপরায়ণ ও শান্তিপ্রিয় ব্যক্তি। তাহার বিরুদ্ধে ইউনিয়ন পরিষদের রেকর্ডে কোন প্রকার ফৌজদারী বা দেওয়ানী মামলা নাই। তিনি সমাজসেবা ও জনকল্যাণমূলক কাজে সক্রিয়ভাবে অংশগ্রহণ করেন।",
+            bodyEN: "This is to certify that Mr./Ms. [Name], son/daughter of [Father's Name], mother [Mother's Name], National ID No: [NID], permanent address: [Address]. He/She is a permanent resident of this union. I have known him/her for the last [Years] years and to the best of my knowledge, he/she is a person of good character, honest, patriotic, religious and peaceful. There are no criminal or civil cases against him/her in the records of the Union Parishad. He/She actively participates in social service and welfare activities."
+        },
+        {
+            id: "income",
+            nameBN: "আয়ের প্রত্যয়ন",
+            nameEN: "Income Certificate",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব/জনাবা [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি], স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা। তিনি [পেশা] পেশায় নিয়োজিত আছেন। অত্র ইউনিয়ন পরিষদের রেকর্ড অনুযায়ী এবং স্থানীয় তদন্তের মাধ্যমে জানা গিয়েছে যে, উক্ত ব্যক্তির বার্ষিক আয়ের পরিমাণ প্রায় [টাকা] (কেবলমাত্র [টাকা কথায়]) টাকা মাত্র। তাহার পরিবারের মোট সদস্য সংখ্যা [সংখ্যা] জন। পরিবারের কোন স্থাবর/অস্থাবর সম্পত্তি নাই।",
+            bodyEN: "This is to certify that Mr./Ms. [Name], son/daughter of [Father's Name], mother [Mother's Name], National ID No: [NID], permanent address: [Address]. He/She is a permanent resident of this union. He/She is engaged in [Profession] profession. According to the records of this Union Parishad and through local investigation, it is known that his/her annual income is approximately [Amount] (Only [Amount in words]) Taka only. The total number of members in his/her family is [Number]. The family has no movable/immovable property."
+        },
+        {
+            id: "unmarried",
+            nameBN: "অবিবাহিত সনদ",
+            nameEN: "Unmarried Certificate",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব/জনাবা [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি], স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা। অত্র ইউনিয়ন পরিষদের রেজিস্ট্রি রেকর্ড এবং স্থানীয় তদন্তের মাধ্যমে জানা গিয়েছে যে, উক্ত ব্যক্তি এখনও অবিবাহিত। তাহার জন্ম নিবন্ধন সনদ/জন্ম সনদ অনুযায়ী জন্ম তারিখ [তারিখ]। তিনি একজন সচ্চরিত্র, ন্যায়পরায়ণ ও শান্তিপ্রিয় ব্যক্তি।",
+            bodyEN: "This is to certify that Mr./Ms. [Name], son/daughter of [Father's Name], mother [Mother's Name], National ID No: [NID], permanent address: [Address]. He/She is a permanent resident of this union. According to the registry records of this Union Parishad and through local investigation, it is known that the said person is still unmarried. According to his/her birth registration certificate/birth certificate, date of birth is [Date]. He/She is a person of good character, honest and peaceful."
+        },
+        {
+            id: "death",
+            nameBN: "মৃত্যু সনদ",
+            nameEN: "Death Certificate",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব/জনাবা [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি], স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা ছিলেন। তিনি [তারিখ] তারিখে স্থানীয় সময় [সময়] ঘটিকার সময় [স্থান] এ মৃত্যুবরণ করেন। মৃত্যুর কারণ [কারণ]। মৃত্যুকালে তাহার বয়স ছিল আনুমানিক [বয়স] বছর। মৃত ব্যক্তির দাফন/সৎকার কাজ [তারিখ] তারিখে [স্থান] এ সম্পন্ন হয়।",
+            bodyEN: "This is to certify that Mr./Ms. [Name], son/daughter of [Father's Name], mother [Mother's Name], National ID No: [NID], permanent address: [Address]. He/She was a permanent resident of this union. He/She passed away on [Date] at local time [Time] at [Place]. Cause of death was [Cause]. At the time of death, his/her age was approximately [Age] years. The burial/cremation of the deceased was completed on [Date] at [Place]."
+        },
+        {
+            id: "birth",
+            nameBN: "জন্ম তারিখ সংশোধন",
+            nameEN: "Birth Date Correction",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব/জনাবা [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি], স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা। অত্র ইউনিয়ন পরিষদের রেকর্ড, স্থানীয় তদন্ত এবং প্রাসঙ্গিক কাগজপত্র পরীক্ষা করে জানা গিয়েছে যে, তাহার সঠিক জন্ম তারিখ হল [সঠিক তারিখ]। পূর্বের রেকর্ডে [ভুল তারিখ] তারিখ ভুলভাবে লিপিবদ্ধ ছিল। সংশোধিত জন্ম তারিখ সমস্ত সরকারি ও বেসরকারি কাজে ব্যবহারের জন্য সঠিক বলে গৃহীত হইবে।",
+            bodyEN: "This is to certify that Mr./Ms. [Name], son/daughter of [Father's Name], mother [Mother's Name], National ID No: [NID], permanent address: [Address]. He/She is a permanent resident of this union. After examining the records of this Union Parishad, local investigation and relevant documents, it is known that his/her correct date of birth is [Correct Date]. The previous record had incorrectly recorded [Wrong Date] as the date of birth. The corrected date of birth will be accepted as correct for all government and private purposes."
+        },
+        {
+            id: "noc",
+            nameBN: "অনাপত্তি সনদ (NOC)",
+            nameEN: "No Objection Certificate (NOC)",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব/জনাবা [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি], স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা। অত্র ইউনিয়ন পরিষদের রেকর্ড পরীক্ষা করে জানা গিয়েছে যে, উক্ত ব্যক্তির বিরুদ্ধে ইউনিয়ন পরিষদের পক্ষ থেকে কোন আপত্তি নাই। তিনি একজন সচ্চরিত্র, ন্যায়পরায়ণ ও শান্তিপ্রিয় ব্যক্তি। তিনি সমাজসেবা ও জনকল্যাণমূলক কাজে সক্রিয়ভাবে অংশগ্রহণ করেন।",
+            bodyEN: "This is to certify that Mr./Ms. [Name], son/daughter of [Father's Name], mother [Mother's Name], National ID No: [NID], permanent address: [Address]. He/She is a permanent resident of this union. After examining the records of this Union Parishad, it is known that there is no objection from the Union Parishad against him/her. He/She is a person of good character, honest and peaceful. He/She actively participates in social service and welfare activities."
+        },
+        {
+            id: "landless",
+            nameBN: "ভূমিহীন সনদ",
+            nameEN: "Landless Certificate",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব/জনাবা [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি], স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা। অত্র ইউনিয়ন পরিষদের রেকর্ড এবং স্থানীয় তদন্তের মাধ্যমে জানা গিয়েছে যে, উক্ত ব্যক্তি কোন জমির মালিক নন এবং সম্পূর্ণ ভূমিহীন। তাহার পরিবারে মোট সদস্য সংখ্যা [সংখ্যা] জন। পরিবারের বার্ষিক আয় প্রায় [টাকা] টাকা মাত্র। সরকারি সাহায্য/সুবিধা পাওয়ার জন্য তিনি উপযুক্ত বলে বিবেচিত হন।",
+            bodyEN: "This is to certify that Mr./Ms. [Name], son/daughter of [Father's Name], mother [Mother's Name], National ID No: [NID], permanent address: [Address]. He/She is a permanent resident of this union. Through the records of this Union Parishad and local investigation, it is known that the said person does not own any land and is completely landless. The total number of members in his/her family is [Number]. The annual income of the family is approximately [Amount] Taka only. He/She is considered eligible for government assistance/benefits."
+        },
+        {
+            id: "disability",
+            nameBN: "প্রতিবন্ধী প্রত্যয়ন",
+            nameEN: "Disability Certificate",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব/জনাবা [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি], স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা। স্থানীয় তদন্ত এবং [হাসপাতাল/চিকিৎসক] এর প্রতিবেদন অনুযায়ী তিনি [প্রতিবন্ধিতার ধরন] প্রতিবন্ধী। তাহার প্রতিবন্ধীতার হার আনুমানিক [শতকরা]%। তিনি [বছর] সাল থেকে উক্ত প্রতিবন্ধীতায় ভুগিতেছেন। সরকারি সাহায্য/সুবিধা পাওয়ার জন্য তিনি উপযুক্ত বলে বিবেচিত হন।",
+            bodyEN: "This is to certify that Mr./Ms. [Name], son/daughter of [Father's Name], mother [Mother's Name], National ID No: [NID], permanent address: [Address]. He/She is a permanent resident of this union. According to local investigation and report of [Hospital/Doctor], he/she is [Type of Disability] disabled. The percentage of his/her disability is approximately [Percentage]%. He/She has been suffering from this disability since [Year]. He/She is considered eligible for government assistance/benefits."
+        },
+        {
+            id: "education",
+            nameBN: "শিক্ষাগত প্রত্যয়ন",
+            nameEN: "Educational Certificate",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব/জনাবা [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি], স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা। তাহার শিক্ষাগত যোগ্যতা নিম্নরূপ: [শিক্ষাগত যোগ্যতার বিবরণ]। তিনি [শিক্ষা প্রতিষ্ঠান] হতে [বছর] সালে [পরীক্ষা] পরীক্ষায় উত্তীর্ণ হন। তিনি একজন মেধাবী ও পরিশ্রমী ছাত্র/ছাত্রী ছিলেন। বর্তমানে তিনি [বর্তমান অবস্থা]।",
+            bodyEN: "This is to certify that Mr./Ms. [Name], son/daughter of [Father's Name], mother [Mother's Name], National ID No: [NID], permanent address: [Address]. He/She is a permanent resident of this union. His/Her educational qualification is as follows: [Educational Qualification Details]. He/She passed the [Examination] examination in [Year] from [Educational Institution]. He/She was a talented and hardworking student. Currently he/she is [Current Status]."
+        },
+        {
+            id: "remarriage",
+            nameBN: "পুনঃবিবাহ না হওয়া",
+            nameEN: "No Remarriage Certificate",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব/জনাবা [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি], স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা। অত্র ইউনিয়ন পরিষদের রেকর্ড এবং স্থানীয় তদন্তের মাধ্যমে জানা গিয়েছে যে, উক্ত ব্যক্তি [তারিখ] তারিখে তাহার স্ত্রী/স্বামী [নাম] এর মৃত্যুর পর পুনঃবিবাহ করেন নাই। তিনি এখনও অবিবাহিত/বিধবা/বিপত্নীক হিসাবে জীবনযাপন করিতেছেন। সরকারি সাহায্য/সুবিধা পাওয়ার জন্য তিনি উপযুক্ত বলে বিবেচিত হন।",
+            bodyEN: "This is to certify that Mr./Ms. [Name], son/daughter of [Father's Name], mother [Mother's Name], National ID No: [NID], permanent address: [Address]. He/She is a permanent resident of this union. According to the records of this Union Parishad and through local investigation, it is known that the said person has not remarried after the death of his/her wife/husband [Name] on [Date]. He/She is still living as unmarried/widow/widower. He/She is considered eligible for government assistance/benefits."
+        },
+        {
+            id: "nationality",
+            nameBN: "জাতীয়তা সনদ",
+            nameEN: "Nationality Certificate",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব/জনাবা [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি], স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা। অত্র ইউনিয়ন পরিষদের রেকর্ড, ভোটার তালিকা এবং স্থানীয় তদন্তের মাধ্যমে জানা গিয়েছে যে, তিনি বাংলাদেশের স্থায়ী নাগরিক। তাহার পিতা-মাতা উভয়েই বাংলাদেশের নাগরিক ছিলেন। তিনি জন্মসূত্রে বাংলাদেশের নাগরিক। তিনি বিদেশী কোন নাগরিকত্ব ধারণ করেন না।",
+            bodyEN: "This is to certify that Mr./Ms. [Name], son/daughter of [Father's Name], mother [Mother's Name], National ID No: [NID], permanent address: [Address]. He/She is a permanent resident of this union. Through the records of this Union Parishad, voter list and local investigation, it is known that he/she is a permanent citizen of Bangladesh. Both his/her parents were citizens of Bangladesh. He/She is a citizen of Bangladesh by birth. He/She does not hold any foreign citizenship."
+        },
+        {
+            id: "testimonial",
+            nameBN: "অন্যান্য প্রত্যয়ন",
+            nameEN: "Other Testimonial",
+            bodyBN: "এই মর্মে প্রত্যয়ন করা যাইতেছে যে, জনাব/জনাবা [নাম], পিতা: [পিতার নাম], মাতা: [মাতার নাম], জাতীয় পরিচয়পত্র নং: [এনআইডি], স্থায়ী ঠিকানা: [ঠিকানা]। তিনি অত্র ইউনিয়নের স্থায়ী বাসিন্দা। তিনি একজন সচ্চরিত্র, ন্যায়পরায়ণ, দেশপ্রেমিক ও শান্তিপ্রিয় ব্যক্তি। অত্র ইউনিয়ন পরিষদের রেকর্ড অনুযায়ী তাহার বিরুদ্ধে কোন ফৌজদারী বা দেওয়ানী মামলা নাই। তিনি সমাজসেবা ও জনকল্যাণমূলক কাজে সক্রিয়ভাবে অংশগ্রহণ করেন। [অতিরিক্ত তথ্য]।",
+            bodyEN: "This is to certify that Mr./Ms. [Name], son/daughter of [Father's Name], mother [Mother's Name], National ID No: [NID], permanent address: [Address]. He/She is a permanent resident of this union. He/She is a person of good character, honest, patriotic and peaceful. According to the records of this Union Parishad, there are no criminal or civil cases against him/her. He/She actively participates in social service and welfare activities. [Additional Information]."
+        }
+    ];
+
+    // Initialize the application
+    window.onload = function() {
+        showLoading();
+        setTimeout(() => {
+            loadSanadTypes();
+            loadUnions();
+            addMemberRow(); // Add one initial row
+            
+            // Set default values
+            document.getElementById('applicantName').value = "মোঃ আব্দুল করিম";
+            document.getElementById('fatherName').value = "মৃত দরবেশ আলী";
+            document.getElementById('motherName').value = "মৃত রমিজা খাতুন";
+            document.getElementById('nidNo').value = "৫৫১৬৬৭৫২৮৬";
+            document.getElementById('address').value = "গ্রাম- চেমিরছড়া, ডাকঘর- বেতাগী-৪৩৪৮, ওয়ার্ড নং-০২, খলিলপুর ইউনিয়ন পরিষদ, উপজেলা- মৌলভীবাজার সদর, জেলা- মৌলভীবাজার";
+            
+            // Load first sanad type by default
+            selectSanadType(sanadTypes[0].id);
+            
+            // Initialize font sizes
+            updateGlobalFontSize(14);
+            updateBodyFontSize(14);
+            updateTitleFontSize(22);
+            updateUnionFontSize(22);
+            
+            // Set current date
+            setCurrentDate();
+            
+            // Initialize watermark size
+            updateWatermarkSize(300);
+            
+            render();
+            hideLoading();
+        }, 500);
+    };
+
+    // FIXED: Set current date based on language
+    function setCurrentDate() {
+        const lang = document.getElementById('lang').value;
+        const today = new Date();
+        
+        if (lang === 'BN') {
+            const day = today.getDate();
+            const monthNamesBN = ['জানুয়ারী', 'ফেব্রুয়ারী', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+            const bnNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            const bnDay = day.toString().split('').map(d => bnNumbers[parseInt(d)]).join('');
+            document.getElementById('date').value = `${bnDay} ${monthNamesBN[today.getMonth()]} ${today.getFullYear()}`;
+        } else {
+            const monthNamesEN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('date').value = `${today.getDate()} ${monthNamesEN[today.getMonth()]} ${today.getFullYear()}`;
+        }
+        updatePreview();
+    }
+
+    // FIXED: Update global font size
+    function updateGlobalFontSize(size) {
+        document.documentElement.style.setProperty('--global-font-size', size + 'px');
+        document.getElementById('globalFontSize').value = size;
+        document.getElementById('globalFontSizeValue').textContent = size + 'px';
+        updatePreview();
+    }
+
+    // FIXED: Update body font size
+    function updateBodyFontSize(size) {
+        document.documentElement.style.setProperty('--body-font-size', size + 'px');
+        document.getElementById('bodyFontSize').value = size;
+        document.getElementById('bodyFontSizeValue').textContent = size + 'px';
+        updatePreview();
+    }
+
+    // FIXED: Update title font size
+    function updateTitleFontSize(size) {
+        document.documentElement.style.setProperty('--title-font-size', size + 'px');
+        document.getElementById('titleFontSize').value = size;
+        document.getElementById('titleFontSizeValue').textContent = size + 'px';
+        updatePreview();
+    }
+
+    // FIXED: Reset all font sizes
+    function resetFontSizes() {
+        updateGlobalFontSize(14);
+        updateBodyFontSize(14);
+        updateTitleFontSize(22);
+        updateUnionFontSize(22);
+    }
+
+    // FIXED: Update union font size
+    function updateUnionFontSize(size) {
+        document.getElementById('hUni').style.fontSize = size + 'px';
+        document.getElementById('unionFontSize').value = size;
+        document.getElementById('unionFontSizeValue').textContent = size + 'px';
+        updatePreview();
+    }
+
+    // FIXED: Update watermark size
+    function updateWatermarkSize(size) {
+        document.documentElement.style.setProperty('--watermark-size', size + 'px');
+        document.getElementById('watermarkSize').value = size;
+        document.getElementById('sizeValue').textContent = size + 'px';
+        
+        const watermark = document.getElementById('wmImg');
+        watermark.style.width = size + 'px';
+        watermark.style.height = size + 'px';
+    }
+
+    // FIXED: Toggle watermark color
+    function toggleWatermarkColor() {
+        const watermark = document.getElementById('wmImg');
+        const colorCheckbox = document.getElementById('colorWatermark');
+        
+        if (colorCheckbox.checked) {
+            watermark.style.filter = 'none'; // Color
+        } else {
+            watermark.style.filter = 'grayscale(100%)'; // B&W
+        }
+    }
+
+    // FIXED: Reset union contact info
+    function resetUnionContact() {
+        const lang = document.getElementById('lang').value;
+        if (lang === 'BN') {
+            document.getElementById('unionPhone').value = '০১৭১২-৩৪৫৬৭৮';
+            document.getElementById('unionEmail').value = 'union@example.com';
+            document.getElementById('unionWebsite').value = 'www.union.gov.bd';
+        } else {
+            document.getElementById('unionPhone').value = '01712-345678';
+            document.getElementById('unionEmail').value = 'union@example.com';
+            document.getElementById('unionWebsite').value = 'www.union.gov.bd';
+        }
+        updatePreview();
+    }
+
+    // FIXED: Reset chairman details to default
+    function resetChairmanDetails() {
+        const lang = document.getElementById('lang').value;
+        document.getElementById('chairmanName').value = lang === 'BN' ? 'মোহাম্মদ আলী' : 'Mohammad Ali';
+        document.getElementById('chairmanTitleText').value = lang === 'BN' ? 'চেয়ারম্যান' : 'Chairman';
+        updatePreview();
+    }
+
+    // FIXED: Reset investigator details to default
+    function resetInvestigatorDetails() {
+        const lang = document.getElementById('lang').value;
+        document.getElementById('investigatorName').value = lang === 'BN' ? 'রহিম উদ্দিন' : 'Rahim Uddin';
+        document.getElementById('investigatorDesignationText').value = lang === 'BN' ? 'সহকারী কমিশনার' : 'Assistant Commissioner';
+        updatePreview();
+    }
+
+    // Update watermark controls visibility
+    function updateWatermarkControls() {
+        const wmType = document.getElementById('wmType').value;
+        const opacityControls = document.getElementById('watermarkControls');
+        const sizeControls = document.getElementById('watermarkSizeControls');
+        
+        if (wmType !== 'NONE') {
+            opacityControls.style.display = 'flex';
+            sizeControls.style.display = 'flex';
+            updateWatermark();
+        } else {
+            opacityControls.style.display = 'none';
+            sizeControls.style.display = 'none';
+            document.getElementById('wmImg').style.display = 'none';
+        }
+        updatePreview();
+    }
+
+    // Update watermark
+    function updateWatermark() {
+        const wmType = document.getElementById('wmType').value;
+        const wmImg = document.getElementById('wmImg');
+        
+        if (wmType === 'BD') {
+            wmImg.src = "https://upload.wikimedia.org/wikipedia/commons/8/84/Government_Seal_of_Bangladesh.svg";
+            wmImg.style.display = 'block';
+        } else if (wmType === 'UP') {
+            wmImg.src = document.getElementById('mainLogo').src;
+            wmImg.style.display = 'block';
+        }
+        
+        // Apply color/B&W filter
+        toggleWatermarkColor();
+        
+        // Apply opacity
+        const opacity = document.getElementById('watermarkOpacity').value;
+        updateWatermarkOpacity(opacity);
+        
+        // Apply size
+        const size = document.getElementById('watermarkSize').value;
+        updateWatermarkSize(size);
+    }
+
+    // Update watermark opacity
+    function updateWatermarkOpacity(value) {
+        const watermark = document.getElementById('wmImg');
+        const opacityValue = document.getElementById('opacityValue');
+        
+        const opacity = value / 100;
+        watermark.style.opacity = opacity;
+        opacityValue.textContent = value + '%';
+    }
+
+    // FIXED: Auto-adjust table for A4 size
+    function adjustTableForA4() {
+        const table = document.getElementById('outTable');
+        const tbody = document.getElementById('tableBody');
+        const rows = tbody ? tbody.querySelectorAll('tr') : [];
+        
+        if (rows.length === 0) return;
+        
+        // Calculate total rows
+        const totalRows = rows.length;
+        
+        // Adjust table font size based on number of rows
+        const globalFontSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--global-font-size'));
+        let fontSize = globalFontSize * 0.85;
+        
+        if (totalRows > 8) {
+            fontSize = globalFontSize * 0.8;
+        }
+        if (totalRows > 12) {
+            fontSize = globalFontSize * 0.75;
+        }
+        
+        // Apply font size
+        table.style.fontSize = fontSize + 'px';
+        
+        // Adjust table container height
+        const tableContainer = document.getElementById('tableContainer');
+        if (tableContainer && totalRows > 5) {
+            const maxHeight = 180 - (totalRows * 1.5);
+            tableContainer.style.maxHeight = Math.max(50, maxHeight) + 'mm';
+        }
+    }
+
+    // Load sanad types into the list and dropdown
+    function loadSanadTypes() {
+        const sanadTypeList = document.getElementById('sanadTypes');
+        const certTypeSelect = document.getElementById('certType');
+        
+        let listHTML = '';
+        let selectHTML = '';
+        
+        sanadTypes.forEach((sanad, index) => {
+            // For the clickable list
+            listHTML += `
+                <div class="sanad-type-item" onclick="selectSanadType('${sanad.id}')" id="sanad-item-${sanad.id}">
+                    ${sanad.nameBN}
+                </div>
+            `;
+            
+            // For the dropdown
+            selectHTML += `
+                <option value="${sanad.id}">${sanad.nameBN} / ${sanad.nameEN}</option>
+            `;
+        });
+        
+        sanadTypeList.innerHTML = listHTML;
+        certTypeSelect.innerHTML = selectHTML;
+    }
+
+    // Select sanad type from list (when clicked)
+    function selectSanadType(sanadId) {
+        // Remove active class from all items
+        document.querySelectorAll('.sanad-type-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Add active class to selected item
+        document.getElementById(`sanad-item-${sanadId}`).classList.add('active');
+        
+        // Set dropdown value
+        document.getElementById('certType').value = sanadId;
+        
+        // Change certificate type
+        changeCertificateType();
+    }
+
+    // Change language - COMPLETE IMPLEMENTATION
+    function changeLanguage() {
+        const lang = document.getElementById('lang').value;
+        
+        // Update loading text
+        document.getElementById('loading').innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${labels[lang].loadingText}`;
+        
+        // Update all labels
+        updateLabels(lang);
+        
+        // Reload unions for the new language
+        loadUnions();
+        
+        // Update current sanad type text for the new language
+        const currentSanadId = document.getElementById('certType').value;
+        const currentSanad = sanadTypes.find(s => s.id === currentSanadId);
+        
+        if (currentSanad) {
+            document.getElementById('bodyText').value = lang === 'BN' ? currentSanad.bodyBN : currentSanad.bodyEN;
+        }
+        
+        // Update sanad type list names
+        updateSanadTypeList(lang);
+        
+        // Update additional text line for current certificate type
+        const certType = document.getElementById('certType').value;
+        if (certType === 'warish' || certType === 'family' || certType === 'uttoradikar') {
+            if (certType === 'warish') {
+                document.getElementById('additionalTextLine').value = labels[lang].warishAdditionalText;
+            } else if (certType === 'family') {
+                document.getElementById('additionalTextLine').value = labels[lang].familyAdditionalText;
+            } else if (certType === 'uttoradikar') {
+                document.getElementById('additionalTextLine').value = labels[lang].uttoradikarAdditionalText;
+            }
+        }
+        
+        // Reset contact details based on language
+        resetUnionContact();
+        resetChairmanDetails();
+        resetInvestigatorDetails();
+        
+        // Set current date in correct language
+        setCurrentDate();
+        
+        updatePreview();
+    }
+
+    // Update all UI labels
+    function updateLabels(lang) {
+        const labelData = labels[lang];
+        
+        // Update all labels
+        document.getElementById('upazilaLabel').textContent = labelData.upazilaLabel;
+        document.getElementById('unionLabel').textContent = labelData.unionLabel;
+        document.getElementById('sanadTypeLabel').textContent = labelData.sanadTypeLabel;
+        document.getElementById('logoLabel').textContent = labelData.logoLabel;
+        document.getElementById('photoLabel').textContent = labelData.photoLabel;
+        document.getElementById('watermarkLabel').textContent = labelData.watermarkLabel;
+        document.getElementById('detailsTitle').textContent = labelData.detailsTitle;
+        document.getElementById('certNoLabel').textContent = labelData.certNoLabel;
+        document.getElementById('dateLabel').textContent = labelData.dateLabel;
+        document.getElementById('applicantLabel').textContent = labelData.applicantLabel;
+        document.getElementById('fatherLabel').textContent = labelData.fatherLabel;
+        document.getElementById('motherLabel').textContent = labelData.motherLabel;
+        document.getElementById('nidLabel').textContent = labelData.nidLabel;
+        document.getElementById('addressLabel').textContent = labelData.addressLabel;
+        document.getElementById('bodyTextLabel').textContent = labelData.bodyTextLabel;
+        document.getElementById('additionalTextLabel').textContent = labelData.additionalTextLabel;
+        document.getElementById('autoFillText').textContent = labelData.autoFillText;
+        document.getElementById('clearText').textContent = labelData.clearText;
+        document.getElementById('memberTitle').textContent = labelData.memberTitle;
+        document.getElementById('addMemberText').textContent = labelData.addMemberText;
+        document.getElementById('uploadLogoText').textContent = labelData.uploadLogoText;
+        document.getElementById('uploadPhotoText').textContent = labelData.uploadPhotoText;
+        document.getElementById('textColorLabel').textContent = labelData.textColorLabel;
+        document.getElementById('bgColorLabel').textContent = labelData.bgColorLabel;
+        document.getElementById('borderColorLabel').textContent = labelData.borderColorLabel;
+        document.getElementById('chairmanNameLabel').textContent = labelData.chairmanNameLabel;
+        document.getElementById('chairmanTitleLabel').textContent = labelData.chairmanTitleLabel;
+        document.getElementById('investigatorNameLabel').textContent = labelData.investigatorNameLabel;
+        document.getElementById('investigatorDesignationLabel').textContent = labelData.investigatorDesignationLabel;
+        document.getElementById('unionPhoneLabel').textContent = labelData.unionPhoneLabel;
+        document.getElementById('unionEmailLabel').textContent = labelData.unionEmailLabel;
+        document.getElementById('unionWebsiteLabel').textContent = labelData.unionWebsiteLabel;
+        document.getElementById('unionSizeLabel').textContent = labelData.unionSizeLabel;
+        document.getElementById('globalFontSizeLabel').textContent = labelData.globalFontSizeLabel;
+        document.getElementById('bodyFontSizeLabel').textContent = labelData.bodyFontSizeLabel;
+        document.getElementById('titleFontSizeLabel').textContent = labelData.titleFontSizeLabel;
+        document.getElementById('customTitleLabel').textContent = labelData.customTitleLabel;
+        document.getElementById('sizeLabel').textContent = labelData.sizeLabel;
+        document.getElementById('opacityLabel').textContent = labelData.opacityLabel;
+        document.getElementById('opacityValue').textContent = "15%";
+        document.getElementById('sizeValue').textContent = "300px";
+        document.getElementById('devCredit').innerHTML = labelData.devCredit;
+        
+        // Update watermark options
+        document.getElementById('wmBD').textContent = labelData.wmBD;
+        document.getElementById('wmUP').textContent = labelData.wmUP;
+        document.getElementById('wmNone').textContent = labelData.wmNone;
+    }
+
+    // Update sanad type list with current language
+    function updateSanadTypeList(lang) {
+        sanadTypes.forEach(sanad => {
+            const item = document.getElementById(`sanad-item-${sanad.id}`);
+            if (item) {
+                item.textContent = lang === 'BN' ? sanad.nameBN : sanad.nameEN;
+            }
+        });
+        
+        // Update dropdown options
+        const certTypeSelect = document.getElementById('certType');
+        certTypeSelect.innerHTML = '';
+        
+        sanadTypes.forEach(sanad => {
+            const option = document.createElement('option');
+            option.value = sanad.id;
+            option.textContent = lang === 'BN' ? `${sanad.nameBN} / ${sanad.nameEN}` : `${sanad.nameEN} / ${sanad.nameBN}`;
+            certTypeSelect.appendChild(option);
+        });
+        
+        // Set the current value
+        const currentSanadId = document.getElementById('certType').getAttribute('data-current') || sanadTypes[0].id;
+        certTypeSelect.value = currentSanadId;
+    }
+
+    // Load unions based on selected language and upazila
+    function loadUnions() {
+        const lang = document.getElementById('lang').value;
+        const upazila = document.getElementById('upzSelect').value;
+        const unionSelect = document.getElementById('uniSelect');
+        
+        // Clear existing options
+        unionSelect.innerHTML = "";
+        
+        // Add new options
+        unions[lang][upazila].forEach(union => {
+            const option = document.createElement('option');
+            option.value = union;
+            option.textContent = union;
+            unionSelect.appendChild(option);
+        });
+        
+        updatePreview();
+    }
+
+    // Change certificate type
+    function changeCertificateType() {
+        const type = document.getElementById('certType').value;
+        const lang = document.getElementById('lang').value;
+        
+        // Store current selection
+        document.getElementById('certType').setAttribute('data-current', type);
+        
+        // Show/hide table input area
+        const tableArea = document.getElementById('tableInputArea');
+        const outTable = document.getElementById('outTable');
+        const additionalTextContainer = document.getElementById('additionalTextLineContainer');
+        const tableContainer = document.getElementById('tableContainer');
+        const customTitleContainer = document.getElementById('customTitleContainer');
+        
+        // Show table and additional text for specific certificates
+        if (type === 'warish' || type === 'family' || type === 'uttoradikar') {
+            tableArea.style.display = 'block';
+            outTable.style.display = 'table';
+            tableContainer.style.display = 'block';
+            additionalTextContainer.style.display = 'block';
+            
+            // Set default additional text based on certificate type and language
+            if (!document.getElementById('additionalTextLine').value || document.getElementById('additionalTextLine').value === '') {
+                if (type === 'warish') {
+                    document.getElementById('additionalTextLine').value = labels[lang].warishAdditionalText;
+                } else if (type === 'family') {
+                    document.getElementById('additionalTextLine').value = labels[lang].familyAdditionalText;
+                } else if (type === 'uttoradikar') {
+                    document.getElementById('additionalTextLine').value = labels[lang].uttoradikarAdditionalText;
+                }
+            }
+        } else {
+            tableArea.style.display = 'none';
+            outTable.style.display = 'none';
+            tableContainer.style.display = 'none';
+            additionalTextContainer.style.display = 'none';
+        }
+        
+        // Show custom title input for testimonial certificate
+        if (type === 'testimonial') {
+            customTitleContainer.style.display = 'block';
+        } else {
+            customTitleContainer.style.display = 'none';
+        }
+        
+        // Update active state in list
+        document.querySelectorAll('.sanad-type-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        const activeItem = document.getElementById(`sanad-item-${type}`);
+        if (activeItem) {
+            activeItem.classList.add('active');
+        }
+        
+        // Update body text with template
+        const sanad = sanadTypes.find(s => s.id === type);
+        if (sanad) {
+            document.getElementById('bodyText').value = lang === 'BN' ? sanad.bodyBN : sanad.bodyEN;
+        }
+        
+        updatePreview();
+    }
+
+    // Change text color
+    function changeTextColor(color) {
+        // Update CSS variable
+        document.documentElement.style.setProperty('--text-color', color);
+        
+        // Apply to all text elements
+        const textElements = document.querySelectorAll('.header-text p, .meta-info, .cert-body, .table-footer-text, .footer, .sign-box p, .member-table td, .header-contact');
+        textElements.forEach(el => {
+            el.style.color = color;
+        });
+        
+        // Update lines
+        document.querySelectorAll('.hr-thick, .hr-thin, .sign-line').forEach(line => {
+            line.style.borderColor = color;
+        });
+        
+        // Update table borders
+        const tableCells = document.querySelectorAll('.member-table th, .member-table td');
+        tableCells.forEach(cell => {
+            cell.style.borderColor = color;
+        });
+    }
+
+    // Change background color
+    function changeBgColor(color) {
+        // Update CSS variable
+        document.documentElement.style.setProperty('--bg-color', color);
+        
+        // Apply to certificate page
+        document.getElementById('certificatePage').style.backgroundColor = color;
+    }
+
+    // Change border color
+    function changeBorderColor(color) {
+        // Update CSS variable for primary color (used for border)
+        document.documentElement.style.setProperty('--primary', color);
+        
+        // Apply border color to certificate page
+        document.getElementById('certificatePage').style.borderColor = color;
+        
+        // Update table header
+        const tableHeaders = document.querySelectorAll('.member-table th');
+        tableHeaders.forEach(th => {
+            th.style.backgroundColor = color;
+        });
+        
+        // Update table footer text border
+        document.querySelectorAll('.table-footer-text').forEach(text => {
+            text.style.borderLeftColor = color;
+        });
+        
+        // Update photo box border
+        document.querySelectorAll('.photo-box').forEach(box => {
+            box.style.borderColor = color;
+        });
+    }
+
+    // Reset all colors to default
+    function resetColors() {
+        document.getElementById('textColor').value = '#000000';
+        document.getElementById('bgColor').value = '#ffffff';
+        document.getElementById('borderColor').value = '#006a4e';
+        
+        // Reset CSS variables
+        document.documentElement.style.setProperty('--text-color', '#000000');
+        document.documentElement.style.setProperty('--bg-color', '#ffffff');
+        document.documentElement.style.setProperty('--primary', '#006a4e');
+        
+        // Reset certificate page
+        const certPage = document.getElementById('certificatePage');
+        certPage.style.backgroundColor = '#ffffff';
+        certPage.style.borderColor = '#006a4e';
+        
+        // Reset text colors
+        const textElements = document.querySelectorAll('.header-text p, .meta-info, .cert-body, .table-footer-text, .footer, .sign-box p, .member-table td, .header-contact');
+        textElements.forEach(el => {
+            el.style.color = '#000000';
+        });
+        
+        // Reset lines
+        document.querySelectorAll('.hr-thick, .hr-thin, .sign-line').forEach(line => {
+            line.style.borderColor = '#000000';
+        });
+        
+        // Reset table
+        const tableCells = document.querySelectorAll('.member-table th, .member-table td');
+        tableCells.forEach(cell => {
+            cell.style.borderColor = '#000000';
+        });
+        
+        // Reset table header
+        const tableHeaders = document.querySelectorAll('.member-table th');
+        tableHeaders.forEach(th => {
+            th.style.backgroundColor = '#006a4e';
+        });
+        
+        // Reset table footer text border
+        document.querySelectorAll('.table-footer-text').forEach(text => {
+            text.style.borderLeftColor = '#006a4e';
+        });
+        
+        // Reset photo box border
+        document.querySelectorAll('.photo-box').forEach(box => {
+            box.style.borderColor = '#006a4e';
+        });
+    }
+
+    // Upload media (logo/photo)
+    function uploadMedia(input, elementId) {
+        if (input.files && input.files[0]) {
+            showLoading();
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById(elementId).src = e.target.result;
+                
+                // If watermark type is UP and this is logo, update watermark
+                if (elementId === 'mainLogo' && document.getElementById('wmType').value === 'UP') {
+                    document.getElementById('wmImg').src = e.target.result;
+                }
+                hideLoading();
+                updatePreview();
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Add member row
+    function addMemberRow() {
+        const container = document.getElementById('memberInputs');
+        const lang = document.getElementById('lang').value;
+        
+        const row = document.createElement('div');
+        row.className = 'member-row';
+        row.innerHTML = `
+            <input type="text" placeholder="${lang === 'BN' ? 'নাম' : 'Name'}" oninput="syncTable()">
+            <input type="text" placeholder="${lang === 'BN' ? 'জাতীয় পরিচয়পত্র নং' : 'National ID No'}" oninput="syncTable()">
+            <input type="text" placeholder="${lang === 'BN' ? 'জন্ম তারিখ (DD/MM/YYYY)' : 'Date of Birth (DD/MM/YYYY)'}" oninput="syncTable()">
+            <select oninput="syncTable()">
+                <option value="">${lang === 'BN' ? 'সম্পর্ক' : 'Relation'}</option>
+                <option value="${lang === 'BN' ? 'পিতা' : 'Father'}">${lang === 'BN' ? 'পিতা' : 'Father'}</option>
+                <option value="${lang === 'BN' ? 'মাতা' : 'Mother'}">${lang === 'BN' ? 'মাতা' : 'Mother'}</option>
+                <option value="${lang === 'BN' ? 'পুত্র' : 'Son'}">${lang === 'BN' ? 'পুত্র' : 'Son'}</option>
+                <option value="${lang === 'BN' ? 'কন্যা' : 'Daughter'}">${lang === 'BN' ? 'কন্যা' : 'Daughter'}</option>
+                <option value="${lang === 'BN' ? 'ভাই' : 'Brother'}">${lang === 'BN' ? 'ভাই' : 'Brother'}</option>
+                <option value="${lang === 'BN' ? 'বোন' : 'Sister'}">${lang === 'BN' ? 'বোন' : 'Sister'}</option>
+            </select>
+            <button class="remove-btn" onclick="removeMemberRow(this)">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        container.appendChild(row);
+        syncTable();
+        
+        // Limit to 15 members for A4 size
+        const rows = container.querySelectorAll('.member-row');
+        if (rows.length >= 15) {
+            alert(lang === 'BN' ? 'সর্বোচ্চ ১৫ জন সদস্য যোগ করা যাবে।' : 'Maximum 15 members can be added.');
+            row.querySelector('button').click();
+        }
+    }
+
+    // Remove member row
+    function removeMemberRow(button) {
+        const row = button.closest('.member-row');
+        row.remove();
+        syncTable();
+    }
+
+    // Sync table data
+    function syncTable() {
+        const lang = document.getElementById('lang').value;
+        const tableHead = document.getElementById('tableHead');
+        const tableBody = document.getElementById('tableBody');
+        
+        // Update table headers
+        tableHead.innerHTML = '';
+        labels[lang].tableHeaders.forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            tableHead.appendChild(th);
+        });
+        
+        // Update table body
+        tableBody.innerHTML = '';
+        const rows = document.querySelectorAll('#memberInputs .member-row');
+        
+        rows.forEach((row, index) => {
+            const inputs = row.querySelectorAll('input, select');
+            const tr = document.createElement('tr');
+            
+            // Serial number
+            const td1 = document.createElement('td');
+            td1.textContent = index + 1;
+            tr.appendChild(td1);
+            
+            // Name
+            const td2 = document.createElement('td');
+            td2.textContent = inputs[0].value || '-';
+            tr.appendChild(td2);
+            
+            // NID
+            const td3 = document.createElement('td');
+            td3.textContent = inputs[1].value || '-';
+            tr.appendChild(td3);
+            
+            // Date of Birth
+            const td4 = document.createElement('td');
+            td4.textContent = inputs[2].value || '-';
+            tr.appendChild(td4);
+            
+            // Relation
+            const td5 = document.createElement('td');
+            td5.textContent = inputs[3].value || '-';
+            tr.appendChild(td5);
+            
+            tableBody.appendChild(tr);
+        });
+        
+        // Auto-adjust table for A4
+        adjustTableForA4();
+        updatePreview();
+    }
+
+    // Generate certificate number
+    function generateCertNo() {
+        const lang = document.getElementById('lang').value;
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+        
+        let certNo = `${year}/${month}/${random}`;
+        
+        if (lang === 'BN') {
+            // Convert numbers to Bengali
+            const bnNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            certNo = certNo.replace(/\d/g, (digit) => bnNumbers[parseInt(digit)]);
+        }
+        
+        document.getElementById('certNo').value = certNo;
+        updatePreview();
+    }
+
+    // Render preview
+    function render() {
+        const lang = document.getElementById('lang').value;
+        const union = document.getElementById('uniSelect').value;
+        const upazila = document.getElementById('upzSelect').value;
+        const certType = document.getElementById('certType').value;
+        
+        // Get sanad details
+        const sanad = sanadTypes.find(s => s.id === certType);
+        let sanadName = lang === 'BN' ? sanad.nameBN : sanad.nameEN;
+        
+        // If testimonial certificate and custom title is provided, use custom title
+        if (certType === 'testimonial') {
+            const customTitle = document.getElementById('customTitle').value;
+            if (customTitle && customTitle.trim() !== '') {
+                sanadName = customTitle;
+            }
+        }
+        
+        // Update header with correct language
+        document.getElementById('hGov').textContent = labels[lang].gov;
+        document.getElementById('hUni').textContent = union;
+        document.getElementById('hUni').setAttribute('title', union); // Tooltip for full name
+        
+        // Apply union font size
+        const unionFontSize = document.getElementById('unionFontSize').value;
+        document.getElementById('hUni').style.fontSize = unionFontSize + 'px';
+        
+        // Update union contact information
+        const unionPhone = document.getElementById('unionPhone').value;
+        const unionEmail = document.getElementById('unionEmail').value;
+        const unionWebsite = document.getElementById('unionWebsite').value;
+        
+        let contactHTML = '';
+        if (lang === 'BN') {
+            contactHTML = `
+                <div>ফোন: ${unionPhone} | ইমেইল: ${unionEmail}</div>
+                <div>ওয়েবসাইট: ${unionWebsite}</div>
+            `;
+        } else {
+            contactHTML = `
+                <div>Phone: ${unionPhone} | Email: ${unionEmail}</div>
+                <div>Website: ${unionWebsite}</div>
+            `;
+        }
+        document.getElementById('unionContact').innerHTML = contactHTML;
+        
+        // Get upazila name in correct language
+        let upazilaName = upazila;
+        const upazilaMap = {
+            'MoulvibazarSadar': lang === 'BN' ? 'মৌলভীবাজার সদর' : 'Moulvibazar Sadar',
+            'Barlekha': lang === 'BN' ? 'বড়লেখা' : 'Barlekha',
+            'Kamalganj': lang === 'BN' ? 'কমলগঞ্জ' : 'Kamalganj',
+            'Kulaura': lang === 'BN' ? 'কুলাউড়া' : 'Kulaura',
+            'Rajnagar': lang === 'BN' ? 'রাজনগর' : 'Rajnagar',
+            'Sreemangal': lang === 'BN' ? 'শ্রীমঙ্গল' : 'Sreemangal',
+            'Juri': lang === 'BN' ? 'জুড়ী' : 'Juri'
+        };
+        
+        upazilaName = upazilaMap[upazila] || upazila;
+        
+        document.getElementById('hLoc').textContent = `${lang === 'BN' ? 'উপজেলা:' : 'Upazila:'} ${upazilaName}, ${lang === 'BN' ? 'জেলা:' : 'District:'} ${labels[lang].district}`;
+        
+        // Update certificate title
+        document.getElementById('outTitle').textContent = sanadName;
+        
+        // Update certificate number and date
+        document.getElementById('outNo').textContent = `${lang === 'BN' ? 'সনদ নং:' : 'Certificate No:'} ${document.getElementById('certNo').value || (lang === 'BN' ? '২০২৫/০১/০০১' : '2025/01/001')}`;
+        document.getElementById('outDate').textContent = `${lang === 'BN' ? 'তারিখ:' : 'Date:'} ${document.getElementById('date').value || (lang === 'BN' ? '৩১ জানুয়ারী ২০২৬' : '31 January 2026')}`;
+        
+        // Update certificate body with dynamic values
+        let bodyText = document.getElementById('bodyText').value;
+        
+        // Replace placeholders with actual values
+        bodyText = bodyText.replace(/\[নাম\]/g, document.getElementById('applicantName').value || '________')
+                          .replace(/\[পিতার নাম\]/g, document.getElementById('fatherName').value || '________')
+                          .replace(/\[মাতার নাম\]/g, document.getElementById('motherName').value || '________')
+                          .replace(/\[এনআইডি\]/g, document.getElementById('nidNo').value || '________')
+                          .replace(/\[ঠিকানা\]/g, document.getElementById('address').value || '________')
+                          .replace(/\[Name\]/g, document.getElementById('applicantName').value || '________')
+                          .replace(/\[Father's Name\]/g, document.getElementById('fatherName').value || '________')
+                          .replace(/\[Mother's Name\]/g, document.getElementById('motherName').value || '________')
+                          .replace(/\[NID\]/g, document.getElementById('nidNo').value || '________')
+                          .replace(/\[Address\]/g, document.getElementById('address').value || '________');
+        
+        document.getElementById('outBody').innerHTML = bodyText || (lang === 'BN' ? 'বিস্তারিত তথ্য এখানে আসবে...' : 'Details will appear here...');
+        
+        // Update footer text in correct language
+        document.getElementById('fPrep').textContent = labels[lang].signInvestigator;
+        document.getElementById('investigatorName').textContent = `${lang === 'BN' ? 'নাম:' : 'Name:'} ${document.getElementById('investigatorName').value || (lang === 'BN' ? 'রহিম উদ্দিন' : 'Rahim Uddin')}`;
+        document.getElementById('investigatorDesignation').textContent = `${lang === 'BN' ? 'পদবী:' : 'Designation:'} ${document.getElementById('investigatorDesignationText').value || (lang === 'BN' ? 'সহকারী কমিশনার' : 'Assistant Commissioner')}`;
+        document.getElementById('chairmanTitle').innerHTML = `<strong>${document.getElementById('chairmanTitleText').value || labels[lang].chairmanTitle}</strong>`;
+        document.getElementById('fUniDisp').textContent = union;
+        document.getElementById('chairmanName').textContent = document.getElementById('chairmanName').value || (lang === 'BN' ? 'মোহাম্মদ আলী' : 'Mohammad Ali');
+        
+        // Update watermark
+        updateWatermark();
+        
+        // Update table footer text
+        const tableFooterText = document.getElementById('tableFooterText');
+        const additionalText = document.getElementById('additionalTextLine').value;
+        
+        if ((certType === 'warish' || certType === 'family' || certType === 'uttoradikar') && additionalText.trim() !== '') {
+            tableFooterText.style.display = 'block';
+            tableFooterText.textContent = additionalText;
+        } else {
+            tableFooterText.style.display = 'none';
+        }
+        
+        // Update developer credit
+        document.getElementById('devCredit').innerHTML = labels[lang].devCredit;
+        
+        // Sync table if needed
+        if (certType === 'warish' || certType === 'family' || certType === 'uttoradikar') {
+            syncTable();
+        }
+    }
+
+    // Load template data
+    function loadTemplateData() {
+        const type = document.getElementById('certType').value;
+        const lang = document.getElementById('lang').value;
+        
+        const sanad = sanadTypes.find(s => s.id === type);
+        if (sanad) {
+            document.getElementById('bodyText').value = lang === 'BN' ? sanad.bodyBN : sanad.bodyEN;
+        }
+        
+        // Generate a certificate number
+        generateCertNo();
+        
+        // Set current date
+        setCurrentDate();
+        
+        updatePreview();
+    }
+
+    // Clear form
+    function clearForm() {
+        const lang = document.getElementById('lang').value;
+        const confirmMessage = lang === 'BN' ? 
+            'আপনি কি নিশ্চিত যে ফরম ক্লিয়ার করতে চান? সকল তথ্য মুছে যাবে।' : 
+            'Are you sure you want to clear the form? All data will be lost.';
+        
+        if (confirm(confirmMessage)) {
+            document.getElementById('applicantName').value = '';
+            document.getElementById('fatherName').value = '';
+            document.getElementById('motherName').value = '';
+            document.getElementById('nidNo').value = '';
+            document.getElementById('address').value = '';
+            document.getElementById('bodyText').value = '';
+            document.getElementById('additionalTextLine').value = '';
+            document.getElementById('customTitle').value = '';
+            
+            // Clear member inputs
+            document.getElementById('memberInputs').innerHTML = '';
+            addMemberRow(); // Add one empty row
+            
+            // Reset colors
+            resetColors();
+            
+            // Set current date
+            setCurrentDate();
+            
+            updatePreview();
+        }
+    }
+</script>
+</body>
+</html>

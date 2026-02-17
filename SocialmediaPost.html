@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Social Media Poster Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --success: #4cc9f0;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 50%, #7209b7 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f0f2f5 0%, #e6e9f0 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            border-top: 5px solid var(--accent);
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--success));
+        }
+        
+        .header h1 {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            color: var(--dark);
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+        
+        .control-panel {
+            flex: 1;
+            min-width: 350px;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .control-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+        }
+        
+        .preview-area {
+            flex: 1.2;
+            min-width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .preview-container {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow: auto;
+            max-height: 800px;
+        }
+        
+        .panel-title {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            color: var(--dark);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #f0f0f0;
+            font-weight: 700;
+            position: relative;
+        }
+        
+        .panel-title::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-family: 'Noto Sans Bengali', sans-serif;
+            font-size: 1rem;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 1rem;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary);
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        .logo-section {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .logo-box {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .logo-upload-area {
+            border: 2px dashed #cbd5e1;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f8fafc;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-upload-area:hover {
+            border-color: var(--primary);
+            background-color: #f0f9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+        }
+        
+        .logo-preview {
+            max-width: 120px;
+            max-height: 60px;
+            margin-top: 8px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .alignment-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .alignment-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .alignment-btn:hover {
+            border-color: var(--primary);
+            background: #f0f9ff;
+        }
+        
+        .alignment-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .social-inputs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .social-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .social-input i {
+            color: var(--primary);
+            font-size: 1.2rem;
+            min-width: 24px;
+        }
+        
+        .social-input input {
+            border: none;
+            background: transparent;
+            padding: 0;
+            flex-grow: 1;
+        }
+        
+        .social-input input:focus {
+            box-shadow: none;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 160px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), #3a0ca3);
+            color: white;
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(90deg, var(--accent), #b5179e);
+            color: white;
+            box-shadow: 0 6px 20px rgba(247, 37, 133, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(247, 37, 133, 0.3);
+        }
+        
+        /* Poster Styling - Auto Adjusting with Design Elements */
+        .poster-container {
+            width: 600px;
+            max-width: 100%;
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            position: relative;
+            border: 15px solid white;
+            min-height: 400px;
+            transition: min-height 0.3s ease;
+        }
+        
+        .poster {
+            width: 100%;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            min-height: 400px;
+        }
+        
+        /* Design Background Elements */
+        .design-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.05;
+            overflow: hidden;
+        }
+        
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+        
+        .circle-1 {
+            width: 200px;
+            height: 200px;
+            top: -50px;
+            right: -50px;
+            background: var(--primary);
+        }
+        
+        .circle-2 {
+            width: 150px;
+            height: 150px;
+            bottom: -30px;
+            left: -30px;
+            background: var(--accent);
+        }
+        
+        .circle-3 {
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            left: 10%;
+            background: var(--success);
+        }
+        
+        .pattern {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(67, 97, 238, 0.1) 2px, transparent 2px),
+                radial-gradient(circle at 75% 75%, rgba(247, 37, 133, 0.1) 2px, transparent 2px);
+            background-size: 50px 50px;
+        }
+        
+        .poster-content {
+            position: relative;
+            z-index: 1;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* Header with dual logos */
+        .poster-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(67, 97, 238, 0.2);
+            position: relative;
+        }
+        
+        .poster-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+        
+        .left-logo, .right-logo {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: white;
+            padding: 5px;
+        }
+        
+        .poster-logo {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .company-info {
+            flex-grow: 1;
+            text-align: center;
+            padding: 0 15px;
+        }
+        
+        .company-name {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 5px;
+            font-family: 'Noto Sans Bengali', sans-serif;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .company-tagline {
+            font-size: 1rem;
+            color: var(--primary);
+            font-weight: 600;
+            font-family: 'Noto Sans Bengali', sans-serif;
+            background: rgba(67, 97, 238, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        /* Title Section */
+        .poster-title-section {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(90deg, rgba(67, 97, 238, 0.1), rgba(247, 37, 133, 0.1));
+            border-radius: 15px;
+            border-left: 5px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .poster-title-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+        }
+        
+        .poster-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1.3;
+            font-family: 'Noto Sans Bengali', sans-serif;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Description Section with Alignment */
+        .description-section {
+            flex-grow: 1;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(67, 97, 238, 0.1);
+            min-height: 150px;
+        }
+        
+        .description-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #444;
+            font-family: 'Noto Sans Bengali', sans-serif;
+            white-space: pre-line;
+        }
+        
+        .description-section.left-aligned .description-text {
+            text-align: left;
+        }
+        
+        .description-section.center-aligned .description-text {
+            text-align: center;
+        }
+        
+        .description-section.right-aligned .description-text {
+            text-align: right;
+        }
+        
+        /* Deadline Section */
+        .deadline-section {
+            background: linear-gradient(90deg, var(--accent), #b5179e);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(247, 37, 133, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .deadline-section::before {
+            content: '⏰';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            opacity: 0.2;
+        }
+        
+        .deadline-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-family: 'Noto Sans Bengali', sans-serif;
+            opacity: 0.9;
+        }
+        
+        .deadline-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            font-family: 'Noto Sans Bengali', sans-serif;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Footer Section with Contact Info */
+        .poster-footer {
+            border-top: 2px solid rgba(67, 97, 238, 0.2);
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .contact-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .contact-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            color: #444;
+            padding: 8px 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        
+        .contact-line:last-child {
+            border-bottom: none;
+        }
+        
+        .contact-icon {
+            color: var(--primary);
+            font-size: 1.2rem;
+            min-width: 24px;
+            text-align: center;
+        }
+        
+        .social-media-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .social-media-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 20px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .social-media-item:hover {
+            background: rgba(67, 97, 238, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .social-icon {
+            font-size: 1.2rem;
+        }
+        
+        .social-icon.facebook { color: #1877f2; }
+        .social-icon.instagram { color: #e4405f; }
+        .social-icon.whatsapp { color: #25d366; }
+        .social-icon.twitter { color: #1da1f2; }
+        .social-icon.youtube { color: #ff0000; }
+        
+        .social-username {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .instructions {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .instructions h3 {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0f0f0;
+            font-weight: 700;
+        }
+        
+        .instructions ol {
+            padding-left: 18px;
+            line-height: 1.6;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 1100px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .poster-container {
+                width: 100%;
+                max-width: 600px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .control-panel, .preview-area {
+                min-width: 100%;
+                padding: 20px;
+            }
+            
+            .btn {
+                min-width: 100%;
+            }
+            
+            .poster-title {
+                font-size: 1.7rem;
+            }
+            
+            .poster {
+                padding: 20px;
+            }
+            
+            .logo-section {
+                flex-direction: column;
+            }
+            
+            .social-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>মডার্ন সোশ্যাল মিডিয়া পোস্টার জেনারেটর</h1>
+            <p class="subtitle">আপনার কন্টেন্ট অনুযায়ী স্বয়ংক্রিয়ভাবে সাইজ পরিবর্তন হয় এমন আধুনিক পোস্টার তৈরি করুন। সব টেক্সট পোস্টারের ভিতরে দেখা যাবে।</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="control-panel">
+                <h2 class="panel-title">পোস্টার সেটিংস</h2>
+                
+                <form id="posterForm">
+                    <div class="form-group">
+                        <label>লোগো অপশন</label>
+                        <div class="logo-section">
+                            <div class="logo-box">
+                                <p style="margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">বাম পাশের লোগো</p>
+                                <div class="logo-upload-area" id="leftLogoUpload">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 8px;"></i>
+                                    <p style="font-size: 0.9rem;">লোগো আপলোড</p>
+                                    <p class="optional" style="font-size: 0.8rem;">ডিফল্ট: Student Care</p>
+                                    <img id="leftLogoPreview" class="logo-preview" alt="Left Logo Preview" style="display: none;">
+                                </div>
+                                <input type="file" id="leftLogoInput" accept="image/*" style="display: none;">
+                            </div>
+                            
+                            <div class="logo-box">
+                                <p style="margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">ডান পাশের লোগো <span class="optional">(ঐচ্ছিক)</span></p>
+                                <div class="logo-upload-area" id="rightLogoUpload">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 8px;"></i>
+                                    <p style="font-size: 0.9rem;">লোগো আপলোড</p>
+                                    <p class="optional" style="font-size: 0.8rem;">পোস্ট সম্পর্কিত</p>
+                                    <img id="rightLogoPreview" class="logo-preview" alt="Right Logo Preview" style="display: none;">
+                                </div>
+                                <input type="file" id="rightLogoInput" accept="image/*" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="companyName">কোম্পানি নাম</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-building"></i>
+                            <input type="text" id="companyName" placeholder="কোম্পানি নাম" value="STUDENT CARE">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tagline">ট্যাগলাইন</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-tag"></i>
+                            <input type="text" id="tagline" placeholder="ট্যাগলাইন লিখুন" value="IT & Educational Center">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="headline">শিরোনাম</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-heading"></i>
+                            <input type="text" id="headline" placeholder="শিরোনাম লিখুন" value="নতুন পদে নিয়োগ">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">বিস্তারিত তথ্য (৫-৬ লাইন)</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-align-left"></i>
+                            <textarea id="description" placeholder="বিস্তারিত লিখুন...">• Office Support Staff
+• Security Guard
+• Cleaner
+• Gardener
+
+যোগদানের শেষ তারিখ দেখুন নিচে...</textarea>
+                        </div>
+                        
+                        <label style="margin-top: 15px; font-size: 0.9rem;">টেক্সট এলাইনমেন্ট</label>
+                        <div class="alignment-options">
+                            <button type="button" class="alignment-btn active" data-alignment="left">
+                                <i class="fas fa-align-left"></i> বামে
+                            </button>
+                            <button type="button" class="alignment-btn" data-alignment="center">
+                                <i class="fas fa-align-center"></i> মাঝে
+                            </button>
+                            <button type="button" class="alignment-btn" data-alignment="right">
+                                <i class="fas fa-align-right"></i> ডানে
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="deadline">শেষ সময়</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-clock"></i>
+                            <input type="text" id="deadline" placeholder="শেষ সময় লিখুন" value="০৭ ফেব্রুয়ারি ২০২৬, ০৪:৫৯ PM">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>যোগাযোগের তথ্য</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <input type="text" id="address" placeholder="ঠিকানা" value="Brother's Mansion, college gate, মৌলভীবাজার">
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <div class="input-with-icon" style="flex: 1;">
+                                <i class="fas fa-phone-alt"></i>
+                                <input type="text" id="phone" placeholder="ফোন নম্বর" value="০১৭১৩-৭৪৬৪২৮">
+                            </div>
+                            <div class="input-with-icon" style="flex: 1;">
+                                <i class="fas fa-envelope"></i>
+                                <input type="text" id="email" placeholder="ইমেইল" value="info@studentcaremb.com">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>সোশ্যাল মিডিয়া</label>
+                        <div class="social-inputs">
+                            <div class="social-input">
+                                <i class="fab fa-facebook-f"></i>
+                                <input type="text" id="facebook" placeholder="Facebook ইউজারনেম" value="StudentCareMB">
+                            </div>
+                            <div class="social-input">
+                                <i class="fab fa-instagram"></i>
+                                <input type="text" id="instagram" placeholder="Instagram ইউজারনেম" value="StudentCare_Official">
+                            </div>
+                            <div class="social-input">
+                                <i class="fab fa-whatsapp"></i>
+                                <input type="text" id="whatsapp" placeholder="WhatsApp নম্বর" value="+8801713746428">
+                            </div>
+                            <div class="social-input">
+                                <i class="fab fa-youtube"></i>
+                                <input type="text" id="youtube" placeholder="YouTube চ্যানেল" value="Student Care MB">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="button" class="btn btn-primary" id="generateBtn">
+                            <i class="fas fa-bolt"></i> পোস্টার তৈরি করুন
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="downloadBtn">
+                            <i class="fas fa-download"></i> ডাউনলোড করুন
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="preview-area">
+                <div class="preview-container">
+                    <h3 style="margin-bottom: 20px; color: var(--dark); font-size: 1.3rem; font-family: 'Noto Sans Bengali', sans-serif; font-weight: 700;">লাইভ প্রিভিউ - সব টেক্সট দেখা যাচ্ছে</h3>
+                    
+                    <div class="poster-container" id="posterContainer">
+                        <div class="poster" id="poster">
+                            <div class="design-bg">
+                                <div class="circle circle-1"></div>
+                                <div class="circle circle-2"></div>
+                                <div class="circle circle-3"></div>
+                                <div class="pattern"></div>
+                            </div>
+                            
+                            <div class="poster-content" id="posterContent">
+                                <!-- Header with dual logos -->
+                                <div class="poster-header">
+                                    <div class="left-logo">
+                                        <img id="leftPosterLogo" class="poster-logo" src="https://i.postimg.cc/7hdFkp49/Logo-sc.png" alt="Left Logo">
+                                    </div>
+                                    
+                                    <div class="company-info">
+                                        <div class="company-name" id="posterCompanyName">STUDENT CARE</div>
+                                        <div class="company-tagline" id="posterTagline">IT & Educational Center</div>
+                                    </div>
+                                    
+                                    <div class="right-logo">
+                                        <img id="rightPosterLogo" class="poster-logo" alt="Right Logo" style="display: none;">
+                                    </div>
+                                </div>
+                                
+                                <!-- Title Section -->
+                                <div class="poster-title-section">
+                                    <div class="poster-title" id="posterTitle">নতুন পদে নিয়োগ</div>
+                                </div>
+                                
+                                <!-- Description Section with Alignment -->
+                                <div class="description-section center-aligned" id="descriptionSection">
+                                    <div class="description-text" id="posterDescription">
+                                        • Office Support Staff<br>
+                                        • Security Guard<br>
+                                        • Cleaner<br>
+                                        • Gardener<br><br>
+                                        যোগদানের শেষ তারিখ দেখুন নিচে...
+                                    </div>
+                                </div>
+                                
+                                <!-- Deadline Section -->
+                                <div class="deadline-section">
+                                    <div class="deadline-label">যোগদানের শেষ তারিখ</div>
+                                    <div class="deadline-text" id="posterDeadline">০৭ ফেব্রুয়ারি ২০২৬, ০৪:৫৯ PM</div>
+                                </div>
+                                
+                                <!-- Footer Section -->
+                                <div class="poster-footer">
+                                    <div class="contact-section">
+                                        <div class="contact-line">
+                                            <i class="fas fa-map-marker-alt contact-icon"></i>
+                                            <span id="posterAddress">Brother's Mansion, college gate, মৌলভীবাজার</span>
+                                        </div>
+                                        <div class="contact-line">
+                                            <i class="fas fa-phone-alt contact-icon"></i>
+                                            <span id="posterPhone">০১৭১৩-৭৪৬৪২৮</span>
+                                        </div>
+                                        <div class="contact-line">
+                                            <i class="fas fa-envelope contact-icon"></i>
+                                            <span id="posterEmail">info@studentcaremb.com</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="social-media-section" id="posterSocial">
+                                        <a href="#" class="social-media-item">
+                                            <i class="fab fa-facebook-f social-icon facebook"></i>
+                                            <span class="social-username">StudentCareMB</span>
+                                        </a>
+                                        <a href="#" class="social-media-item">
+                                            <i class="fab fa-instagram social-icon instagram"></i>
+                                            <span class="social-username">StudentCare_Official</span>
+                                        </a>
+                                        <a href="#" class="social-media-item">
+                                            <i class="fab fa-whatsapp social-icon whatsapp"></i>
+                                            <span class="social-username">+8801713746428</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="instructions">
+                    <h3>ব্যবহার বিধি</h3>
+                    <ol>
+                        <li>লোগো আপলোড করুন (ডান পাশের লোগো ঐচ্ছিক)</li>
+                        <li>কোম্পানি নাম, ট্যাগলাইন ও শিরোনাম লিখুন</li>
+                        <li>বিস্তারিত তথ্য লিখুন এবং এলাইনমেন্ট সিলেক্ট করুন</li>
+                        <li>যোগাযোগের তথ্য (ঠিকানা, ফোন, ইমেইল) লিখুন</li>
+                        <li>সোশ্যাল মিডিয়া ইউজারনেম যোগ করুন</li>
+                        <li>"পোস্টার তৈরি করুন" ক্লিক করুন - পোস্টার স্বয়ংক্রিয়ভাবে সাইজ পরিবর্তন করবে</li>
+                        <li>সব টেক্সট দেখা যাচ্ছে কিনা চেক করুন, তারপর ডাউনলোড করুন</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const leftLogoUpload = document.getElementById('leftLogoUpload');
+            const leftLogoInput = document.getElementById('leftLogoInput');
+            const leftLogoPreview = document.getElementById('leftLogoPreview');
+            const rightLogoUpload = document.getElementById('rightLogoUpload');
+            const rightLogoInput = document.getElementById('rightLogoInput');
+            const rightLogoPreview = document.getElementById('rightLogoPreview');
+            
+            const generateBtn = document.getElementById('generateBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const posterContainer = document.getElementById('posterContainer');
+            const poster = document.getElementById('poster');
+            const posterContent = document.getElementById('posterContent');
+            
+            // Poster elements
+            const leftPosterLogo = document.getElementById('leftPosterLogo');
+            const rightPosterLogo = document.getElementById('rightPosterLogo');
+            
+            // Form input elements
+            const companyNameInput = document.getElementById('companyName');
+            const taglineInput = document.getElementById('tagline');
+            const headlineInput = document.getElementById('headline');
+            const descriptionInput = document.getElementById('description');
+            const deadlineInput = document.getElementById('deadline');
+            const addressInput = document.getElementById('address');
+            const phoneInput = document.getElementById('phone');
+            const emailInput = document.getElementById('email');
+            const facebookInput = document.getElementById('facebook');
+            const instagramInput = document.getElementById('instagram');
+            const whatsappInput = document.getElementById('whatsapp');
+            const youtubeInput = document.getElementById('youtube');
+            
+            // Poster display elements
+            const posterCompanyName = document.getElementById('posterCompanyName');
+            const posterTagline = document.getElementById('posterTagline');
+            const posterTitle = document.getElementById('posterTitle');
+            const posterDescription = document.getElementById('posterDescription');
+            const posterDeadline = document.getElementById('posterDeadline');
+            const posterAddress = document.getElementById('posterAddress');
+            const posterPhone = document.getElementById('posterPhone');
+            const posterEmail = document.getElementById('posterEmail');
+            const posterSocial = document.getElementById('posterSocial');
+            const descriptionSection = document.getElementById('descriptionSection');
+            
+            // Alignment buttons
+            const alignmentBtns = document.querySelectorAll('[data-alignment]');
+            let currentAlignment = 'center';
+            
+            // Handle left logo upload
+            leftLogoUpload.addEventListener('click', function() {
+                leftLogoInput.click();
+            });
+            
+            leftLogoInput.addEventListener('change', function(event) {
+                handleLogoUpload(event, leftLogoPreview, leftPosterLogo, leftLogoUpload);
+            });
+            
+            // Handle right logo upload
+            rightLogoUpload.addEventListener('click', function() {
+                rightLogoInput.click();
+            });
+            
+            rightLogoInput.addEventListener('change', function(event) {
+                handleLogoUpload(event, rightLogoPreview, rightPosterLogo, rightLogoUpload);
+            });
+            
+            // Logo upload handler function
+            function handleLogoUpload(event, previewElem, posterElem, uploadArea) {
+                const file = event.target.files[0];
+                if (file) {
+                    // Check file size (max 2MB)
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('ফাইল সাইজ খুব বড়! সর্বোচ্চ 2MB সাইজের ফাইল আপলোড করুন।');
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Update preview image
+                        previewElem.src = e.target.result;
+                        previewElem.style.display = 'block';
+                        
+                        // Update poster logo
+                        posterElem.src = e.target.result;
+                        posterElem.style.display = 'block';
+                        
+                        // Update logo upload area
+                        uploadArea.innerHTML = `
+                            <i class="fas fa-check-circle" style="font-size: 1.5rem; color: var(--success); margin-bottom: 8px;"></i>
+                            <p style="font-size: 0.9rem;">লোগো আপলোড হয়েছে!</p>
+                            <p class="optional" style="font-size: 0.8rem;">নতুন লোগো আপলোড করতে ক্লিক করুন</p>
+                            <img class="logo-preview" src="${e.target.result}" alt="Logo Preview" style="display: block;">
+                        `;
+                        
+                        // Re-attach click event
+                        uploadArea.addEventListener('click', function() {
+                            if (uploadArea === leftLogoUpload) {
+                                leftLogoInput.click();
+                            } else {
+                                rightLogoInput.click();
+                            }
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+            
+            // Handle alignment selection
+            alignmentBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    alignmentBtns.forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Get alignment value
+                    currentAlignment = this.getAttribute('data-alignment');
+                    
+                    // Update description section alignment
+                    descriptionSection.className = 'description-section ' + currentAlignment + '-aligned';
+                });
+            });
+            
+            // Update poster size based on content
+            function updatePosterSize() {
+                // Get the height of the content
+                const contentHeight = posterContent.scrollHeight;
+                
+                // Set minimum and maximum heights
+                const minHeight = 500;
+                const calculatedHeight = Math.max(minHeight, contentHeight + 60); // Add padding
+                
+                // Update poster container height
+                posterContainer.style.minHeight = calculatedHeight + 'px';
+                poster.style.minHeight = calculatedHeight + 'px';
+                
+                // Also adjust poster container width for balance (slightly responsive)
+                const baseWidth = 600;
+                const widthAdjustment = Math.min(100, Math.max(0, (contentHeight - minHeight) / 10));
+                posterContainer.style.width = (baseWidth + widthAdjustment) + 'px';
+            }
+            
+            // Generate poster
+            generateBtn.addEventListener('click', function() {
+                // Update poster with form values
+                posterCompanyName.textContent = companyNameInput.value || 'কোম্পানি নাম';
+                posterTagline.textContent = taglineInput.value || 'ট্যাগলাইন';
+                posterTitle.textContent = headlineInput.value || 'শিরোনাম';
+                posterDescription.innerHTML = (descriptionInput.value || 'বিস্তারিত তথ্য').replace(/\n/g, '<br>');
+                posterDeadline.textContent = deadlineInput.value || 'শেষ সময়';
+                posterAddress.textContent = addressInput.value || 'ঠিকানা';
+                posterPhone.textContent = phoneInput.value || 'ফোন নম্বর';
+                posterEmail.textContent = emailInput.value || 'ইমেইল';
+                
+                // Update social media
+                let socialHTML = '';
+                
+                if (facebookInput.value) {
+                    socialHTML += `
+                        <a href="#" class="social-media-item">
+                            <i class="fab fa-facebook-f social-icon facebook"></i>
+                            <span class="social-username">${facebookInput.value}</span>
+                        </a>
+                    `;
+                }
+                
+                if (instagramInput.value) {
+                    socialHTML += `
+                        <a href="#" class="social-media-item">
+                            <i class="fab fa-instagram social-icon instagram"></i>
+                            <span class="social-username">${instagramInput.value}</span>
+                        </a>
+                    `;
+                }
+                
+                if (whatsappInput.value) {
+                    socialHTML += `
+                        <a href="#" class="social-media-item">
+                            <i class="fab fa-whatsapp social-icon whatsapp"></i>
+                            <span class="social-username">${whatsappInput.value}</span>
+                        </a>
+                    `;
+                }
+                
+                if (youtubeInput.value) {
+                    socialHTML += `
+                        <a href="#" class="social-media-item">
+                            <i class="fab fa-youtube social-icon youtube"></i>
+                            <span class="social-username">${youtubeInput.value}</span>
+                        </a>
+                    `;
+                }
+                
+                posterSocial.innerHTML = socialHTML || '<div style="text-align: center; color: #666; font-style: italic;">সোশ্যাল মিডিয়া লিঙ্ক যোগ করুন</div>';
+                
+                // Update alignment
+                descriptionSection.className = 'description-section ' + currentAlignment + '-aligned';
+                
+                // Update poster size after content is rendered
+                setTimeout(updatePosterSize, 100);
+                
+                // Show success message
+                generateBtn.innerHTML = '<i class="fas fa-check"></i> পোস্টার তৈরি হয়েছে!';
+                generateBtn.style.background = 'linear-gradient(90deg, var(--success), #4cc9f0)';
+                
+                setTimeout(() => {
+                    generateBtn.innerHTML = '<i class="fas fa-bolt"></i> পোস্টার তৈরি করুন';
+                    generateBtn.style.background = 'linear-gradient(90deg, var(--primary), #3a0ca3)';
+                }, 1500);
+            });
+            
+            // Download poster as image
+            downloadBtn.addEventListener('click', function() {
+                // Show loading state
+                const originalText = downloadBtn.innerHTML;
+                downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> তৈরি হচ্ছে...';
+                downloadBtn.disabled = true;
+                
+                // Ensure poster size is updated
+                updatePosterSize();
+                
+                // Use html2canvas to capture the poster
+                html2canvas(posterContainer, {
+                    scale: 2,
+                    backgroundColor: null,
+                    useCORS: true,
+                    logging: false,
+                    allowTaint: true,
+                    width: posterContainer.offsetWidth,
+                    height: posterContainer.offsetHeight
+                }).then(canvas => {
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.download = 'student-care-poster.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    
+                    // Restore button state
+                    downloadBtn.innerHTML = '<i class="fas fa-check"></i> ডাউনলোড সম্পন্ন!';
+                    downloadBtn.style.background = 'linear-gradient(90deg, var(--accent), #b5179e)';
+                    
+                    setTimeout(() => {
+                        downloadBtn.innerHTML = originalText;
+                        downloadBtn.style.background = 'linear-gradient(90deg, var(--accent), #b5179e)';
+                        downloadBtn.disabled = false;
+                    }, 1500);
+                }).catch(error => {
+                    console.error('Error capturing poster:', error);
+                    alert('পোস্টার ডাউনলোড করতে সমস্যা হচ্ছে। দয়া করে আবার চেষ্টা করুন।');
+                    
+                    // Restore button state
+                    downloadBtn.innerHTML = originalText;
+                    downloadBtn.disabled = false;
+                });
+            });
+            
+            // Real-time preview updates
+            const inputs = [
+                companyNameInput, taglineInput, headlineInput, descriptionInput,
+                deadlineInput, addressInput, phoneInput, emailInput,
+                facebookInput, instagramInput, whatsappInput, youtubeInput
+            ];
+            
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    // Update relevant poster element
+                    if (input === companyNameInput) {
+                        posterCompanyName.textContent = companyNameInput.value || 'কোম্পানি নাম';
+                    } else if (input === taglineInput) {
+                        posterTagline.textContent = taglineInput.value || 'ট্যাগলাইন';
+                    } else if (input === headlineInput) {
+                        posterTitle.textContent = headlineInput.value || 'শিরোনাম';
+                    } else if (input === descriptionInput) {
+                        posterDescription.innerHTML = (descriptionInput.value || 'বিস্তারিত তথ্য').replace(/\n/g, '<br>');
+                    } else if (input === deadlineInput) {
+                        posterDeadline.textContent = deadlineInput.value || 'শেষ সময়';
+                    } else if (input === addressInput) {
+                        posterAddress.textContent = addressInput.value || 'ঠিকানা';
+                    } else if (input === phoneInput) {
+                        posterPhone.textContent = phoneInput.value || 'ফোন নম্বর';
+                    } else if (input === emailInput) {
+                        posterEmail.textContent = emailInput.value || 'ইমেইল';
+                    } else if ([facebookInput, instagramInput, whatsappInput, youtubeInput].includes(input)) {
+                        // Update social media when any social input changes
+                        generateBtn.click();
+                    }
+                    
+                    // Update poster size after content changes
+                    setTimeout(updatePosterSize, 50);
+                });
+            });
+            
+            // Set default logo
+            leftPosterLogo.src = "https://i.postimg.cc/7hdFkp49/Logo-sc.png";
+            leftPosterLogo.onerror = function() {
+                // If default logo fails to load, use text
+                leftPosterLogo.style.display = 'none';
+                const logoText = document.createElement('div');
+                logoText.innerHTML = '<div style="font-size: 1.2rem; font-weight: 800; color: var(--primary); text-align: center;">STUDENT<br>CARE</div>';
+                leftPosterLogo.parentNode.appendChild(logoText);
+            };
+            
+            // Initialize poster size
+            setTimeout(updatePosterSize, 300);
+            
+            // Auto-update poster size when window resizes
+            window.addEventListener('resize', updatePosterSize);
+        });
+    </script>
+</body>
+</html>
