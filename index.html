@@ -15,6 +15,7 @@
             --border: rgba(255, 255, 255, 0.08);
             --green: #10b981;
             --red: #ef4444;
+            --iptv-accent: #00e676;
         }
 
         body {
@@ -35,6 +36,9 @@
         .nav-links { display: flex; gap: 20px; }
         .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; transition: 0.3s; }
         .nav-links a:hover { color: var(--accent); }
+        /* IPTV নেভিগেশন লিংক */
+        .nav-links .iptv-link { color: var(--iptv-accent); font-weight: 600; }
+        .nav-links .iptv-link:hover { color: #69f0ae; }
 
         /* --- Hero --- */
         .hero {
@@ -52,7 +56,7 @@
         }
         .search-container input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
 
-        /* --- Tools Grid (11 Tools) --- */
+        /* --- Tools Grid (12 Tools - IPTV যোগ করা হয়েছে) --- */
         .container { max-width: 1300px; margin: 0 auto; padding: 0 5% 50px; }
         .section-title { font-size: 24px; color: var(--accent); margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
         
@@ -66,6 +70,24 @@
         .tool-card:hover { transform: translateY(-5px); border-color: var(--accent); background: rgba(56, 189, 248, 0.05); }
         .tool-card i { font-size: 28px; color: var(--accent); margin-bottom: 12px; }
         .tool-card h3 { font-size: 14px; margin: 0; color: #fff; }
+
+        /* IPTV স্পেশাল কার্ড */
+        .tool-card.iptv-card {
+            border-color: rgba(0, 230, 118, 0.3);
+            background: rgba(0, 230, 118, 0.05);
+        }
+        .tool-card.iptv-card:hover {
+            border-color: var(--iptv-accent);
+            background: rgba(0, 230, 118, 0.1);
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.1);
+        }
+        .tool-card.iptv-card i { color: var(--iptv-accent); }
+        .tool-card.iptv-card .badge-iptv {
+            position: absolute; top: 8px; right: 8px;
+            background: var(--iptv-accent); color: #000;
+            font-size: 8px; font-weight: 700; padding: 2px 10px;
+            border-radius: 12px; text-transform: uppercase;
+        }
 
         /* --- Mega Link Directory --- */
         .directory-grid {
@@ -99,6 +121,12 @@
             .hero h1 { font-size: 28px; }
             .tools-grid { grid-template-columns: 1fr 1fr; }
         }
+        @media (max-width: 480px) {
+            .tools-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .tool-card { padding: 15px 10px; }
+            .tool-card i { font-size: 20px; }
+            .tool-card h3 { font-size: 11px; }
+        }
     </style>
 </head>
 <body>
@@ -111,6 +139,7 @@
     <div class="nav-links">
         <a href="#services">Tools</a>
         <a href="#directory">BD Directory</a>
+        <a href="Jahangiriptv.html" class="iptv-link" target="_blank">📡 IPTV</a>
         <a href="https://wa.me/8801637746468" target="_blank">Contact</a>
     </div>
 </nav>
@@ -138,6 +167,13 @@
         <div class="tool-card" onclick="openPage('letter.html')"><i class="fa-solid fa-envelope-open-text"></i><h3>Official Letter</h3></div>
         <div class="tool-card" onclick="openPage('nagorik.html')"><i class="fa-solid fa-id-card"></i><h3>Nagorik Sanad</h3></div>
         <div class="tool-card" onclick="openPage('uniondigital.html')"><i class="fa-solid fa-landmark"></i><h3>Union Digital</h3></div>
+        
+        <!-- ===== IPTV টুল কার্ড (Jahangiriptv.html লিংক) ===== -->
+        <div class="tool-card iptv-card" onclick="openPage('Jahangiriptv.html')">
+            <span class="badge-iptv">LIVE</span>
+            <i class="fa-solid fa-tower-broadcast"></i>
+            <h3>📡 জাহাঙ্গীর আইপি টিভি</h3>
+        </div>
     </div>
 
     <div class="section-title" id="directory"><i class="fa fa-globe"></i> Bangladesh Service Directory</div>
@@ -269,4 +305,3 @@
 
 </body>
 </html>
-
