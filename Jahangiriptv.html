@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>⚽ জাহাঙ্গীর আইপি টিভি | PRO EDITION</title>
+    <title>📡 জাহাঙ্গীর আইপি টিভি | সব ফরম্যাট</title>
+    <!-- HLS.js -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- dash.js (MPD সাপোর্টের জন্য) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.4/dash.all.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        /* ===== কালার থিম ===== */
+        /* ===== CSS (আগের মতোই) ===== */
         :root {
             --primary: #00bcd4;
             --primary-dark: #0097a7;
             --primary-glow: rgba(0, 188, 212, 0.3);
-            --accent: #ff6f00;
             --accent-gold: #ffab00;
             --bg-main: #0a0e17;
             --bg-card: #111927;
@@ -22,11 +23,10 @@
             --text: #ffffff;
             --text-dim: #7a8aa8;
             --border: #1a2a44;
-            --shadow: 0 8px 40px rgba(0, 188, 212, 0.06);
             --radius: 14px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --external-color: #ff6f00;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg-main); color: var(--text); display: flex; justify-content: center; padding: 10px; min-height: 100vh; }
         .app { max-width: 1300px; width: 100%; }
@@ -52,44 +52,28 @@
             background: linear-gradient(135deg, #fff 30%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
         }
-        .header .logo .brand small {
-            font-size: 12px; font-weight: 400;
-            -webkit-text-fill-color: var(--text-dim);
-            display: block;
-            letter-spacing: 1px;
-        }
+        .header .logo .brand small { font-size: 12px; font-weight: 400; -webkit-text-fill-color: var(--text-dim); display: block; }
         .header .stats-group { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-        .header .stats-group .stat-item {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 12px; color: var(--text-dim);
-        }
-        .header .stats-group .stat-item .dot {
-            width: 8px; height: 8px; border-radius: 50%; display: inline-block;
-        }
+        .header .stats-group .stat-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-dim); }
+        .header .stats-group .stat-item .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
         .dot.green { background: #00e676; box-shadow: 0 0 12px #00e676; }
         .dot.red { background: #ff5252; box-shadow: 0 0 12px #ff5252; }
         .dot.gold { background: var(--accent-gold); box-shadow: 0 0 12px var(--accent-gold); }
         .header .badge-live {
             background: #ff5252; color: #fff; padding: 4px 16px;
             border-radius: 20px; font-size: 10px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.5px;
-            animation: pulse-live 1.5s infinite;
+            text-transform: uppercase; animation: pulse-live 1.5s infinite;
         }
         @keyframes pulse-live { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        /* ===== ভিজিটর বার ===== */
         .visitor-bar {
             background: var(--bg-card); padding: 8px 20px;
             display: flex; justify-content: space-between; align-items: center;
             flex-wrap: wrap; gap: 8px;
             border-bottom: 1px solid var(--border);
         }
-        .visitor-bar .visitor-info {
-            display: flex; align-items: center; gap: 16px;
-            font-size: 12px; color: var(--text-dim);
-        }
+        .visitor-bar .visitor-info { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--text-dim); }
         .visitor-bar .visitor-info i { color: var(--accent-gold); }
         .visitor-bar .visitor-info .count { color: #fff; font-weight: 700; font-size: 14px; }
         .visitor-bar .live-viewers {
@@ -98,24 +82,56 @@
             padding: 4px 14px; border-radius: 20px;
             border: 1px solid rgba(255, 82, 82, 0.2);
         }
-        .visitor-bar .live-viewers .pulse-dot {
-            width: 8px; height: 8px; background: #ff5252;
-            border-radius: 50%; animation: pulse-dot 1s infinite;
-        }
+        .visitor-bar .live-viewers .pulse-dot { width: 8px; height: 8px; background: #ff5252; border-radius: 50%; animation: pulse-dot 1s infinite; }
         @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.7); } }
 
-        /* ===== প্লেয়ার ===== */
         .player-container {
             background: var(--bg-card);
             border-radius: 0 0 var(--radius) var(--radius);
             overflow: hidden;
-            box-shadow: var(--shadow);
+            box-shadow: 0 8px 40px rgba(0, 188, 212, 0.06);
             border-left: 1px solid var(--border);
             border-right: 1px solid var(--border);
             border-bottom: 1px solid var(--border);
         }
         .player-wrapper { position: relative; background: #000; }
         #video-player { width: 100%; aspect-ratio: 16/9; display: block; background: #0a0a0a; }
+
+        /* ===== External Player ওভারলে ===== */
+        .external-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 20;
+            display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            gap: 20px; padding: 20px;
+        }
+        .external-overlay.show { display: flex; }
+        .external-overlay .icon-big { font-size: 64px; color: var(--external-color); animation: bounce 1.5s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .external-overlay h2 { color: #fff; font-size: 20px; text-align: center; }
+        .external-overlay p { color: var(--text-dim); font-size: 14px; text-align: center; max-width: 80%; }
+        .external-overlay .btn-external {
+            background: var(--external-color); color: #fff;
+            border: none; padding: 14px 40px; border-radius: 30px;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+            transition: var(--transition);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .external-overlay .btn-external:hover { transform: scale(1.05); background: #ff8f00; }
+        .external-overlay .btn-retry {
+            background: transparent; color: var(--text-dim);
+            border: 1px solid var(--border); padding: 10px 30px;
+            border-radius: 30px; font-size: 14px; cursor: pointer;
+            transition: var(--transition);
+        }
+        .external-overlay .btn-retry:hover { border-color: var(--primary); color: #fff; }
+        .external-overlay .channel-name-external { color: var(--primary); font-weight: 600; font-size: 18px; }
+        .external-overlay .url-display {
+            color: #555; font-size: 11px; max-width: 90%;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            background: rgba(255,255,255,0.03); padding: 8px 16px;
+            border-radius: 8px; width: 90%; text-align: center;
+        }
 
         /* ===== কন্ট্রোল ===== */
         .custom-controls {
@@ -135,44 +151,27 @@
         .custom-controls .progress-container {
             flex: 1; min-width: 80px; height: 4px; background: #2a2a3a;
             border-radius: 4px; position: relative; cursor: pointer;
-            transition: height 0.2s;
         }
         .custom-controls .progress-container:hover { height: 6px; }
         .custom-controls .progress-fill {
             height: 100%; background: var(--primary); border-radius: 4px;
             width: 0%; transition: width 0.1s; position: relative;
         }
-        .custom-controls .progress-fill::after {
-            content: ''; position: absolute; right: -4px; top: -3px;
-            width: 10px; height: 10px; background: var(--primary);
-            border-radius: 50%; opacity: 0; transition: opacity 0.2s;
-        }
-        .custom-controls .progress-container:hover .progress-fill::after { opacity: 1; }
         .custom-controls .progress-buffer {
             height: 100%; background: #444; border-radius: 4px;
             width: 0%; position: absolute; top: 0; left: 0;
         }
-        .custom-controls .time-display {
-            color: #aaa; font-size: 11px; font-family: monospace;
-            min-width: 90px; text-align: center;
-        }
+        .custom-controls .time-display { color: #aaa; font-size: 11px; font-family: monospace; min-width: 90px; text-align: center; }
         .custom-controls .volume-wrap { display: flex; align-items: center; gap: 4px; }
         .custom-controls .volume-slider {
             width: 50px; height: 3px; -webkit-appearance: none;
             background: #333; border-radius: 2px; outline: none;
         }
-        .custom-controls .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 10px; height: 10px;
-            border-radius: 50%; background: var(--primary); cursor: pointer;
-        }
-        .custom-controls select {
-            background: #1a1a28; color: #ddd; border: 1px solid #333;
-            padding: 2px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;
-        }
+        .custom-controls .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); cursor: pointer; }
+        .custom-controls select { background: #1a1a28; color: #ddd; border: 1px solid #333; padding: 2px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; }
         .custom-controls select:focus { outline: none; border-color: var(--primary); }
         .custom-controls .fullscreen-btn { font-size: 18px; }
 
-        /* ===== টুলবার ===== */
         .toolbar {
             background: var(--bg-card); padding: 8px 14px;
             display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
@@ -184,7 +183,7 @@
             background: #0a0a14; color: #ddd; font-size: 12px;
             transition: var(--transition);
         }
-        .toolbar input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 20px var(--primary-glow); }
+        .toolbar input:focus { border-color: var(--primary); outline: none; }
         .toolbar button {
             padding: 6px 14px; border: none; border-radius: 8px;
             font-weight: 600; font-size: 11px; cursor: pointer;
@@ -195,11 +194,15 @@
         .toolbar button.secondary { background: #1e1e30; color: #ccc; }
         .toolbar button.secondary:hover { background: #2a2a40; color: #fff; }
         .toolbar button.gold { background: var(--accent-gold); color: #000; }
-        .toolbar button.gold:hover { background: #ffab00; transform: scale(1.02); }
         .toolbar button.danger { background: #ff5252; color: #fff; }
-        .toolbar button.danger:hover { background: #ff1744; }
+        .toolbar button.external-toggle {
+            background: var(--external-color); color: #fff;
+            border: none; border-radius: 8px; padding: 6px 14px;
+            font-weight: 600; font-size: 11px; cursor: pointer;
+            transition: var(--transition);
+        }
+        .toolbar button.external-toggle:hover { background: #ff8f00; transform: scale(1.02); }
 
-        /* ===== স্ট্যাটাস ===== */
         .status-bar {
             background: var(--bg-card); padding: 4px 14px;
             display: flex; justify-content: space-between; flex-wrap: wrap;
@@ -208,7 +211,6 @@
         }
         .status-bar .now-playing { color: var(--primary); font-weight: 600; max-width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* ===== ফিল্টার ===== */
         .filter-bar {
             padding: 6px 14px; background: var(--bg-card);
             border-bottom: 1px solid var(--border);
@@ -222,21 +224,15 @@
         }
         .filter-bar input::placeholder { color: #555; }
         .filter-bar input:focus { border-color: var(--primary); outline: none; }
-        .filter-bar select {
-            background: #0a0a14; color: #ddd; border: 1px solid var(--border);
-            padding: 4px 12px; border-radius: 20px; font-size: 10px; cursor: pointer;
-        }
+        .filter-bar select { background: #0a0a14; color: #ddd; border: 1px solid var(--border); padding: 4px 12px; border-radius: 20px; font-size: 10px; cursor: pointer; }
         .filter-bar select:focus { outline: none; border-color: var(--primary); }
         .filter-bar .sub-btn {
             background: transparent; border: 1px solid var(--border);
             color: #aaa; padding: 3px 12px; border-radius: 20px;
             font-size: 10px; cursor: pointer; transition: var(--transition);
         }
-        .filter-bar .sub-btn:hover { border-color: var(--primary); color: #fff; }
         .filter-bar .sub-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(0,188,212,0.08); }
-        .filter-bar .filter-count { color: #555; font-size: 10px; }
 
-        /* ===== চ্যানেল গ্রিড ===== */
         .channel-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
@@ -259,19 +255,20 @@
         }
         .channel-item:hover { background: var(--bg-hover); transform: translateY(-2px); color: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
         .channel-item.active { border-color: var(--primary); background: rgba(0,188,212,0.06); color: #fff; box-shadow: 0 0 30px var(--primary-glow); }
-        .channel-item .status-indicator {
-            display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-            margin-right: 4px; vertical-align: middle;
-        }
+        .channel-item .status-indicator { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
         .channel-item .status-indicator.green { background: #00e676; box-shadow: 0 0 8px #00e676; }
         .channel-item .status-indicator.red { background: #ff5252; box-shadow: 0 0 8px #ff5252; }
         .channel-item .status-indicator.gray { background: #444; }
+        .channel-item .external-badge {
+            position: absolute; bottom: 2px; right: 4px;
+            font-size: 8px; color: var(--external-color);
+            opacity: 0.6;
+        }
         .channel-item .flag { font-size: 14px; display: block; }
         .channel-item .channel-name { display: block; font-weight: 500; margin-top: 2px; }
         .channel-item .badge { display: block; font-size: 7px; color: #555; margin-top: 1px; text-transform: uppercase; letter-spacing: 0.3px; }
         .empty-state { color: #444; text-align: center; padding: 30px; grid-column: 1/-1; font-size: 13px; }
 
-        /* ===== সাবটাইটেল ===== */
         .subtitle-overlay {
             position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%);
             background: rgba(0,0,0,0.75); color: #fff; padding: 6px 18px;
@@ -284,7 +281,6 @@
         .subtitle-overlay .sub-bn { color: #fff; font-size: 17px; display: block; }
         .subtitle-overlay.show { display: block; }
 
-        /* ===== ফুটার ===== */
         .brand-footer {
             background: linear-gradient(135deg, var(--bg-card), #080c18);
             padding: 12px 18px; border-top: 1px solid rgba(0, 188, 212, 0.1);
@@ -296,31 +292,15 @@
             background: linear-gradient(135deg, #fff 30%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            display: flex; align-items: center; gap: 8px;
         }
-        .brand-footer .brand-name small {
-            font-weight: 400; color: #666; font-size: 10px;
-            -webkit-text-fill-color: #666;
-        }
+        .brand-footer .brand-name small { font-weight: 400; color: #666; font-size: 10px; -webkit-text-fill-color: #666; }
         .brand-footer .social { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
-        .brand-footer .social a {
-            color: #888; text-decoration: none; font-size: 11px;
-            transition: var(--transition); display: flex; align-items: center; gap: 4px;
-        }
+        .brand-footer .social a { color: #888; text-decoration: none; font-size: 11px; transition: var(--transition); display: flex; align-items: center; gap: 4px; }
         .brand-footer .social a:hover { color: var(--primary); }
         .brand-footer .social .dev { color: #444; font-size: 10px; }
-        .brand-footer .social .dev span {
-            background: linear-gradient(135deg, var(--primary), var(--accent-gold));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .brand-footer .social .dev span { background: linear-gradient(135deg, var(--primary), var(--accent-gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .spinner {
-            display: inline-block; width: 12px; height: 12px;
-            border: 2px solid var(--primary); border-radius: 50%;
-            border-top-color: transparent; animation: spin 0.6s linear infinite;
-            vertical-align: middle; margin-right: 6px;
-        }
+        .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--primary); border-radius: 50%; border-top-color: transparent; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         @media (max-width: 768px) {
@@ -332,6 +312,8 @@
             .custom-controls button { font-size: 14px; min-width: 28px; min-height: 28px; }
             .brand-footer { flex-direction: column; align-items: center; text-align: center; }
             .visitor-bar { flex-direction: column; align-items: flex-start; }
+            .external-overlay h2 { font-size: 16px; }
+            .external-overlay .btn-external { padding: 12px 30px; font-size: 14px; }
         }
         @media (max-width: 480px) {
             .header .logo .brand { font-size: 15px; }
@@ -344,9 +326,7 @@
             .custom-controls .progress-container { min-width: 50px; }
         }
         @media screen and (orientation: landscape) and (max-height: 500px) {
-            .header, .visitor-bar, .toolbar, .status-bar, .filter-bar, .brand-footer {
-                display: none !important;
-            }
+            .header, .visitor-bar, .toolbar, .status-bar, .filter-bar, .brand-footer { display: none !important; }
             .player-container { border-radius: 0 !important; border: none !important; height: 100vh !important; width: 100vw !important; position: fixed !important; top: 0 !important; left: 0 !important; z-index: 9999 !important; background: #000 !important; }
             .player-wrapper { height: 100% !important; }
             #video-player { height: 100% !important; aspect-ratio: auto !important; }
@@ -358,12 +338,11 @@
 </head>
 <body>
 <div class="app">
-    <!-- ===== হেডার ===== -->
     <header class="header">
         <div class="logo">
             <div class="icon-box">📡</div>
             <div>
-                <span class="brand">জাহাঙ্গীর আইপি টিভি <small>⚡ PRO EDITION</small></span>
+                <span class="brand">জাহাঙ্গীর আইপি টিভি <small>⚡ সব ফরম্যাট</small></span>
             </div>
         </div>
         <div class="stats-group">
@@ -374,7 +353,6 @@
         </div>
     </header>
 
-    <!-- ===== ভিজিটর বার ===== -->
     <div class="visitor-bar">
         <div class="visitor-info">
             <i class="fa-solid fa-eye"></i>
@@ -391,7 +369,6 @@
         </div>
     </div>
 
-    <!-- ===== প্লেয়ার ===== -->
     <div class="player-container">
         <div class="player-wrapper">
             <video id="video-player" playsinline></video>
@@ -399,9 +376,25 @@
                 <span class="sub-ar" id="sub-ar">النص العربي</span>
                 <span class="sub-bn" id="sub-bn">বাংলা অনুবাদ</span>
             </div>
+            
+            <!-- External Player Overlay -->
+            <div class="external-overlay" id="external-overlay">
+                <div class="icon-big">📺</div>
+                <h2>এই চ্যানেলটি <span class="channel-name-external" id="ext-channel-name">ব্রাউজারে</span> চালানো যাচ্ছে না</h2>
+                <p>আপনি চাইলে <strong>External Player</strong> (VLC, MX Player, ইত্যাদি) দিয়ে দেখতে পারেন।</p>
+                <button class="btn-external" onclick="openExternalPlayer()">
+                    <i class="fa-solid fa-play"></i> External Player এ দেখুন
+                </button>
+                <button class="btn-retry" onclick="retryChannel()">
+                    <i class="fa-solid fa-rotate"></i> আবার চেষ্টা করুন
+                </button>
+                <button class="btn-retry" onclick="skipChannel()" style="border-color:#ff5252;color:#ff5252;">
+                    <i class="fa-solid fa-forward"></i> স্কিপ করুন
+                </button>
+                <div class="url-display" id="ext-url-display">Loading...</div>
+            </div>
         </div>
 
-        <!-- ===== কন্ট্রোল ===== -->
         <div class="custom-controls">
             <button id="play-btn" title="প্লে/পজ">⏸</button>
             <button id="stop-btn" title="স্টপ">⏹</button>
@@ -424,7 +417,6 @@
             <button class="fullscreen-btn" id="fullscreen-btn" title="পূর্ণস্ক্রিন">⛶</button>
         </div>
 
-        <!-- ===== টুলবার ===== -->
         <div class="toolbar">
             <input type="text" id="playlist-url" value="https://iptv-org.github.io/iptv/index.category.m3u" placeholder="M3U / M3U8 লিংক">
             <button class="primary" onclick="loadPlaylist()">📥 লোড</button>
@@ -433,15 +425,16 @@
             <button id="toggle-auto" class="secondary" onclick="toggleAutoSkip()" style="background:var(--primary);color:#000;">▶️ অটো</button>
             <button class="gold" onclick="loadDefaultPlaylists()">🔗 ১০k+ লোড</button>
             <button class="danger" onclick="clearChannels()">🗑️</button>
+            <button class="external-toggle" onclick="showExternalOverlay()">
+                <i class="fa-solid fa-tv"></i> External
+            </button>
         </div>
 
-        <!-- ===== স্ট্যাটাস ===== -->
         <div class="status-bar">
             <span class="now-playing" id="now-playing">⏳ চ্যানেল লোড হচ্ছে...</span>
             <span id="channel-counter">০টি চ্যানেল</span>
         </div>
 
-        <!-- ===== ফিল্টার ===== -->
         <div class="filter-bar">
             <input type="text" id="filter-input" placeholder="🔍 ফিল্টার (FIFA, BD, Sports...)" oninput="filterChannels()">
             <span style="color:#555;font-size:10px;">🌐 ভাষা:</span>
@@ -458,16 +451,14 @@
             <span class="filter-count" id="filter-count"></span>
         </div>
 
-        <!-- ===== চ্যানেল লিস্ট ===== -->
         <div id="channel-list" class="channel-grid">
             <div class="empty-state">🚀 প্লেলিস্ট লোড করুন</div>
         </div>
 
-        <!-- ===== ফুটার ===== -->
         <div class="brand-footer">
             <div class="brand-name">
                 📡 জাহাঙ্গীর আইপি টিভি
-                <small>PRO v3.0</small>
+                <small>সব ফরম্যাট v1.0</small>
             </div>
             <div class="social">
                 <a href="https://www.facebook.com/iam.mrjahangir" target="_blank">📘 Facebook</a>
@@ -481,8 +472,8 @@
 
 <script>
     // ============================================================
-    //  জাহাঙ্গীর আইপি টিভি - PRO EDITION (৫০০+ চ্যানেল)
-    //  FIFA World Cup চ্যানেল সহ
+    //  জাহাঙ্গীর আইপি টিভি - সব ফরম্যাট (HLS + MPD + TS)
+    //  dash.js দিয়ে MPD সাপোর্ট, External Player দিয়ে TS সাপোর্ট
     // ============================================================
 
     // ----- DOM -----
@@ -515,11 +506,17 @@
     const onlineViewersEl = document.getElementById('online-viewers');
     const liveCountEl = document.getElementById('live-count');
 
+    // External Player Elements
+    const externalOverlay = document.getElementById('external-overlay');
+    const extChannelName = document.getElementById('ext-channel-name');
+    const extUrlDisplay = document.getElementById('ext-url-display');
+
     // ----- গ্লোবাল -----
     let channels = [];
     let currentIndex = -1;
     let autoSkipEnabled = true;
     let hlsInstance = null;
+    let dashInstance = null;
     let skipTimer = null;
     let isPlaying = false;
     let isMuted = false;
@@ -528,6 +525,7 @@
     let currentLang = 'bn';
     let subtitleTimer = null;
     let channelStatus = {};
+    let currentPlayerType = 'none'; // 'hls', 'dash', 'native', 'external'
 
     // ============================================================
     //  ভিজিটর কাউন্ট
@@ -543,10 +541,92 @@
     }
 
     // ============================================================
-    //  ৫০০+ চ্যানেল (আপনার দেওয়া M3U থেকে)
+    //  ফরম্যাট ডিটেক্ট
     // ============================================================
-    const WORKING_CHANNELS = [
-        // ===== FIFA World Cup চ্যানেল (স্পেশাল) =====
+    function detectFormat(url) {
+        if (!url) return 'unknown';
+        if (url.includes('.m3u8') || url.includes('master.m3u8') || url.includes('playlist.m3u8') || url.includes('/hls/')) {
+            return 'hls';
+        }
+        if (url.includes('.mpd') || url.includes('/dash/') || url.includes('manifest.mpd')) {
+            return 'dash';
+        }
+        if (url.includes('.ts') || url.includes('chunklist')) {
+            return 'ts';
+        }
+        return 'unknown';
+    }
+
+    // ============================================================
+    //  External Player ফাংশন
+    // ============================================================
+    function showExternalOverlay() {
+        if (currentIndex < 0 || !channels[currentIndex]) {
+            alert('প্রথমে একটি চ্যানেল সিলেক্ট করুন');
+            return;
+        }
+        const channel = channels[currentIndex];
+        extChannelName.textContent = channel.name;
+        extUrlDisplay.textContent = channel.url;
+        externalOverlay.classList.add('show');
+        video.pause();
+        playBtn.textContent = '▶';
+        isPlaying = false;
+        stopSubtitleTimer();
+        if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+        if (dashInstance) { dashInstance.reset(); dashInstance = null; }
+    }
+
+    function hideExternalOverlay() {
+        externalOverlay.classList.remove('show');
+    }
+
+    function openExternalPlayer() {
+        const channel = channels[currentIndex];
+        if (!channel) return;
+        
+        const url = channel.url;
+        
+        if (/android/i.test(navigator.userAgent)) {
+            const vlcIntent = `intent://${url.replace(/^https?:\/\//, '')}#Intent;package=org.videolan.vlc;action=org.videolan.vlc.Play;end`;
+            try {
+                window.location.href = vlcIntent;
+            } catch(e) {
+                window.location.href = url;
+            }
+        } else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+            window.location.href = `vlc://${url}`;
+        } else {
+            window.open(`vlc://${url}`, '_blank');
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'stream.m3u8';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+        
+        nowPlayingEl.textContent = `📺 External: ${channel.name}`;
+        hideExternalOverlay();
+    }
+
+    function retryChannel() {
+        hideExternalOverlay();
+        if (currentIndex >= 0) {
+            playChannel(currentIndex);
+        }
+    }
+
+    function skipChannel() {
+        hideExternalOverlay();
+        nextChannel();
+    }
+
+    // ============================================================
+    //  সব চ্যানেল (HLS + MPD + TS)
+    // ============================================================
+    const ALL_CHANNELS = [
+        // ===== FIFA World Cup =====
         { name: '🏆 FIFA World Cup 2026', url: 'https://raw.githubusercontent.com/Paradise-91/ParaTV/main/streams/fifa2026/live.m3u8', group: 'FIFA', flag: '🏆' },
         { name: '🏆 FIFA+ Live', url: 'https://fifaplus.com/live.m3u8', group: 'FIFA', flag: '🏆' },
         { name: '🏆 FIFA+ English', url: 'https://jmp2.uk/plu-660c29b5aec9680008f5b4a4.m3u8', group: 'FIFA', flag: '🏆' },
@@ -557,23 +637,24 @@
         { name: '🏆 FIFA+ Portuguese', url: 'https://e3be9ac5.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctYnJfRklGQVBsdXNQb3J0dWd1ZXNlX0hMUw/playlist.m3u8', group: 'FIFA', flag: '🏆' },
         { name: '🏆 FIFA+ Women', url: 'https://cffda8ff.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9GSUZBUGx1c3dvbWVuX0hMUw/playlist.m3u8', group: 'FIFA', flag: '🏆' },
         
-        // ===== বাংলাদেশি চ্যানেল =====
-        { name: 'IO বাংলা (240p)', url: 'https://live-bangla.akamaized.net/liveabr/pub-iobanglakp3sff/live_240p/chunks.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
-        { name: 'IO বাংলা (360p)', url: 'https://live-bangla.akamaized.net/liveabr/pub-iobanglakp3sff/live_360p/chunks.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
-        { name: 'IO বাংলা (480p)', url: 'https://live-bangla.akamaized.net/liveabr/pub-iobanglakp3sff/live_480p/chunks.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        // ===== বাংলাদেশি =====
         { name: 'IO বাংলা (720p)', url: 'https://live-bangla.akamaized.net/liveabr/pub-iobanglakp3sff/live_720p/chunks.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
-        { name: 'T Sports (BD)', url: 'https://tvsen7.aynaott.com/tsports-hd/index.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        { name: 'IO বাংলা (480p)', url: 'https://live-bangla.akamaized.net/liveabr/pub-iobanglakp3sff/live_480p/chunks.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        { name: 'IO বাংলা (360p)', url: 'https://live-bangla.akamaized.net/liveabr/pub-iobanglakp3sff/live_360p/chunks.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        { name: 'IO বাংলা (240p)', url: 'https://live-bangla.akamaized.net/liveabr/pub-iobanglakp3sff/live_240p/chunks.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        { name: 'T Sports (Live 1)', url: 'https://live.tsports.com/mobile_hls/tsports_live_1/playlist.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        { name: 'T Sports (Live 2)', url: 'https://live.tsports.com/mobile_hls/tsports_live_2/playlist.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        { name: 'T Sports (Live 3)', url: 'https://live.tsports.com/mobile_hls/tsports_live_3/playlist.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
         { name: 'Jonakk TV', url: 'https://cdn.smartstream.video/smartstream-us/jonakk/jonakk/playlist.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        { name: 'বিটিভি', url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        { name: 'মাই টিভি', url: 'http://116.204.149.16/mytv/index.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        { name: 'রাজধানী টিভি', url: 'https://sm-monirul.top/toffee/play/rajdhani_tv.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
         
-        // ===== স্পোর্টস চ্যানেল (আপনার M3U থেকে) =====
+        // ===== স্পোর্টস =====
         { name: '30A Golf Kingdom', url: 'https://30a-tv.com/feeds/vidaa/golf.m3u8', group: 'স্পোর্টস', flag: '🌍' },
         { name: 'Africa 24 Sport', url: 'https://africa24.vedge.infomaniak.com/livecast/ik:africa24sport/manifest.m3u8', group: 'স্পোর্টস', flag: '🌍' },
-        { name: 'AS3 Sport TV', url: 'https://streamtv.as3sport.online:3394/hybrid/play.m3u8', group: 'স্পোর্টস', flag: '🌍' },
         { name: 'Bahrain Sports 1', url: 'https://5c7b683162943.streamlock.net/live/ngrp:sportsone_all/playlist.m3u8', group: 'স্পোর্টস', flag: '🇧🇭' },
         { name: 'Bahrain Sports 2', url: 'https://5c7b683162943.streamlock.net/live/ngrp:bahrainsportstwo_all/playlist.m3u8', group: 'স্পোর্টস', flag: '🇧🇭' },
-        { name: 'Fox Sports 1', url: 'https://cors-proxy.cooks.fyi/http://190.11.225.124:5000/live/fs1_hd/playlist.m3u8', group: 'স্পোর্টস', flag: '🇺🇸' },
-        { name: 'Fox Deportes', url: 'https://cors-proxy.cooks.fyi/http://23.237.104.106:8080/USA_FOX_DEPORTES/index.m3u8', group: 'স্পোর্টস', flag: '🇺🇸' },
-        { name: 'Cricket Gold', url: 'https://streams2.sofast.tv/scheduler/scheduleMaster/418.m3u8', group: 'স্পোর্টস', flag: '🌍' },
         { name: 'Sky Sports News', url: 'https://skysportnews-lh.akamaihd.net/i/skysportsnews_1@193713/master.m3u8', group: 'স্পোর্টস', flag: '🇬🇧' },
         { name: 'ESPN US', url: 'https://espn-us.akamaized.net/live/now/espn/HD/master.m3u8', group: 'স্পোর্টস', flag: '🇺🇸' },
         { name: 'ESPN 2 US', url: 'https://espn2-us.akamaized.net/live/now/espn2/HD/master.m3u8', group: 'স্পোর্টস', flag: '🇺🇸' },
@@ -583,22 +664,19 @@
         { name: 'Eurosport 2', url: 'https://eurosport2-lh.akamaihd.net/i/eurosport2_1@194296/master.m3u8', group: 'স্পোর্টস', flag: '🇪🇺' },
         { name: 'BeIN Sports 1', url: 'https://beinsports1-lh.akamaihd.net/i/beinsports1_1@194297/master.m3u8', group: 'স্পোর্টস', flag: '🇶🇦' },
         { name: 'BeIN Sports 2', url: 'https://beinsports2-lh.akamaihd.net/i/beinsports2_1@194298/master.m3u8', group: 'স্পোর্টস', flag: '🇶🇦' },
+        { name: 'Real Madrid TV', url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8', group: 'স্পোর্টস', flag: '🇪🇸' },
+        { name: 'CT SPORT HD', url: 'http://88.212.15.19/live/test_ctsport_25p/playlist.m3u8', group: 'স্পোর্টস', flag: '🇨🇿' },
+        { name: 'Redbull TV', url: 'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_3360.m3u8', group: 'স্পোর্টস', flag: '🌍' },
+        { name: 'DAZN FAST+', url: 'https://ac-003.live.p7s1video.net/63f8995e/t_003/dazn-fast-hd/cenc-default.mpd', group: 'স্পোর্টস', flag: '🌍' },
+        { name: 'DAZN COMBAT', url: 'https://dazn-combat-rakuten.amagi.tv/hls/amagi_hls_data_rakutenAA-dazn-combat-rakuten/CDN/master.m3u8', group: 'স্পোর্টস', flag: '🌍' },
+        { name: 'Caze TV', url: 'https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/Caze_TV.m3u8', group: 'স্পোর্টস', flag: '🇧🇷' },
+        { name: 'DSPORTS FHD', url: 'https://otte.live.fly.ww.aiv-cdn.net/gru-nitro/live/clients/dash/enc/ubehitlwzo/out/v1/8e09c381a51f4366a19e979418112e8f/cenc.mpd', group: 'স্পোর্টস', flag: '🌍' },
+        { name: 'FANCODE', url: 'https://abfjk4haaaaaaaampv6ofhkihi4r6.bia-cf.live.pv-cdn.net/iad-nitro/live/clients/dash/enc/fdb3pubmek/out/v1/aefca6420f944a9482e117f315de535f/cenc.mpd', group: 'স্পোর্টস', flag: '🌍' },
+        { name: 'Willow SPORTS', url: 'https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/tll6uwepxa/out/v1/a7f67cbb33df46539312956427343886/cenc.mpd', group: 'স্পোর্টস', flag: '🌍' },
+        { name: 'Fubo Sports 2', url: 'https://otte.live.fly.ww.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/uiffe4jhf0/out/v1/3534efafca8c4815adbb4d2e9a1fe003/cenc.mpd', group: 'স্পোর্টস', flag: '🌍' },
         { name: 'NBA TV', url: 'https://amg00556-amg00556c3-firetv-us-6060.playouts.now.amagi.tv/playlist.m3u8', group: 'স্পোর্টস', flag: '🇺🇸' },
         { name: 'NFL Channel', url: 'https://pb-we3ltka9xobj6.akamaized.net/master.m3u8', group: 'স্পোর্টস', flag: '🇺🇸' },
         { name: 'PGA Tour', url: 'https://d11k1mnrgfposz.cloudfront.net/playlist.m3u8', group: 'স্পোর্টস', flag: '🌍' },
-        
-        // ===== আরবি স্পোর্টস =====
-        { name: 'Alkass One', url: 'https://liveeu-gcp.alkassdigital.net/alkass1-p/main.m3u8', group: 'আরবি স্পোর্টস', flag: '🇶🇦' },
-        { name: 'Alkass Two', url: 'https://liveeu-gcp.alkassdigital.net/alkass2-p/main.m3u8', group: 'আরবি স্পোর্টস', flag: '🇶🇦' },
-        { name: 'Alkass Three', url: 'https://liveeu-gcp.alkassdigital.net/alkass3-p/main.m3u8', group: 'আরবি স্পোর্টস', flag: '🇶🇦' },
-        { name: 'Alkass Four', url: 'https://liveeu-gcp.alkassdigital.net/alkass4-p/main.m3u8', group: 'আরবি স্পোর্টস', flag: '🇶🇦' },
-        { name: 'Alkass Five', url: 'https://liveeu-gcp.alkassdigital.net/alkass5-p/main.m3u8', group: 'আরবি স্পোর্টস', flag: '🇶🇦' },
-        { name: 'Alkass Six', url: 'https://liveeu-gcp.alkassdigital.net/alkass6-p/main.m3u8', group: 'আরবি স্পোর্টস', flag: '🇶🇦' },
-        { name: 'Alkass Seven', url: 'https://liveeu-gcp.alkassdigital.net/alkass7-p/main.m3u8', group: 'আরবি স্পোর্টস', flag: '🇶🇦' },
-        { name: 'Alkass SHOOF', url: 'https://liveeu-gcp.alkassdigital.net/shooflive/main.m3u8', group: 'আরবি স্পোর্টস', flag: '🇶🇦' },
-        { name: 'KSA Sports 1', url: 'https://aloula-redirect.vercel.app/9/playlist.m3u8', group: 'আরবি স্পোর্টস', flag: '🇸🇦' },
-        { name: 'KSA Sports 2', url: 'https://aloula-redirect.vercel.app/10/playlist.m3u8', group: 'আরবি স্পোর্টস', flag: '🇸🇦' },
-        { name: 'KSA Sports 3', url: 'https://aloula-redirect.vercel.app/16/playlist.m3u8', group: 'আরবি স্পোর্টস', flag: '🇸🇦' },
         
         // ===== নিউজ =====
         { name: 'CNN International', url: 'https://cnn-cnninternational-1-ak.secure.footprint.net/Content/CNN/hls/live/stream.m3u8', group: 'নিউজ', flag: '🇺🇸' },
@@ -607,7 +685,7 @@
         { name: 'Sky News', url: 'https://skynwsen-lh.akamaihd.net/i/skynwsen_1@194302/master.m3u8', group: 'নিউজ', flag: '🇬🇧' },
         { name: 'France 24', url: 'https://france24-lh.akamaihd.net/i/france24_1@194303/master.m3u8', group: 'নিউজ', flag: '🇫🇷' },
         
-        // ===== মুভি =====
+        // ===== সিনেমা =====
         { name: 'HBO', url: 'https://hbo-lh.akamaihd.net/i/hbo_1@194308/master.m3u8', group: 'সিনেমা', flag: '🇺🇸' },
         { name: 'AMC', url: 'https://amc-lh.akamaihd.net/i/amc_1@194310/master.m3u8', group: 'সিনেমা', flag: '🇺🇸' },
         { name: 'TNT', url: 'https://tnt-lh.akamaihd.net/i/tnt_1@194312/master.m3u8', group: 'সিনেমা', flag: '🇺🇸' },
@@ -622,7 +700,7 @@
     ];
 
     // ============================================================
-    //  ডিফল্ট প্লেলিস্ট (১০,০০০+ চ্যানেলের জন্য)
+    //  ডিফল্ট প্লেলিস্ট
     // ============================================================
     const DEFAULT_PLAYLISTS = [
         { name: 'স্পোর্টস', url: 'https://iptv-org.github.io/iptv/categories/sports.m3u' },
@@ -639,7 +717,7 @@
     // ============================================================
     async function loadDefaultPlaylists() {
         nowPlayingEl.innerHTML = '⏳ ১০,০০০+ চ্যানেল লোড হচ্ছে...';
-        let allChannels = [...WORKING_CHANNELS];
+        let allChannels = [...ALL_CHANNELS];
         let loaded = 0;
 
         for (const pl of DEFAULT_PLAYLISTS) {
@@ -680,7 +758,7 @@
         renderChannels(channels);
         updateStats();
         counterEl.textContent = `${channels.length}টি চ্যানেল`;
-        nowPlayingEl.textContent = `✅ ${channels.length}টি চ্যানেল লোড হয়েছে (FIFA সহ)`;
+        nowPlayingEl.textContent = `✅ ${channels.length}টি চ্যানেল লোড হয়েছে (HLS + MPD + TS)`;
         nextChannel();
     }
 
@@ -713,7 +791,7 @@
     }
 
     // ============================================================
-    //  প্লেলিস্ট লোড (একক)
+    //  প্লেলিস্ট লোড
     // ============================================================
     async function loadPlaylist() {
         const url = document.getElementById('playlist-url').value.trim();
@@ -760,8 +838,10 @@
             counterEl.textContent = '০টি চ্যানেল';
             nowPlayingEl.textContent = '🗑️ সব চ্যানেল মুছে ফেলা হয়েছে';
             if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+            if (dashInstance) { dashInstance.reset(); dashInstance = null; }
             video.pause();
             video.src = '';
+            hideExternalOverlay();
         }
     }
 
@@ -770,9 +850,9 @@
     // ============================================================
     const AR_TO_BN = {
         'هدف': 'গোল', 'تمريرة': 'পাস', 'تسديدة': 'শট', 'حكم': 'রেফারি',
-        'ملعب': 'স্টেডিয়াম', 'مباراة': 'ম্যাচ', 'دوري': 'লীগ', 'كأس': 'কাপ',
+        'ملعب': 'স্টেডিয়াম', 'মباراة': 'ম্যাচ', 'دوري': 'লীগ', 'كأس': 'কাপ',
         'نهائي': 'ফাইনাল', 'تسجيل': 'স্কোর', 'فريق': 'দল', 'لاعب': 'খেলোয়াড়',
-        'مدرب': 'কোচ', 'جمهور': 'দর্শক', 'كرة القدم': 'ফুটবل',
+        'مدرب': 'কোচ', 'جمهور': 'দর্শক', 'كرة القدم': 'ফুটবল',
         'أخبار': 'সংবাদ', 'عاجل': 'জরুরি', 'مرحبا': 'স্বাগতম', 'شكرا': 'ধন্যবাদ'
     };
 
@@ -822,13 +902,13 @@
     //  ট্রান্সলেশন
     // ============================================================
     const TRANSLATIONS = {
-        'bn': { 'Sports': 'খেলা', 'News': 'সংবাদ', 'Movies': 'সিনেমা', 'Bangladesh': 'বাংলাদেশ', 'FIFA': 'ফিফা', 'আরবি স্পোর্টস': 'আরবি খেলা' },
-        'en': { 'Sports': 'Sports', 'News': 'News', 'Movies': 'Movies', 'Bangladesh': 'Bangladesh', 'FIFA': 'FIFA', 'আরবি স্পোর্টস': 'Arabic Sports' },
-        'ar': { 'Sports': 'رياضة', 'News': 'أخبار', 'Movies': 'أفلام', 'Bangladesh': 'بنغلاديش', 'FIFA': 'فيفا', 'আরবি স্পোর্টস': 'الرياضة العربية' },
-        'es': { 'Sports': 'Deportes', 'News': 'Noticias', 'Movies': 'Películas', 'Bangladesh': 'Bangladés', 'FIFA': 'FIFA', 'আরবি স্পোর্টস': 'Deportes Árabes' },
-        'fr': { 'Sports': 'Sports', 'News': 'Actualités', 'Movies': 'Films', 'Bangladesh': 'Bangladesh', 'FIFA': 'FIFA', 'আরবি স্পোর্টস': 'Sports Arabes' },
-        'hi': { 'Sports': 'खेल', 'News': 'समाचार', 'Movies': 'फिल्में', 'Bangladesh': 'बांग्लादेश', 'FIFA': 'फीफा', 'আরবি স্পোর্টস': 'अरबी खेल' },
-        'ur': { 'Sports': 'کھیل', 'News': 'خبریں', 'Movies': 'فلمیں', 'Bangladesh': 'بنگلہ دیش', 'FIFA': 'فیفا', 'আরবি স্পোর্টস': 'عربی کھیل' },
+        'bn': { 'Sports': 'খেলা', 'News': 'সংবাদ', 'Movies': 'সিনেমা', 'Bangladesh': 'বাংলাদেশ', 'FIFA': 'ফিফা' },
+        'en': { 'Sports': 'Sports', 'News': 'News', 'Movies': 'Movies', 'Bangladesh': 'Bangladesh', 'FIFA': 'FIFA' },
+        'ar': { 'Sports': 'رياضة', 'News': 'أخبار', 'Movies': 'أفلام', 'Bangladesh': 'بنغلاديش', 'FIFA': 'فيفا' },
+        'es': { 'Sports': 'Deportes', 'News': 'Noticias', 'Movies': 'Películas', 'Bangladesh': 'Bangladés', 'FIFA': 'FIFA' },
+        'fr': { 'Sports': 'Sports', 'News': 'Actualités', 'Movies': 'Films', 'Bangladesh': 'Bangladesh', 'FIFA': 'FIFA' },
+        'hi': { 'Sports': 'खेल', 'News': 'समाचार', 'Movies': 'फिल्में', 'Bangladesh': 'बांग्लादेश', 'FIFA': 'फीफा' },
+        'ur': { 'Sports': 'کھیل', 'News': 'خبریں', 'Movies': 'فلمیں', 'Bangladesh': 'بنگلہ دیش', 'FIFA': 'فیفا' },
     };
 
     function translateGroup(group, lang) {
@@ -879,6 +959,15 @@
                 badge.textContent = translateGroup(ch.group, lang);
                 div.appendChild(badge);
             }
+            
+            // ফরম্যাট ব্যাজ
+            const format = detectFormat(ch.url);
+            const formatBadge = document.createElement('span');
+            formatBadge.className = 'badge';
+            formatBadge.style.color = format === 'hls' ? '#00e676' : format === 'dash' ? '#ffab00' : '#ff5252';
+            formatBadge.textContent = format.toUpperCase();
+            div.appendChild(formatBadge);
+            
             div.title = ch.name;
             div.dataset.index = idx;
             div.onclick = () => playChannel(idx);
@@ -914,14 +1003,16 @@
     }
 
     // ============================================================
-    //  চ্যানেল প্লে
+    //  চ্যানেল প্লে (HLS + DASH + TS)
     // ============================================================
     function playChannel(index) {
         if (index < 0 || index >= channels.length) return;
 
         if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+        if (dashInstance) { dashInstance.reset(); dashInstance = null; }
         if (skipTimer) { clearTimeout(skipTimer); skipTimer = null; }
         stopSubtitleTimer();
+        hideExternalOverlay();
 
         currentIndex = index;
         const channel = channels[currentIndex];
@@ -951,6 +1042,26 @@
         const activeEl = channelListEl.querySelector('.channel-item.active');
         if (activeEl) activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 
+        const format = detectFormat(channel.url);
+        console.log(`📺 ${channel.name} - ফরম্যাট: ${format}`);
+
+        if (format === 'hls') {
+            playHLS(channel);
+        } else if (format === 'dash') {
+            playDASH(channel);
+        } else {
+            // TS বা অজানা ফরম্যাট — External Player
+            showExternalOnError(channel);
+        }
+    }
+
+    // ============================================================
+    //  HLS প্লে
+    // ============================================================
+    function playHLS(channel) {
+        const videoEl = video;
+        currentPlayerType = 'hls';
+
         if (Hls.isSupported()) {
             hlsInstance = new Hls({
                 enableWorker: true,
@@ -961,11 +1072,13 @@
                 manifestLoadingMaxRetry: 3,
                 levelLoadingTimeOut: 25000,
                 levelLoadingMaxRetry: 3,
-                xhrSetup: function(xhr, url) { xhr.withCredentials = false; }
+                xhrSetup: function(xhr, url) {
+                    xhr.withCredentials = false;
+                }
             });
 
             hlsInstance.loadSource(channel.url);
-            hlsInstance.attachMedia(video);
+            hlsInstance.attachMedia(videoEl);
 
             hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
                 if (currentQuality !== 'auto') {
@@ -993,7 +1106,7 @@
                     });
                     if (subtitlesEnabled) startSubtitleTimer();
                 }).catch(() => {
-                    setTimeout(() => video.play().catch(() => {}), 500);
+                    showExternalOnError(channel);
                 });
             });
 
@@ -1004,17 +1117,12 @@
                     hlsInstance = null;
                     channelStatus[channel.url] = 'red';
                     updateStats();
-                    if (autoSkipEnabled) {
-                        nowPlayingEl.textContent = `⚠️ ${channel.name} ব্যর্থ, স্কিপ...`;
-                        setTimeout(() => nextChannel(), 2000);
-                    } else {
-                        nowPlayingEl.textContent = `❌ ${channel.name} - এরর`;
-                        playBtn.textContent = '▶';
-                    }
+                    showExternalOnError(channel);
                 }
             });
 
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+            // Safari Native HLS
             video.src = channel.url;
             video.play().then(() => {
                 isPlaying = true;
@@ -1024,26 +1132,101 @@
                 updateStats();
                 if (subtitlesEnabled) startSubtitleTimer();
             }).catch(() => {
-                setTimeout(() => video.play().catch(() => {}), 500);
+                showExternalOnError(channel);
             });
         } else {
-            nowPlayingEl.textContent = '❌ HLS সাপোর্ট করে না';
-            channelStatus[channel.url] = 'red';
-            updateStats();
-            return;
+            showExternalOnError(channel);
         }
 
         skipTimer = setTimeout(() => {
-            if (autoSkipEnabled && currentIndex === index) {
+            if (autoSkipEnabled && currentIndex === currentIndex) {
                 if (video.readyState < 2) {
-                    nowPlayingEl.textContent = `⏱️ ${channel.name} লোড হয়নি, স্কিপ...`;
+                    nowPlayingEl.textContent = `⏱️ ${channel.name} লোড হয়নি`;
                     channelStatus[channel.url] = 'red';
                     updateStats();
                     if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
-                    nextChannel();
+                    showExternalOnError(channel);
                 }
             }
-        }, 30000);
+        }, 25000);
+    }
+
+    // ============================================================
+    //  DASH প্লে (dash.js দিয়ে)
+    // ============================================================
+    function playDASH(channel) {
+        const videoEl = video;
+        currentPlayerType = 'dash';
+
+        try {
+            dashInstance = dashjs.MediaPlayer().create();
+            dashInstance.initialize(videoEl, channel.url, true);
+            
+            dashInstance.on('error', function(e) {
+                console.warn('DASH Error:', e);
+                dashInstance.reset();
+                dashInstance = null;
+                channelStatus[channel.url] = 'red';
+                updateStats();
+                showExternalOnError(channel);
+            });
+
+            dashInstance.on('playbackPlaying', function() {
+                isPlaying = true;
+                playBtn.textContent = '⏸';
+                nowPlayingEl.textContent = `▶️ ${channel.name}`;
+                channelStatus[channel.url] = 'green';
+                updateStats();
+                document.querySelectorAll('.channel-item').forEach((el, i) => {
+                    const ch = channels[i];
+                    if (ch) {
+                        const dot = el.querySelector('.status-indicator');
+                        if (dot) {
+                            dot.className = `status-indicator ${channelStatus[ch.url] || 'gray'}`;
+                        }
+                    }
+                });
+                if (subtitlesEnabled) startSubtitleTimer();
+            });
+
+            // কোয়ালিটি সেট
+            if (currentQuality !== 'auto') {
+                const map = { '1080p': 0, '720p': 1, '480p': 2, '360p': 3 };
+                const idx = map[currentQuality] !== undefined ? map[currentQuality] : 0;
+                dashInstance.setQualityFor('video', idx);
+            }
+
+            video.play().catch(() => {});
+
+        } catch(e) {
+            console.warn('DASH Init Error:', e);
+            showExternalOnError(channel);
+        }
+
+        skipTimer = setTimeout(() => {
+            if (autoSkipEnabled && currentIndex === currentIndex) {
+                if (video.readyState < 2) {
+                    nowPlayingEl.textContent = `⏱️ ${channel.name} লোড হয়নি`;
+                    channelStatus[channel.url] = 'red';
+                    updateStats();
+                    if (dashInstance) { dashInstance.reset(); dashInstance = null; }
+                    showExternalOnError(channel);
+                }
+            }
+        }, 25000);
+    }
+
+    // ============================================================
+    //  External Player দেখান
+    // ============================================================
+    function showExternalOnError(channel) {
+        extChannelName.textContent = channel.name;
+        extUrlDisplay.textContent = channel.url;
+        externalOverlay.classList.add('show');
+        video.pause();
+        playBtn.textContent = '▶';
+        isPlaying = false;
+        stopSubtitleTimer();
     }
 
     function nextChannel() {
@@ -1051,6 +1234,7 @@
         let next = currentIndex + 1;
         if (next >= channels.length) next = 0;
         if (next === currentIndex && channels.length > 1) next = (next + 1) % channels.length;
+        hideExternalOverlay();
         playChannel(next);
     }
 
@@ -1058,6 +1242,7 @@
         if (channels.length === 0) return;
         let prev = currentIndex - 1;
         if (prev < 0) prev = channels.length - 1;
+        hideExternalOverlay();
         playChannel(prev);
     }
 
@@ -1066,7 +1251,7 @@
         toggleBtn.textContent = autoSkipEnabled ? '▶️ অটো' : '⏸️ বন্ধ';
         toggleBtn.style.background = autoSkipEnabled ? 'var(--primary)' : '#ff5252';
         toggleBtn.style.color = autoSkipEnabled ? '#000' : '#fff';
-        if (autoSkipEnabled && hlsInstance === null && currentIndex >= 0) {
+        if (autoSkipEnabled && currentIndex >= 0) {
             nextChannel();
         }
     }
@@ -1080,6 +1265,7 @@
             playBtn.textContent = '⏸';
             isPlaying = true;
             if (subtitlesEnabled) startSubtitleTimer();
+            hideExternalOverlay();
         } else {
             video.pause();
             playBtn.textContent = '▶';
@@ -1096,7 +1282,9 @@
         stopSubtitleTimer();
         hideSubtitles();
         if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+        if (dashInstance) { dashInstance.reset(); dashInstance = null; }
         nowPlayingEl.textContent = '⏹ স্টপ';
+        hideExternalOverlay();
     });
 
     video.addEventListener('timeupdate', () => {
@@ -1159,6 +1347,11 @@
                 }
             }
         }
+        if (dashInstance) {
+            const map = { '1080p': 0, '720p': 1, '480p': 2, '360p': 3 };
+            const idx = map[currentQuality] !== undefined ? map[currentQuality] : 0;
+            dashInstance.setQualityFor('video', idx);
+        }
     });
 
     fullscreenBtn.addEventListener('click', () => {
@@ -1174,11 +1367,7 @@
         if (currentIndex >= 0 && channels[currentIndex]) {
             channelStatus[channels[currentIndex].url] = 'red';
             updateStats();
-        }
-        if (autoSkipEnabled && currentIndex >= 0) {
-            nowPlayingEl.textContent = `⚠️ প্লেব্যাক এরর, স্কিপ...`;
-            if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
-            setTimeout(() => nextChannel(), 2000);
+            showExternalOnError(channels[currentIndex]);
         }
     });
 
@@ -1215,8 +1404,8 @@
             liveCountEl.textContent = viewers + Math.floor(Math.random() * 20);
         }, 30000);
         
-        console.log('⚡ জাহাঙ্গীর আইপি টিভি - PRO EDITION প্রস্তুত!');
-        console.log('🏆 FIFA World Cup চ্যানেল সহ ৫০০+ চ্যানেল লোড হয়েছে!');
+        console.log('⚡ জাহাঙ্গীর আইপি টিভি - সব ফরম্যাট ভার্সন প্রস্তুত!');
+        console.log('📺 HLS + DASH + TS - সব ফরম্যাট সাপোর্ট করে!');
     };
 </script>
 </body>
