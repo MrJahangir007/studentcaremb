@@ -424,7 +424,7 @@
             <button class="secondary" onclick="prevChannel()">⏪</button>
             <button class="secondary" onclick="nextChannel()">⏩</button>
             <button id="toggle-auto" class="secondary" onclick="toggleAutoSkip()" style="background:var(--primary);color:#000;">▶️ অটো</button>
-            <button class="gold" onclick="loadDefaultPlaylists()">🔗 ১০k+ লোড</button>
+            <button class="gold" onclick="loadDefaultPlaylists()">🔗 ১৫k+ লোড</button>
             <button class="danger" onclick="clearChannels()">🗑️</button>
         </div>
 
@@ -473,8 +473,8 @@
 
 <script>
     // ============================================================
-    //  JAHANGIR IPTV - ULTIMATE EDITION (সম্পূর্ণ আপডেটেড)
-    //  BTV National, BTV World, BTV News সহ
+    //  JAHANGIR IPTV - ULTIMATE EDITION (১৫,০০০+ চ্যানেল)
+    //  BTV National, BTV Sangshad, BTV News সহ
     //  FIFA World Cup 2026 স্পেশাল
     // ============================================================
 
@@ -530,9 +530,9 @@
         { name: '🏆 FIFA WC 2026 (beIN MAX 4)', url: 'https://beinsports4-lh.akamaihd.net/i/beinsports4_1@194300/master.m3u8', group: 'FIFA 2026', flag: '🇶🇦' },
         { name: '🏆 FIFA WC 2026 (beIN MAX 5)', url: 'https://beinsports5-lh.akamaihd.net/i/beinsports5_1@194301/master.m3u8', group: 'FIFA 2026', flag: '🇶🇦' },
         
-        // ===== Bangladesh (BTV + Somoy + T Sports) =====
+        // ===== Bangladesh (সঠিক নাম) =====
         { name: '🏆 FIFA WC 2026 (BTV National)', url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8', group: 'FIFA 2026', flag: '🇧🇩' },
-        { name: '🏆 FIFA WC 2026 (BTV World)', url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1713/output/index.m3u8', group: 'FIFA 2026', flag: '🇧🇩' },
+        { name: '🏆 FIFA WC 2026 (BTV Sangshad)', url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1713/output/index.m3u8', group: 'FIFA 2026', flag: '🇧🇩' },
         { name: '🏆 FIFA WC 2026 (BTV News)', url: 'https://streams.btvlive.gov.bd/live/37f2df30-3edf-42f3-a2ee-6185002c841c/BD/d96eb7f4-83c2-4472-9597-3568390a8ebf/index.m3u8', group: 'FIFA 2026', flag: '🇧🇩' },
         { name: '🏆 FIFA WC 2026 (Somoy TV)', url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1702/output/index.m3u8', group: 'FIFA 2026', flag: '🇧🇩' },
         { name: '🏆 FIFA WC 2026 (T Sports)', url: 'https://live.tsports.com/mobile_hls/tsports_live_1/playlist.m3u8', group: 'FIFA 2026', flag: '🇧🇩' },
@@ -564,16 +564,22 @@
     ];
 
     // ============================================================
-    //  সব চ্যানেল (BTV ৩টি + অন্যান্য)
+    //  সব চ্যানেল (সঠিক নাম সহ)
     // ============================================================
     const ALL_CHANNELS = [
-        // ===== FIFA World Cup 2026 (সবার উপরে) =====
+        // ===== FIFA World Cup 2026 =====
         ...FIFA_CHANNELS,
         
-        // ===== BTV চ্যানেল (৩টি) =====
+        // ===== BTV চ্যানেল (সঠিক নাম) =====
         { name: '📺 BTV National', url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
-        { name: '📺 BTV World', url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1713/output/index.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        { name: '📺 BTV Sangshad', url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1713/output/index.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
         { name: '📺 BTV News', url: 'https://streams.btvlive.gov.bd/live/37f2df30-3edf-42f3-a2ee-6185002c841c/BD/d96eb7f4-83c2-4472-9597-3568390a8ebf/index.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        
+        // ===== অন্যান্য বাংলাদেশি =====
+        { name: '📺 Somoy TV', url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1702/output/index.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        { name: '📺 Makka Live TV', url: 'https://app.ncare.live/c3VydmVyX8RpbEU9Mi8xNy8yMDE0GIDU6RgzQ6NTAgdEoaeFzbF92YWxIZTO0U0ezN1IzMyfvcGVMZEJCTEFWeVN3PTOmdFsaWRtaW51aiPhnPTI2/makkahtv.stream/playlist.m3u8', group: 'ইসলামিক', flag: '🇸🇦' },
+        { name: 'মাই টিভি', url: 'http://116.204.149.16/mytv/index.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
+        { name: 'RAJDHANI TV', url: 'https://sm-monirul.top/toffee/play/rajdhani_tv.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
         
         // ===== Caze TV =====
         { name: 'Caze TV', url: 'https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8', group: 'স্পোর্টস', flag: '🇧🇷' },
@@ -605,11 +611,6 @@
         
         // ===== T Sports =====
         { name: 'T Sports', url: 'http://luckonline.eu/live/y49sz6KMQs/6115263489/1142.ts', group: 'বাংলাদেশ', flag: '🇧🇩' },
-        
-        // ===== বাংলাদেশি অন্যান্য =====
-        { name: 'Somoy TV', url: 'https://owrcovcrpy.gpcdn.net/bpk-tv/1702/output/index.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
-        { name: 'মাই টিভি', url: 'http://116.204.149.16/mytv/index.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
-        { name: 'RAJDHANI TV', url: 'https://sm-monirul.top/toffee/play/rajdhani_tv.m3u8', group: 'বাংলাদেশ', flag: '🇧🇩' },
         
         // ===== DAZN =====
         { name: 'DAZN FAST+', url: 'https://ac-003.live.p7s1video.net/63f8995e/t_003/dazn-fast-hd/cenc-default.mpd', group: 'স্পোর্টস', flag: '🌍' },
@@ -651,14 +652,18 @@
     ];
 
     // ============================================================
-    //  ডিফল্ট প্লেলিস্ট
+    //  ডিফল্ট প্লেলিস্ট (১৫,০০০+ চ্যানেল)
     // ============================================================
     const DEFAULT_PLAYLISTS = [
-        { name: 'স্পোর্টস', url: 'https://iptv-org.github.io/iptv/categories/sports.m3u' },
-        { name: 'নিউজ', url: 'https://iptv-org.github.io/iptv/categories/news.m3u' },
-        { name: 'মুভি', url: 'https://iptv-org.github.io/iptv/categories/movies.m3u' },
-        { name: 'বাংলাদেশ', url: 'https://iptv-org.github.io/iptv/countries/bd.m3u' },
-        { name: 'Free-TV গ্লোবাল', url: 'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8' },
+        { name: 'IPTV-org (গ্লোবাল ৮k+)', url: 'https://iptv-org.github.io/iptv/index.m3u' },
+        { name: 'Free-TV (গ্লোবাল ৫k+)', url: 'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8' },
+        { name: 'IPTV-org (স্পোর্টস)', url: 'https://iptv-org.github.io/iptv/categories/sports.m3u' },
+        { name: 'IPTV-org (বাংলাদেশ)', url: 'https://iptv-org.github.io/iptv/countries/bd.m3u' },
+        { name: 'BD YouTube TV', url: 'https://raw.githubusercontent.com/manabray/bdyttv/main/youtube.m3u' },
+        { name: 'imShakil BD IPTV', url: 'https://raw.githubusercontent.com/imShakil/tvlink/refs/heads/main/iptv.m3u8' },
+        { name: 'Pirates TV (BD মেগা)', url: 'https://raw.githubusercontent.com/FunctionError/PiratesTv/main/combined_playlist.m3u' },
+        { name: 'Pirates TV (অল-ইন-ওয়ান)', url: 'https://iptv.piratestv.workers.dev/all' },
+        { name: 'T Sports (অটো-আপডেট)', url: 'https://raw.githubusercontent.com/abusaeeidx/T-Sports-Playlist-Auto-Update/refs/heads/main/universal_player.m3u' },
     ];
 
     // ============================================================
@@ -700,10 +705,10 @@
     }
 
     // ============================================================
-    //  ডিফল্ট প্লেলিস্ট লোড
+    //  ডিফল্ট প্লেলিস্ট লোড (১৫,০০০+)
     // ============================================================
     async function loadDefaultPlaylists() {
-        nowPlayingEl.innerHTML = '⏳ ১০,০০০+ চ্যানেল লোড হচ্ছে...';
+        nowPlayingEl.innerHTML = '⏳ ১৫,০০০+ চ্যানেল লোড হচ্ছে...';
         let allChannels = [...ALL_CHANNELS];
         let loaded = 0;
 
@@ -714,7 +719,7 @@
                     const text = await resp.text();
                     const parsed = parseM3U(text);
                     parsed.forEach(ch => {
-                        if (!ch.group) ch.group = pl.name;
+                        if (!ch.group) ch.group = pl.name.split('(')[0].trim();
                         if (!ch.flag) ch.flag = '🌍';
                     });
                     allChannels = allChannels.concat(parsed);
@@ -745,7 +750,7 @@
         renderChannels(channels);
         updateStats();
         counterEl.textContent = `${channels.length}টি চ্যানেল`;
-        nowPlayingEl.textContent = `✅ ${channels.length}টি চ্যানেল লোড হয়েছে (BTV ৩টি + FIFA ২০২৬ সহ)`;
+        nowPlayingEl.textContent = `✅ ${channels.length}টি চ্যানেল লোড হয়েছে (১৫k+)\nBTV ও FIFA ২০২৬ সহ`;
         nextChannel();
     }
 
@@ -901,7 +906,6 @@
                 div.appendChild(fifaBadge);
             }
             
-            // BTV চিহ্নিত
             if (ch.name.includes('BTV')) {
                 const badge = document.createElement('span');
                 badge.className = 'badge';
@@ -1242,7 +1246,7 @@
         toggleBtn.style.color = '#000';
         console.log('⚡ JAHANGIR IPTV - ULTIMATE EDITION প্রস্তুত!');
         console.log(`🏆 FIFA World Cup 2026 - ${FIFA_CHANNELS.length}টি স্পেশাল চ্যানেল!`);
-        console.log(`📺 BTV National, BTV World, BTV News সহ ${ALL_CHANNELS.length}টি ডিফল্ট চ্যানেল!`);
+        console.log(`📺 ১৫,০০০+ চ্যানেল লোড হবে (BTV ৩টি + FIFA ২০২৬ সহ)`);
     };
 </script>
 </body>
